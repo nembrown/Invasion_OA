@@ -1,0 +1,28 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+Biological data
+Chlorophyll
+CO2sys parameter data
+Powerpoints
+Metabolic rate
+Norah's summer 2013 invasion mesocosm experiment
+Temperature and Salinity
+Write ups
+Jilisa's data
+
+*.csv
+*.xlsx
+*.xls
+*.doc
+*.docx
+*.ppt
+*.pptx
+**/Plots
+**/Output Files
+.RDataTmp
+*.RDataTmp
+**/History and Environment
+*.png
+*.tmp
