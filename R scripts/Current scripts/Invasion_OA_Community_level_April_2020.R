@@ -7,15 +7,9 @@ library(car)
 library(fitdistrplus)
 
 ## read in data from both mesocosms and tiles
-food.exp.data.mesocosm<-read.csv("C:Data//Mesocosm inventory data//mesocosm_inventory_counts.csv", stringsAsFactors = FALSE, na.strings = c("NA","") )
-head(food.exp.data.mesocosm)
 
-mesocosm.key<-read.csv("C:Data//Percent cover data//Environmental files for community analysis//mesocosm_key.csv", stringsAsFactors = FALSE, na.strings = c("NA","") )
-food.exp.data.tile.all<-read.csv("C:Data//Percent cover data//Percent cover files over time//tile_week_12_all.csv" ,stringsAsFactors = FALSE, na.strings = c("NA","") )
-head(food.exp.data.tile.all)
 
-food.exp.data.mesocosm.12<-read.csv("c:Data//Mesocosm inventory data//food.exp.data.mesocosm.12.original.csv", stringsAsFactors = FALSE, na.strings = c("NA","") )
-head(food.exp.data.mesocosm.12)
+invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_without_pres.csv",stringsAsFactors = FALSE, na.strings = c("NA","") )
 
 
 #Select data to be used: 

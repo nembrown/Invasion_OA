@@ -43,6 +43,7 @@ invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_without_pre
 
 
 
+
 #either read in the percent cover file or the with presence file
 head(invasion.exp.data)
 
@@ -62,10 +63,14 @@ invasion.exp.data.8to16 <-aggregate(invasion.exp.data.lastmonth, by=list(invasio
 
 invasion.exp.data.lastmonth$Tile.ID<-as.character(invasion.exp.data.lastmonth$Tile.ID)
 
-head(invasion.exp.data.8to16)
 
 
-fix(invasion.exp.data.8to16)
+
+
+
+
+
+
 
 invasion.exp.data$evenness.no.bot<-invasion.exp.data$shannon.diversity.no.bot/(log(invasion.exp.data$num.species.no.bot))
 
