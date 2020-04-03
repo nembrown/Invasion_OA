@@ -44,19 +44,24 @@ library(installr)
 # dataframe management ----------------------------------------------------
 
 invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_without_pres.csv",stringsAsFactors = FALSE, na.strings = c("NA","") )
-invasion.exp.data<-invasion.exp.data %>% filter(Week==16)
+# invasion.exp.data<-invasion.exp.data %>% filter(Week==16)
 
 head(invasion.exp.data)
+invasion.exp.data$Week<-as.numeric(invasion.exp.data$Week)
+
 
 str(invasion.exp.data)
 
 #ordered and unordered factors
-invasion.exp.data$oTreatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2.TreatmentAbsent", "CO2.TreatmentPresent", "AIRPresent"), ordered=TRUE)
-invasion.exp.data$Treatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2.TreatmentAbsent", "CO2.TreatmentPresent", "AIRPresent"), ordered=FALSE)
+invasion.exp.data$oTreatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=TRUE)
+invasion.exp.data$Treatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=FALSE)
 
 #I think I need just Invasives if we're going with CO2.Treatment
 invasion.exp.data$oInvasives<-factor(invasion.exp.data$Invasives, levels=c("Absent", "Present"), ordered=TRUE)
 invasion.exp.data$Invasives<-factor(invasion.exp.data$Invasives, levels=c("Absent", "Present"), ordered=FALSE)
+
+invasion.exp.data$oCO2.Treatment<-factor(invasion.exp.data$Invasives, levels=c("AIR", "CO2"), ordered=TRUE)
+invasion.exp.data$CO2.Treatment<-factor(invasion.exp.data$Invasives, levels=c("AIR", "CO2"), ordered=FALSE)
 
 
 
@@ -152,7 +157,7 @@ hist(invasion.exp.data_pres$min.10.pH, breaks=18)#18 for the whole 16 weeks
 # Plotting settings -------------------------------------------------------
 
 colorset_invasives = c("Present"="#5EC2DA" ,"Absent"="#EB549A")
-theme_set(theme_classic(base_size = 6))
+theme_set(theme_classic(base_size = 12))
 theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
 
@@ -300,6 +305,85 @@ plt.botryllid <- ggplot(ndata.botryllid, aes(x = min.10.pH.unscaled, y = fit)) +
   theme(legend.position='none')
 plt.botryllid
 ggsave("C:Graphs April 2020//botryllid_pred.png")
+
+
+
+
+
+# botryllid + time -- not working with gam b/c too few --------------------------------------------------------
+colorset_treatment = c("AIRAbsent"="#5EC2DA","CO2.TreatmentAbsent"="#EBC915", "CO2.TreatmentPresent"="#EB549A", "AIRPresent"="#550133")
+#   
+theme_set(theme_classic(base_size = 12))
+theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
+
+gam.binomial.botryllid<- gam(formula = cbind(botryllid, 100-botryllid)~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data_zscores, family = binomial, select=TRUE, REML=TRUE)
+
+#beta next
+gam.beta.botryllid<- gam(botryllid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data_zscores, family = betar(link="logit"), select=TRUE, REML=TRUE)
+gam.beta.botryllid.1<- gam(botryllid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data_zscores, family = betar(link="probit"), select=TRUE, REML=TRUE)
+gam.beta.botryllid.2<- gam(botryllid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data_zscores, family = betar(link="cloglog"), select=TRUE, REML=TRUE)
+gam.beta.botryllid.3<- gam(botryllid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data_zscores, family = betar(link="cauchit"), select=TRUE, REML=TRUE)
+
+
+AICtab(gam.beta.botryllid, gam.beta.botryllid.1, gam.beta.botryllid.2, gam.beta.botryllid.3, gam.binomial.botryllid)
+#cauchit is the best
+
+plot(gam.beta.botryllid.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.beta.botryllid.3)
+qq_plot(gam.beta.botryllid.3, method = 'simulate')
+k_check(gam.beta.botryllid.3)
+summary(gam.beta.botryllid.3)
+
+gam.beta.botryllid.3.unordered<- gam(botryllid.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data_zscores, family = betar(link="cloglog"), select=TRUE, REML=TRUE)
+
+
+fam.gam.botryllid <- family(gam.beta.botryllid.3)
+fam.gam.botryllid
+ilink.gam.botryllid<- fam.gam.botryllid$linkinv
+ilink.gam.botryllid
+want <- seq(1, nrow(invasion.exp.data_zscores), length.out = 100)
+
+
+mod.botryllid<-gam.beta.botryllid.3
+ndata.botryllid <- with(invasion.exp.data_zscores, 
+                        data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                   length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+
+## add the fitted values by predicting from the mod.botryllidel for the new data
+ndata.botryllid <- add_column(ndata.botryllid, fit = predict(mod.botryllid, newdata = ndata.botryllid, type = 'response'))
+
+
+ndata.botryllid <- bind_cols(ndata.botryllid, setNames(as_tibble(predict(mod.botryllid, ndata.botryllid, se.fit = TRUE)[1:2]),
+                                                       c('fit_link','se_link')))
+
+## create the interval and backtransform
+
+ndata.botryllid <- mutate(ndata.botryllid,
+                          fit_resp  = ilink.gam.botryllid(fit_link),
+                          right_upr = ilink.gam.botryllid(fit_link + (2 * se_link)),
+                          right_lwr = ilink.gam.botryllid(fit_link - (2 * se_link)))
+
+
+invasion.exp.data_zscores$min.10.pH.unscaled<-invasion.exp.data_zscores$min.10.pH * attr(invasion.exp.data_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data_zscores$min.10.pH, 'scaled:center')
+
+ndata.botryllid$min.10.pH.unscaled<-ndata.botryllid$min.10.pH * attr(invasion.exp.data_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data_zscores$min.10.pH, 'scaled:center')
+
+# plot 
+
+plt.botryllid <- ggplot(ndata.botryllid, aes(x = min.10.pH.unscaled, y = fit)) + 
+  
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = botryllid.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Botryllus")~ "abundance"), textstyle("(proportion cover)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.botryllid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')
+plt.botryllid
+ggsave("C:Graphs April 2020//botryllid_pred.png")
+
+
 
 
 
@@ -806,78 +890,77 @@ ggsave("C:Graphs April 2020//num.barn_pred.png")
 
 
 
-# GAM negbin disporella / gam.nb.disporella ----------------------------------------------------------
+# GAM negbin num.white.bryo / gam.nb.num.white.bryo ----------------------------------------------------------
 
-nbinom12.disporella <- fitdistr(invasion.exp.data_zscores$disporella, "Negative Binomial")
-qqp(invasion.exp.data_zscores$disporella, "nbinom", size = nbinom12.disporella$estimate[[1]], mu = nbinom12.disporella$estimate[[2]])
+nbinom12.num.white.bryo <- fitdistr(invasion.exp.data_zscores$num.white.bryo, "Negative Binomial")
+qqp(invasion.exp.data_zscores$num.white.bryo, "nbinom", size = nbinom12.num.white.bryo$estimate[[1]], mu = nbinom12.num.white.bryo$estimate[[2]])
 #getting theta
 
-gam.nb.disporella<- gam(disporella ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = negbin(nbinom12.disporella$estimate[[1]]), select=TRUE, method="REML")
-gam.nb.disporella.1<- gam(disporella ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = nb(), select=TRUE, method="REML")
-gam.poisson.disporella<- gam(disporella ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = poisson(), select=TRUE, method="REML")
+gam.nb.num.white.bryo<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = negbin(nbinom12.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.nb.num.white.bryo.1<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = nb(), select=TRUE, method="REML")
+gam.poisson.num.white.bryo<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = poisson(), select=TRUE, method="REML")
 
-AICtab(gam.nb.disporella.1,gam.nb.disporella,gam.poisson.disporella)
+AICtab(gam.nb.num.white.bryo.1,gam.nb.num.white.bryo,gam.poisson.num.white.bryo)
 #used estimated theta
 
-plot(gam.nb.disporella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.nb.disporella)
+plot(gam.nb.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.nb.num.white.bryo)
 #not bad!
-#qq_plot(gam.nb.disporella, method = 'simulate')
-#k_check(gam.nb.disporella)
-summary(gam.nb.disporella)
+qq_plot(gam.nb.num.white.bryo, method = 'simulate')
+#k_check(gam.nb.num.white.bryo)
+summary(gam.nb.num.white.bryo)
 
 #a few outside the area
 #appraise a bit funnelly
 
-gam.nb.disporella.unordered<- gam(disporella ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = negbin(nbinom12.disporella$estimate[[1]]), select=TRUE, method="REML")
+gam.nb.num.white.bryo.unordered<- gam(num.white.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data_zscores, family = negbin(nbinom12.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
 
 
-fam.gam.disporella <- family(gam.nb.disporella)
-fam.gam.disporella
-str(fam.gam.disporella)
-ilink.gam.disporella<- fam.gam.disporella$linkinv
-ilink.gam.disporella
+fam.gam.num.white.bryo <- family(gam.nb.num.white.bryo)
+fam.gam.num.white.bryo
+str(fam.gam.num.white.bryo)
+ilink.gam.num.white.bryo<- fam.gam.num.white.bryo$linkinv
+ilink.gam.num.white.bryo
 
 
-mod.disporella<-gam.nb.disporella
-ndata.disporella <- with(invasion.exp.data_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+mod.num.white.bryo<-gam.nb.num.white.bryo
+ndata.num.white.bryo <- with(invasion.exp.data_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                        length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
-ndata.disporella
+ndata.num.white.bryo
 
 str(invasion.exp.data_zscores)
-str(ndata.disporella)
+str(ndata.num.white.bryo)
 
 ## add the fitted values by predicting from the model for the new data
-ndata.disporella <- add_column(ndata.disporella, fit = predict(mod.disporella, newdata = ndata.disporella, type = 'response'))
+ndata.num.white.bryo <- add_column(ndata.num.white.bryo, fit = predict(mod.num.white.bryo, newdata = ndata.num.white.bryo, type = 'response'))
 
-predict(mod.disporella, newdata = ndata.disporella, type = 'response')
-ndata.disporella <- bind_cols(ndata.disporella, setNames(as_tibble(predict(mod.disporella, ndata.disporella, se.fit = TRUE)[1:2]),
+predict(mod.num.white.bryo, newdata = ndata.num.white.bryo, type = 'response')
+ndata.num.white.bryo <- bind_cols(ndata.num.white.bryo, setNames(as_tibble(predict(mod.num.white.bryo, ndata.num.white.bryo, se.fit = TRUE)[1:2]),
                                                                  c('fit_link','se_link')))
 
 ## create the interval and backtransform
 
-ndata.disporella <- mutate(ndata.disporella,
-                               fit_resp  = ilink.gam.disporella(fit_link),
-                               right_upr = ilink.gam.disporella(fit_link + (2 * se_link)),
-                               right_lwr = ilink.gam.disporella(fit_link - (2 * se_link)))
+ndata.num.white.bryo <- mutate(ndata.num.white.bryo,
+                               fit_resp  = ilink.gam.num.white.bryo(fit_link),
+                               right_upr = ilink.gam.num.white.bryo(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.num.white.bryo(fit_link - (2 * se_link)))
 
-ndata.disporella$min.10.pH.unscaled<-ndata.disporella$min.10.pH * attr(invasion.exp.data_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data_zscores$min.10.pH, 'scaled:center')
+ndata.num.white.bryo$min.10.pH.unscaled<-ndata.num.white.bryo$min.10.pH * attr(invasion.exp.data_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.disporella <- ggplot(ndata.disporella, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
+plt.num.white.bryo <- ggplot(ndata.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = disporella, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data_zscores)+
+  geom_point(aes(y = num.white.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Disporella")~ "abundance"), textstyle("(# of colonies)")))))+  
   scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
   scale_fill_manual(values=colorset_invasives, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.disporella,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  geom_ribbon(data = ndata.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.disporella
-ggsave("C:Graphs April 2020//disporella_pred.png")
+plt.num.white.bryo
+ggsave("C:Graphs April 2020//num.white.bryo_pred.png")
 
 
 # GAM negbin num.red.bryo / gam.nb.num.red.bryo --------------------------------------------------------------
@@ -1319,7 +1402,7 @@ ggsave("C:Graphs April 2020//clam_pred.png")
 # Fig 2 plot generation ---------------------------------------------------
 library(patchwork)
 fig.2<-wrap_plots(plt.gam.hydroid,plt.botryllid,plt.folliculina,plt.caprellid.percent,plt.membranipora,plt.didemnum,
-          plt.mussel,plt.num.barn,plt.disporella,plt.num.red.bryo,plt.num.nudi,plt.num.serpulid,
+          plt.mussel,plt.num.barn,plt.num.white.bryo,plt.num.red.bryo,plt.num.nudi,plt.num.serpulid,
           plt.orange_sponge,plt.num.corella,plt.clam, ncol=5)+
           plot_annotation(tag_levels = 'a')
 
@@ -1340,7 +1423,7 @@ membranipora.gam<-summary(gam.beta.membranipora)
 didemnum.gam<-summary(gam.beta.didemnum)
 mussel.gam<-summary(gam.nb.mussel)
 alive.barn.gam<-summary(gam.nb.num.barn)
-disporella.gam<-summary(gam.nb.disporella)
+num.white.bryo.gam<-summary(gam.nb.num.white.bryo)
 num.red.bryo.gam<-summary(gam.nb.num.red.bryo)
 num.nudi.gam<-summary(gam.poisson.num.nudi)
 num.serpulid.gam<-summary(gam.nb.num.serpulid.1)
@@ -1356,7 +1439,7 @@ membranipora.gam.unordered<-summary(gam.beta.membranipora.unordered)
 didemnum.gam.unordered<-summary(gam.beta.didemnum.unordered)
 mussel.gam.unordered<-summary(gam.nb.mussel.unordered)
 alive.barn.gam.unordered<-summary(gam.nb.num.barn.unordered)
-disporella.gam.unordered<-summary(gam.nb.disporella.unordered)
+num.white.bryo.gam.unordered<-summary(gam.nb.num.white.bryo.unordered)
 num.red.bryo.gam.unordered<-summary(gam.nb.num.red.bryo.unordered)
 num.nudi.gam.unordered<-summary(gam.poisson.num.nudi.unordered)
 num.serpulid.gam.unordered<-summary(gam.nb.num.serpulid.1.unordered)
@@ -1388,8 +1471,8 @@ mussel.gam.s.table<-as.data.frame(mussel.gam$s.table)
 alive.barn.gam.p.table<-as.data.frame(alive.barn.gam.unordered$p.table)
 alive.barn.gam.s.table<-as.data.frame(alive.barn.gam$s.table)
 
-disporella.gam.p.table<-as.data.frame(disporella.gam.unordered$p.table)
-disporella.gam.s.table<-as.data.frame(disporella.gam$s.table)
+num.white.bryo.gam.p.table<-as.data.frame(num.white.bryo.gam.unordered$p.table)
+num.white.bryo.gam.s.table<-as.data.frame(num.white.bryo.gam$s.table)
 
 num.red.bryo.gam.p.table<-as.data.frame(num.red.bryo.gam.unordered$p.table)
 num.red.bryo.gam.s.table<-as.data.frame(num.red.bryo.gam$s.table)
@@ -1421,7 +1504,7 @@ ptable<-rbind(hydroid.gam.p.table,
                didemnum.gam.p.table,
                mussel.gam.p.table,
                alive.barn.gam.p.table,
-               disporella.gam.p.table,
+               num.white.bryo.gam.p.table,
                num.red.bryo.gam.p.table,
                num.nudi.gam.p.table,
                num.serpulid.gam.p.table,
@@ -1451,7 +1534,7 @@ ptable %>%
   group_rows("Didemnum", 16, 18) %>% 
   group_rows("Mussels", 19, 21) %>% 
   group_rows("Barnacles", 22, 24) %>% 
-  group_rows("Disporella", 25, 27) %>% 
+  group_rows("num.white.bryo", 25, 27) %>% 
   group_rows("num.red.bryoporella", 28, 30) %>% 
   group_rows("Hermissenda", 31, 33) %>% 
   group_rows("Serpulid", 34, 36) %>% 
@@ -1470,7 +1553,7 @@ stable<-rbind(hydroid.gam.s.table,
               didemnum.gam.s.table,
               mussel.gam.s.table,
               alive.barn.gam.s.table,
-              disporella.gam.s.table,
+              num.white.bryo.gam.s.table,
               num.red.bryo.gam.s.table,
               num.nudi.gam.s.table,
               num.serpulid.gam.s.table,
@@ -1490,7 +1573,7 @@ stable$Smooth_terms<-rep(c("smooth min.10.pH", "smooth min.10.pH * Low quality f
 #                    "didemnum",
   #                    "mussel",
   #                   "alive.barn",
-  #                   "disporella",
+  #                   "num.white.bryo",
   #                   "num.red.bryo",
   #                   "num.nudi",
   #                   "num.serpulid",
@@ -1513,7 +1596,7 @@ stable %>%
   group_rows("Didemnum", 16, 18) %>% 
   group_rows("Mussels", 19, 21) %>% 
   group_rows("Barnacles", 22, 24) %>% 
-  group_rows("Disporella", 25, 27) %>% 
+  group_rows("num.white.bryo", 25, 27) %>% 
   group_rows("num.red.bryoporella", 28, 30) %>% 
   group_rows("Hermissenda", 31, 33) %>% 
   group_rows("Serpulid", 34, 36) %>% 
@@ -1542,7 +1625,7 @@ pstable %>%
   group_rows("Didemnum, beta", 16, 18) %>% 
   group_rows("Mussels, negative binomial", 19, 21) %>% 
   group_rows("Barnacles, negative binomial", 22, 24) %>% 
-  group_rows("Disporella, negative binomial", 25, 27) %>% 
+  group_rows("num.white.bryo, negative binomial", 25, 27) %>% 
   group_rows("num.red.bryoporella, negative binomial", 28, 30) %>% 
   group_rows("Hermissenda, negative binomial", 31, 33) %>% 
   group_rows("Serpulid, negative binomial", 34, 36) %>% 
