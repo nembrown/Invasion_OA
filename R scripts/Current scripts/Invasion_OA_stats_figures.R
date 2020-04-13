@@ -44,6 +44,9 @@ library(installr)
 # dataframe management ----------------------------------------------------
 
 invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_without_pres.csv",stringsAsFactors = FALSE, na.strings = c("NA","") )
+
+invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
+
 invasion.exp.data.16<-invasion.exp.data %>% filter(Week==16)
 invasion.exp.data.12<-invasion.exp.data %>% filter(Week==12)
 
@@ -491,7 +494,7 @@ ggsave("C:Graphs April 2020//botryllid_pred.png")
 # GAM negbin caprellid / gam.16.nb.caprellid -----------------------------------------------------------
 
 #variety of potential distributions
-gam.16.nb.caprellid<- gam(total.caprellids ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = food.caprellid.data_zscores, family = negbin(nbinom12.caprellid$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.caprellid<- gam(total.caprellids ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = food.caprellid.data_zscores, family = negbin(nbinom.12.caprellid$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.caprellid.1<- gam(total.caprellids ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = food.caprellid.data_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.caprellid<- gam(total.caprellids ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = food.caprellid.data_zscores, family = poisson, select=TRUE, method="REML")
 gam.16.lm.caprellid<- gam(total.caprellids ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = food.caprellid.data_zscores, family = gaussian, select=TRUE, method="REML")
@@ -900,11 +903,11 @@ poisson<-fitdistr(invasion.exp.data.16_zscores$mussel, "Poisson")
 qqp(invasion.exp.data.16_zscores$mussel, "pois", lambda=poisson$estimate[[1]])
 #estimating lambda
 
-nbinom12.mussel <- fitdistr(invasion.exp.data.16_zscores$mussel, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$mussel, "nbinom", size = nbinom12.mussel$estimate[[1]], mu = nbinom12.mussel$estimate[[2]])
+nbinom.12.mussel <- fitdistr(invasion.exp.data.16_zscores$mussel, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$mussel, "nbinom", size = nbinom.12.mussel$estimate[[1]], mu = nbinom.12.mussel$estimate[[2]])
 #estimating theta
 
-gam.16.nb.mussel<- gam(mussel ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.mussel$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.mussel<- gam(mussel ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.12.mussel$estimate[[1]]), select=TRUE, method="REML")
 
 gam.16.nb.mussel.1<- gam(mussel ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(link="log"), select=TRUE, method="REML")
 gam.16.nb.mussel.2<- gam(mussel ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(link="sqrt"), select=TRUE, method="REML")
@@ -928,7 +931,7 @@ plot(gam.16.nb.mussel, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 summary(gam.16.nb.mussel)
 
 
-gam.16.nb.mussel.unordered<- gam(mussel ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.mussel$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.mussel.unordered<- gam(mussel ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.12.mussel$estimate[[1]]), select=TRUE, method="REML")
 summary(gam.16.nb.mussel.unordered)
 
 
@@ -976,11 +979,11 @@ ggsave("C:Graphs April 2020//mussel_pred.png")
 # GAM negbin barnacles / gam.16.nb.num.barn -----------------------------------------------------------
 
 
-nbinom12.barn <- fitdistr(invasion.exp.data.16_zscores$num.barn, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.barn, "nbinom", size = nbinom12.barn.alive$estimate[[1]], mu = nbinom12.barn$estimate[[2]])
+nbinom.16.barn <- fitdistr(invasion.exp.data.16_zscores$num.barn, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$num.barn, "nbinom", size = nbinom.16.barn$estimate[[1]], mu = nbinom.16.barn$estimate[[2]])
 
 #negative binomial 
-gam.16.nb.num.barn<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.barn$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.num.barn<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.barn$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.num.barn.1<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.num.barn<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
 
@@ -997,7 +1000,7 @@ summary(gam.16.poisson.num.barn)
 #a few outside the area
 #appraise a bit funnelly
 
-gam.16.poisson.num.barn.unordered<- gam(num.barn ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.barnacles$estimate[[1]]), select=TRUE, method="REML")
+gam.16.poisson.num.barn.unordered<- gam(num.barn ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.barnacles$estimate[[1]]), select=TRUE, method="REML")
 
 
 fam.gam.16.num.barn <- family(gam.16.poisson.num.barn)
@@ -1011,26 +1014,17 @@ mod.num.barn<-gam.16.poisson.num.barn
 ndata.16.num.barn <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                           length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
-ndata.16.num.barn
-
-
 ## add the fitted values by predicting from the model for the new data
 ndata.16.num.barn <- add_column(ndata.16.num.barn, fit = predict(mod.num.barn, newdata = ndata.16.num.barn, type = 'response'))
-
 predict(mod.num.barn, newdata = ndata.16.num.barn, type = 'response')
 ndata.16.num.barn <- bind_cols(ndata.16.num.barn, setNames(as_tibble(predict(mod.num.barn, ndata.16.num.barn, se.fit = TRUE)[1:2]),
                                                                        c('fit_link','se_link')))
-
 ## create the interval and backtransform
-
 ndata.16.num.barn <- mutate(ndata.16.num.barn,
                                   fit_resp  = ilink.gam.16.num.barn(fit_link),
                                   right_upr = ilink.gam.16.num.barn(fit_link + (2 * se_link)),
                                   right_lwr = ilink.gam.16.num.barn(fit_link - (2 * se_link)))
-
-
 ndata.16.num.barn$min.10.pH.unscaled<-ndata.16.num.barn$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
 
 # plot 
 plt.num.barn.16 <- ggplot(ndata.16.num.barn, aes(x = min.10.pH.unscaled, y = fit)) + 
@@ -1045,15 +1039,68 @@ plt.num.barn.16 <- ggplot(ndata.16.num.barn, aes(x = min.10.pH.unscaled, y = fit
 plt.num.barn.16
 ggsave("C:Graphs April 2020//num.barn_pred.16.png")
 
+# GAM negbin barnacles / gam.12.nb.num.barn -----------------------------------------------------------
+
+nbinom.12.barn <- fitdistr(invasion.exp.data.12_zscores$num.barn, "Negative Binomial")
+qqp(invasion.exp.data.12_zscores$num.barn, "nbinom", size = nbinom.12.barn$estimate[[1]], mu = nbinom.12.barn$estimate[[2]])
+
+#negative binomial 
+gam.12.nb.num.barn<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = negbin(nbinom.12.barn$estimate[[1]]), select=TRUE, method="REML")
+gam.12.nb.num.barn.1<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = nb(), select=TRUE, method="REML")
+gam.12.poisson.num.barn<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = poisson(), select=TRUE, method="REML")
+
+AICtab(gam.12.nb.num.barn, gam.12.nb.num.barn.1, gam.12.poisson.num.barn)
+#unlike week 16, this week nb is better model 
+
+plot(gam.12.nb.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.12.nb.num.barn)
+qq_plot(gam.12.nb.num.barn, method = 'simulate')
+#looks really good
+#k_check(gam.12.poisson.num.barn)
+summary(gam.12.nb.num.barn)
+
+gam.12.nb.num.barn.unordered<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=Invasives),data = invasion.exp.data.12_zscores, family = negbin(nbinom.12.barn$estimate[[1]]), select=TRUE, method="REML")
+fam.gam.12.num.barn <- family(gam.12.nb.num.barn)
+fam.gam.12.num.barn
+ilink.gam.12.num.barn<- fam.gam.12.num.barn$linkinv
+ilink.gam.12.num.barn
+mod.num.barn<-gam.12.nb.num.barn
+ndata.12.num.barn <- with(invasion.exp.data.12_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                                                   length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+## add the fitted values by predicting from the model for the new data
+ndata.12.num.barn <- add_column(ndata.12.num.barn, fit = predict(mod.num.barn, newdata = ndata.12.num.barn, type = 'response'))
+predict(mod.num.barn, newdata = ndata.12.num.barn, type = 'response')
+ndata.12.num.barn <- bind_cols(ndata.12.num.barn, setNames(as_tibble(predict(mod.num.barn, ndata.12.num.barn, se.fit = TRUE)[1:2]),
+                                                           c('fit_link','se_link')))
+
+## create the interval and backtransform
+ndata.12.num.barn <- mutate(ndata.12.num.barn,
+                            fit_resp  = ilink.gam.12.num.barn(fit_link),
+                            right_upr = ilink.gam.12.num.barn(fit_link + (2 * se_link)),
+                            right_lwr = ilink.gam.12.num.barn(fit_link - (2 * se_link)))
+ndata.12.num.barn$min.10.pH.unscaled<-ndata.12.num.barn$min.10.pH * attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:center')
+
+
+# plot 
+plt.num.barn.12 <- ggplot(ndata.12.num.barn, aes(x = min.10.pH.unscaled, y = fit)) + 
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = num.barn, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.12_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Balanus")~ "abundance"), textstyle("(# of individuals)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
+  geom_ribbon(data = ndata.12.num.barn,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')
+plt.num.barn.12
+ggsave("C:Graphs April 2020//num.barn_pred.12.png")
 
 
 # GAM negbin num.white.bryo / gam.16.nb.num.white.bryo ----------------------------------------------------------
-
-nbinom12.num.white.bryo <- fitdistr(invasion.exp.data.16_zscores$num.white.bryo, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.white.bryo, "nbinom", size = nbinom12.num.white.bryo$estimate[[1]], mu = nbinom12.num.white.bryo$estimate[[2]])
+nbinom.16.num.white.bryo <- fitdistr(invasion.exp.data.16_zscores$num.white.bryo, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$num.white.bryo, "nbinom", size = nbinom.16.num.white.bryo$estimate[[1]], mu = nbinom.16.num.white.bryo$estimate[[2]])
 #getting theta
 
-gam.16.nb.num.white.bryo<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.num.white.bryo<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.num.white.bryo.1<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.num.white.bryo<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
 
@@ -1070,8 +1117,7 @@ summary(gam.16.nb.num.white.bryo)
 #a few outside the area
 #appraise a bit funnelly
 
-gam.16.nb.num.white.bryo.unordered<- gam(num.white.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
-
+gam.16.nb.num.white.bryo.unordered<- gam(num.white.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
 
 fam.gam.16.num.white.bryo <- family(gam.16.nb.num.white.bryo)
 fam.gam.16.num.white.bryo
@@ -1079,35 +1125,24 @@ str(fam.gam.16.num.white.bryo)
 ilink.gam.16.num.white.bryo<- fam.gam.16.num.white.bryo$linkinv
 ilink.gam.16.num.white.bryo
 
-
 mod.num.white.bryo<-gam.16.nb.num.white.bryo
 ndata.16.num.white.bryo <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                        length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-ndata.16.num.white.bryo
-
-str(invasion.exp.data.16_zscores)
-str(ndata.16.num.white.bryo)
-
 ## add the fitted values by predicting from the model for the new data
 ndata.16.num.white.bryo <- add_column(ndata.16.num.white.bryo, fit = predict(mod.num.white.bryo, newdata = ndata.16.num.white.bryo, type = 'response'))
-
 predict(mod.num.white.bryo, newdata = ndata.16.num.white.bryo, type = 'response')
 ndata.16.num.white.bryo <- bind_cols(ndata.16.num.white.bryo, setNames(as_tibble(predict(mod.num.white.bryo, ndata.16.num.white.bryo, se.fit = TRUE)[1:2]),
                                                                  c('fit_link','se_link')))
-
 ## create the interval and backtransform
-
 ndata.16.num.white.bryo <- mutate(ndata.16.num.white.bryo,
                                fit_resp  = ilink.gam.16.num.white.bryo(fit_link),
                                right_upr = ilink.gam.16.num.white.bryo(fit_link + (2 * se_link)),
                                right_lwr = ilink.gam.16.num.white.bryo(fit_link - (2 * se_link)))
-
 ndata.16.num.white.bryo$min.10.pH.unscaled<-ndata.16.num.white.bryo$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.num.white.bryo <- ggplot(ndata.16.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.num.white.bryo.16 <- ggplot(ndata.16.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.white.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Disporella")~ "abundance"), textstyle("(# of colonies)")))))+  
@@ -1116,17 +1151,81 @@ plt.num.white.bryo <- ggplot(ndata.16.num.white.bryo, aes(x = min.10.pH.unscaled
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.white.bryo
-ggsave("C:Graphs April 2020//num.white.bryo_pred.png")
+plt.num.white.bryo.16
+ggsave("C:Graphs April 2020//num.white.bryo_pred.16.png")
+
+
+# GAM negbin num.white.bryo / gam.12.nb.num.white.bryo ----------------------------------------------------------
+
+nbinom.12.num.white.bryo <- fitdistr(invasion.exp.data.12_zscores$num.white.bryo, "Negative Binomial")
+qqp(invasion.exp.data.12_zscores$num.white.bryo, "nbinom", size = nbinom.12.num.white.bryo$estimate[[1]], mu = nbinom.12.num.white.bryo$estimate[[2]])
+#getting theta
+
+gam.12.nb.num.white.bryo<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = negbin(nbinom.12.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.12.nb.num.white.bryo.1<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = nb(), select=TRUE, method="REML")
+gam.12.poisson.num.white.bryo<- gam(num.white.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = poisson(), select=TRUE, method="REML")
+
+AICtab(gam.12.nb.num.white.bryo.1,gam.12.nb.num.white.bryo,gam.12.poisson.num.white.bryo)
+#poisson is better for week 12
+
+plot(gam.12.poisson.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.12.poisson.num.white.bryo)
+#not that many points
+qq_plot(gam.12.poisson.num.white.bryo, method = 'simulate')
+#k_check(gam.12.poisson.num.white.bryo)
+summary(gam.12.poisson.num.white.bryo)
+
+gam.12.poisson.num.white.bryo.unordered<- gam(num.white.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = poisson(), select=TRUE, method="REML")
+
+
+fam.gam.12.num.white.bryo <- family(gam.12.poisson.num.white.bryo)
+fam.gam.12.num.white.bryo
+str(fam.gam.12.num.white.bryo)
+ilink.gam.12.num.white.bryo<- fam.gam.12.num.white.bryo$linkinv
+ilink.gam.12.num.white.bryo
+
+
+mod.num.white.bryo<-gam.12.poisson.num.white.bryo
+ndata.12.num.white.bryo <- with(invasion.exp.data.12_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                                                         length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+
+## add the fitted values by predicting from the model for the new data
+ndata.12.num.white.bryo <- add_column(ndata.12.num.white.bryo, fit = predict(mod.num.white.bryo, newdata = ndata.12.num.white.bryo, type = 'response'))
+
+predict(mod.num.white.bryo, newdata = ndata.12.num.white.bryo, type = 'response')
+ndata.12.num.white.bryo <- bind_cols(ndata.12.num.white.bryo, setNames(as_tibble(predict(mod.num.white.bryo, ndata.12.num.white.bryo, se.fit = TRUE)[1:2]),
+                                                                       c('fit_link','se_link')))
+
+## create the interval and backtransform
+
+ndata.12.num.white.bryo <- mutate(ndata.12.num.white.bryo,
+                                  fit_resp  = ilink.gam.12.num.white.bryo(fit_link),
+                                  right_upr = ilink.gam.12.num.white.bryo(fit_link + (2 * se_link)),
+                                  right_lwr = ilink.gam.12.num.white.bryo(fit_link - (2 * se_link)))
+
+ndata.12.num.white.bryo$min.10.pH.unscaled<-ndata.12.num.white.bryo$min.10.pH * attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:center')
+
+
+# plot 
+plt.num.white.bryo.12 <- ggplot(ndata.12.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = num.white.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.12_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Disporella")~ "abundance"), textstyle("(# of colonies)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
+  geom_ribbon(data = ndata.12.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')
+plt.num.white.bryo.12
+ggsave("C:Graphs April 2020//num.white.bryo_pred.12.png")
 
 
 # GAM negbin num.red.bryo / gam.16.nb.num.red.bryo --------------------------------------------------------------
-
-nbinom12.num.red.bryo <- fitdistr(invasion.exp.data.16_zscores$num.red.bryo, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.red.bryo, "nbinom", size = nbinom12.num.red.bryo$estimate[[1]], mu = nbinom12.num.red.bryo$estimate[[2]])
+nbinom.16.num.red.bryo <- fitdistr(invasion.exp.data.16_zscores$num.red.bryo, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$num.red.bryo, "nbinom", size = nbinom.16.num.red.bryo$estimate[[1]], mu = nbinom.16.num.red.bryo$estimate[[2]])
 #getting theta
 
-gam.16.nb.num.red.bryo<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.num.red.bryo<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.num.red.bryo.1<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.num.red.bryo<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 
@@ -1135,12 +1234,11 @@ AICtab(gam.16.nb.num.red.bryo, gam.16.nb.num.red.bryo.1, gam.16.poisson.num.red.
 
 plot(gam.16.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 appraise(gam.16.poisson.num.red.bryo)
-#looks pretty good
 qq_plot(gam.16.poisson.num.red.bryo, method = 'simulate')
 #k_check(gam.16.poisson.num.red.bryo)
 summary(gam.16.poisson.num.red.bryo)
 
-gam.16.poisson.num.red.bryo.unordered<- gam(num.red.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.16.poisson.num.red.bryo.unordered<- gam(num.red.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 summary(gam.16.poisson.num.red.bryo.unordered)
 
 want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
@@ -1154,31 +1252,21 @@ ilink.gam.16.num.red.bryo
 mod.num.red.bryo<-gam.16.poisson.num.red.bryo
 ndata.16.num.red.bryo <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                    length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-ndata.16.num.red.bryo
-
-str(invasion.exp.data.16_zscores)
-str(ndata.16.num.red.bryo)
-
 ## add the fitted values by predicting from the model for the new data
 ndata.16.num.red.bryo <- add_column(ndata.16.num.red.bryo, fit = predict(mod.num.red.bryo, newdata = ndata.16.num.red.bryo, type = 'response'))
 
 predict(mod.num.red.bryo, newdata = ndata.16.num.red.bryo, type = 'response')
 ndata.16.num.red.bryo <- bind_cols(ndata.16.num.red.bryo, setNames(as_tibble(predict(mod.num.red.bryo, ndata.16.num.red.bryo, se.fit = TRUE)[1:2]),
                                                          c('fit_link','se_link')))
-
 ## create the interval and backtransform
-
 ndata.16.num.red.bryo <- mutate(ndata.16.num.red.bryo,
                            fit_resp  = ilink.gam.16.num.red.bryo(fit_link),
                            right_upr = ilink.gam.16.num.red.bryo(fit_link + (2 * se_link)),
                            right_lwr = ilink.gam.16.num.red.bryo(fit_link - (2 * se_link)))
-
-
 ndata.16.num.red.bryo$min.10.pH.unscaled<-ndata.16.num.red.bryo$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.red.bryo <- ggplot(ndata.16.num.red.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.num.red.bryo.16 <- ggplot(ndata.16.num.red.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.red.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Schizoporella")~ "abundance"), textstyle("(# of colonies)")))))+  
@@ -1187,25 +1275,81 @@ plt.num.red.bryo <- ggplot(ndata.16.num.red.bryo, aes(x = min.10.pH.unscaled, y 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.red.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.red.bryo
-ggsave("C:Graphs April 2020//num.red.bryo_pred.png")
+plt.num.red.bryo.16
+ggsave("C:Graphs April 2020//num.red.bryo_pred.16.png")
+
+
+# GAM negbin num.red.bryo / gam.12.nb.num.red.bryo --------------------------------------------------------------
+nbinom.12.num.red.bryo <- fitdistr(invasion.exp.data.12_zscores$num.red.bryo, "Negative Binomial")
+qqp(invasion.exp.data.12_zscores$num.red.bryo, "nbinom", size = nbinom.12.num.red.bryo$estimate[[1]], mu = nbinom.12.num.red.bryo$estimate[[2]])
+#getting theta
+
+gam.12.nb.num.red.bryo<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = negbin(nbinom.12.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.12.nb.num.red.bryo.1<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = nb(), select=TRUE, method="REML")
+gam.12.poisson.num.red.bryo<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = poisson, select=TRUE, method="REML")
+
+AICtab(gam.12.nb.num.red.bryo, gam.12.nb.num.red.bryo.1, gam.12.poisson.num.red.bryo)
+
+
+plot(gam.12.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.12.poisson.num.red.bryo)
+#does not look good
+qq_plot(gam.12.poisson.num.red.bryo, method = 'simulate')
+#k_check(gam.12.poisson.num.red.bryo)
+summary(gam.12.poisson.num.red.bryo)
+
+gam.12.poisson.num.red.bryo.unordered<- gam(num.red.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = poisson, select=TRUE, method="REML")
+
+want <- seq(1, nrow(invasion.exp.data.12_zscores), length.out = 100)
+fam.gam.12.num.red.bryo <- family(gam.12.poisson.num.red.bryo)
+fam.gam.12.num.red.bryo
+str(fam.gam.12.num.red.bryo)
+ilink.gam.12.num.red.bryo<- fam.gam.12.num.red.bryo$linkinv
+ilink.gam.12.num.red.bryo
+
+mod.num.red.bryo<-gam.12.poisson.num.red.bryo
+ndata.12.num.red.bryo <- with(invasion.exp.data.12_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                                                       length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+
+## add the fitted values by predicting from the model for the new data
+ndata.12.num.red.bryo <- add_column(ndata.12.num.red.bryo, fit = predict(mod.num.red.bryo, newdata = ndata.12.num.red.bryo, type = 'response'))
+predict(mod.num.red.bryo, newdata = ndata.12.num.red.bryo, type = 'response')
+ndata.12.num.red.bryo <- bind_cols(ndata.12.num.red.bryo, setNames(as_tibble(predict(mod.num.red.bryo, ndata.12.num.red.bryo, se.fit = TRUE)[1:2]),
+                                                                   c('fit_link','se_link')))
+
+## create the interval and backtransform
+ndata.12.num.red.bryo <- mutate(ndata.12.num.red.bryo,
+                                fit_resp  = ilink.gam.12.num.red.bryo(fit_link),
+                                right_upr = ilink.gam.12.num.red.bryo(fit_link + (2 * se_link)),
+                                right_lwr = ilink.gam.12.num.red.bryo(fit_link - (2 * se_link)))
+ndata.12.num.red.bryo$min.10.pH.unscaled<-ndata.12.num.red.bryo$min.10.pH * attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:center')
+
+# plot 
+plt.num.red.bryo.12 <- ggplot(ndata.12.num.red.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = num.red.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.12_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Schizoporella")~ "abundance"), textstyle("(# of colonies)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+ylim(0,2.5)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
+  geom_ribbon(data = ndata.12.num.red.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')
+plt.num.red.bryo.12
+ggsave("C:Graphs April 2020//num.red.bryo_pred.12.png")
 
 
 # GAM poisson num nudi / gam.16.poisson.num.nudi  ------------------------------------------------------------
-nbinom12.num.nudi <- fitdistr(invasion.exp.data.16_zscores$num.nudi, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.nudi, "nbinom", size = nbinom12.num.nudi$estimate[[1]], mu = nbinom12.num.nudi$estimate[[2]])
+nbinom.16.num.nudi <- fitdistr(invasion.exp.data.16_zscores$num.nudi, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$num.nudi, "nbinom", size = nbinom.16.num.nudi$estimate[[1]], mu = nbinom.16.num.nudi$estimate[[2]])
 #theta
 
 gam.16.nb.num.nudi.1<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.nb.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.nudi$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.nudi$estimate[[1]]), select=TRUE, method="REML")
 gam.16.poisson.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-
 AICtab(gam.16.nb.num.nudi, gam.16.nb.num.nudi.1, gam.16.poisson.num.nudi)
-###poisson is the best fit by 2 dAIC
 
-
-#appraise(gam.16.poisson.num.nudi)
-#qq_plot(gam.16.poisson.num.nudi, method = 'simulate')
+appraise(gam.16.poisson.num.nudi)
+qq_plot(gam.16.poisson.num.nudi, method = 'simulate')
 #looks quite good!
 plot(gam.16.poisson.num.nudi, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 #k_check(gam.16.poisson.num.nudi)
@@ -1214,35 +1358,27 @@ summary(gam.16.poisson.num.nudi)
 
 gam.16.poisson.num.nudi.unordered<- gam(num.nudi ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-
 fam.gam.16.num.nudi <- family(gam.16.poisson.num.nudi)
 ilink.gam.16.num.nudi<- fam.gam.16.num.nudi$linkinv
-
 mod.num.nudi<-gam.16.poisson.num.nudi
 ndata.16.num.nudi <- with(invasion.exp.data.16_zscores, 
                        data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                        length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
-
 ## add the fitted values by predicting from the model for the new data
 ndata.16.num.nudi <- add_column(ndata.16.num.nudi, fit = predict(mod.num.nudi, newdata = ndata.16.num.nudi, type = 'response'))
-
 predict(mod.num.nudi, newdata = ndata.16.num.nudi, type = 'response')
 ndata.16.num.nudi <- bind_cols(ndata.16.num.nudi, setNames(as_tibble(predict(mod.num.nudi, ndata.16.num.nudi, se.fit = TRUE)[1:2]),
                                                  c('fit_link','se_link')))
-
 ## create the interval and backtransform
-
 ndata.16.num.nudi <- mutate(ndata.16.num.nudi,
                        fit_resp  = ilink.gam.16.num.nudi(fit_link),
                        right_upr = ilink.gam.16.num.nudi(fit_link + (2 * se_link)),
                        right_lwr = ilink.gam.16.num.nudi(fit_link - (2 * se_link)))
-
-
 ndata.16.num.nudi$min.10.pH.unscaled<-ndata.16.num.nudi$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.nudi <- ggplot(ndata.16.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.num.nudi.16 <- ggplot(ndata.16.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.nudi, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Hermissenda")~ "abundance"), textstyle("(# of individuals)")))))+  
@@ -1251,46 +1387,88 @@ plt.num.nudi <- ggplot(ndata.16.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.nudi,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0, "cm"), legend.margin=margin(0, 0.05, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
-plt.num.nudi
-ggsave("C:Graphs April 2020//num.nudi_pred.png")
+plt.num.nudi.16
+ggsave("C:Graphs April 2020//num.nudi_pred.16.png")
 
+
+# GAM poisson num nudi / gam.12.poisson.num.nudi  ------------------------------------------------------------
+nbinom.12.num.nudi <- fitdistr(invasion.exp.data.12_zscores$num.nudi, "Negative Binomial")
+qqp(invasion.exp.data.12_zscores$num.nudi, "nbinom", size = nbinom.12.num.nudi$estimate[[1]], mu = nbinom.12.num.nudi$estimate[[2]])
+#theta
+
+gam.12.nb.num.nudi.1<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = nb(), select=TRUE, method="REML")
+gam.12.nb.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = negbin(nbinom.16.num.nudi$estimate[[1]]), select=TRUE, method="REML")
+gam.12.poisson.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = poisson, select=TRUE, method="REML")
+AICtab(gam.12.nb.num.nudi, gam.12.nb.num.nudi.1, gam.12.poisson.num.nudi)
+
+appraise(gam.12.nb.num.nudi.1)
+qq_plot(gam.12.nb.num.nudi.1, method = 'simulate')
+#looks quite good!
+plot(gam.12.nb.num.nudi.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+#k_check(gam.12.nb.num.nudi.1)
+summary(gam.12.nb.num.nudi.1)
+#resids a bit funny but same in neg bin
+
+gam.12.nb.num.nudi.1.unordered<- gam(num.nudi ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = nb(), select=TRUE, method="REML")
+
+want <- seq(1, nrow(invasion.exp.data.12_zscores), length.out = 100)
+fam.gam.12.num.nudi <- family(gam.12.nb.num.nudi.1)
+ilink.gam.12.num.nudi<- fam.gam.12.num.nudi$linkinv
+mod.num.nudi<-gam.12.nb.num.nudi.1
+ndata.12.num.nudi <- with(invasion.exp.data.12_zscores, 
+                          data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                     length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+
+## add the fitted values by predicting from the model for the new data
+ndata.12.num.nudi <- add_column(ndata.12.num.nudi, fit = predict(mod.num.nudi, newdata = ndata.12.num.nudi, type = 'response'))
+predict(mod.num.nudi, newdata = ndata.12.num.nudi, type = 'response')
+ndata.12.num.nudi <- bind_cols(ndata.12.num.nudi, setNames(as_tibble(predict(mod.num.nudi, ndata.12.num.nudi, se.fit = TRUE)[1:2]),
+                                                           c('fit_link','se_link')))
+## create the interval and backtransform
+ndata.12.num.nudi <- mutate(ndata.12.num.nudi,
+                            fit_resp  = ilink.gam.12.num.nudi(fit_link),
+                            right_upr = ilink.gam.12.num.nudi(fit_link + (2 * se_link)),
+                            right_lwr = ilink.gam.12.num.nudi(fit_link - (2 * se_link)))
+ndata.12.num.nudi$min.10.pH.unscaled<-ndata.12.num.nudi$min.10.pH * attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:center')
+
+# plot 
+plt.num.nudi.12 <- ggplot(ndata.12.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) + 
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = num.nudi, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.12_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Hermissenda")~ "abundance"), textstyle("(# of individuals)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+ylim(0,4)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
+  geom_ribbon(data = ndata.12.num.nudi,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0, "cm"), legend.margin=margin(0, 0.05, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
+plt.num.nudi.12
+ggsave("C:Graphs April 2020//num.nudi_pred.12.png")
 
 # GAM nb() serpulids / gam.16.nb.num.serpulid.1 -----------------------------------------------------------
-
-nbinom12.num.serpulid <- fitdistr(invasion.exp.data.16_zscores$num.serpulid, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.serpulid, "nbinom", size = nbinom12.num.serpulid$estimate[[1]], mu = nbinom12.num.serpulid$estimate[[2]])
+nbinom.16.num.serpulid <- fitdistr(invasion.exp.data.16_zscores$num.serpulid, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$num.serpulid, "nbinom", size = nbinom.16.num.serpulid$estimate[[1]], mu = nbinom.16.num.serpulid$estimate[[2]])
 #theta
 
 #negative binomial first
-gam.16.nb.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.num.serpulid.1<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 
 AICtab(gam.16.nb.num.serpulid, gam.16.nb.num.serpulid.1, gam.16.poisson.num.serpulid)
-
 ##gam.16.nb.num.serpulid.1 is best
 
 appraise(gam.16.nb.num.serpulid.1)
 qq_plot(gam.16.nb.num.serpulid.1, method = 'simulate')
-#looks good
 plot(gam.16.nb.num.serpulid.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 k_check(gam.16.nb.num.serpulid.1)
 summary(gam.16.nb.num.serpulid.1)
 
-#residuals a bit weird .... but they are the same in glm as in gam (doesn't improve)
-#I think because of the zeros? 
-
 gam.16.nb.num.serpulid.1.unordered<- gam(num.serpulid ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-
-
 want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-
 fam.gam.16.num.serpulid <- family(gam.16.nb.num.serpulid.1)
 fam.gam.16.num.serpulid
-str(fam.gam.16.num.serpulid)
 ilink.gam.16.num.serpulid<- fam.gam.16.num.serpulid$linkinv
 ilink.gam.16.num.serpulid
-
 mod.num.serpulid<-gam.16.nb.num.serpulid.1
 ndata.16.num.serpulid <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                  length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
@@ -1301,20 +1479,15 @@ ndata.16.num.serpulid <- add_column(ndata.16.num.serpulid, fit = predict(mod.num
 predict(mod.num.serpulid, newdata = ndata.16.num.serpulid, type = 'response')
 ndata.16.num.serpulid <- bind_cols(ndata.16.num.serpulid, setNames(as_tibble(predict(mod.num.serpulid, ndata.16.num.serpulid, se.fit = TRUE)[1:2]),
                                                      c('fit_link','se_link')))
-
 ## create the interval and backtransform
-
 ndata.16.num.serpulid <- mutate(ndata.16.num.serpulid,
                          fit_resp  = ilink.gam.16.num.serpulid(fit_link),
                          right_upr = ilink.gam.16.num.serpulid(fit_link + (2 * se_link)),
                          right_lwr = ilink.gam.16.num.serpulid(fit_link - (2 * se_link)))
-
-
 ndata.16.num.serpulid$min.10.pH.unscaled<-ndata.16.num.serpulid$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.serpulid <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
+plt.num.serpulid.16 <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
@@ -1323,47 +1496,73 @@ plt.num.serpulid <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled, y 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.serpulid
-ggsave("C:Graphs April 2020//num.serpulid_pred.png")
+plt.num.serpulid.16
+ggsave("C:Graphs April 2020//num.serpulid_pred.16.png")
 
-# colorset_invasives = c("High"="#F8A02E" ,"Low"="#439E5F","None"= "#666666")
-# colorset_none = c("High"="#FFFFFF" ,"Low"="#FFFFFF","None"= "#666666")
-# colorset_low = c("High"="#FFFFFF" ,"Low"="#439E5F","None"= "#666666")
-# 
-# ### Plot for powerpoint:
-# plt.num.serpulid <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
-#   
-#   geom_line(aes(colour=oInvasives)) +
-#   geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-#   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
-#   scale_color_manual(values=colorset_none)+
-#   scale_fill_manual(values=colorset_none)+
-#   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-#   geom_ribbon(data = ndata.16.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-#   theme(legend.position='none')
-# plt.num.serpulid
-# ggsave("C:Graphs April 2020//num.serpulid_pred_none.png")
-# 
-# plt.num.serpulid <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
-#   
-#   geom_line(aes(colour=oInvasives)) +
-#   geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-#   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
-#   scale_color_manual(values=colorset_low)+
-#   scale_fill_manual(values=colorset_low)+
-#   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-#   geom_ribbon(data = ndata.16.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-#   theme(legend.position='none')
-# plt.num.serpulid
-# ggsave("C:Graphs April 2020//num.serpulid_pred_low.png")
-# 
-# GAM negbin orange sponge / gam.16.nb.orange_sponge -------------------------------------------------------
-
-nbinom12.orange_sponge <- fitdistr(invasion.exp.data.16_zscores$orange_sponge, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$orange_sponge, "nbinom", size = nbinom12.orange_sponge$estimate[[1]], mu = nbinom12.orange_sponge$estimate[[2]])
+# GAM nb() serpulids / gam.12.nb.num.serpulid.1 -----------------------------------------------------------
+nbinom.12.num.serpulid <- fitdistr(invasion.exp.data.12_zscores$num.serpulid, "Negative Binomial")
+qqp(invasion.exp.data.12_zscores$num.serpulid, "nbinom", size = nbinom.12.num.serpulid$estimate[[1]], mu = nbinom.12.num.serpulid$estimate[[2]])
 #theta
 
-gam.16.nb.orange_sponge<- gam(orange_sponge ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.orange_sponge$estimate[[1]]), select=TRUE, method="REML")
+#negative binomial first
+gam.12.nb.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = negbin(nbinom.12.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
+gam.12.nb.num.serpulid.1<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = nb(), select=TRUE, method="REML")
+gam.12.poisson.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = poisson, select=TRUE, method="REML")
+
+AICtab(gam.12.nb.num.serpulid, gam.12.nb.num.serpulid.1, gam.12.poisson.num.serpulid)
+##gam.12.nb.num.serpulid.1 is best
+
+appraise(gam.12.nb.num.serpulid.1)
+qq_plot(gam.12.nb.num.serpulid.1, method = 'simulate')
+plot(gam.12.nb.num.serpulid.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+k_check(gam.12.nb.num.serpulid.1)
+summary(gam.12.nb.num.serpulid.1)
+
+gam.12.nb.num.serpulid.1.unordered<- gam(num.serpulid ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.12_zscores, family = nb(), select=TRUE, method="REML")
+want <- seq(1, nrow(invasion.exp.data.12_zscores), length.out = 100)
+fam.gam.12.num.serpulid <- family(gam.12.nb.num.serpulid.1)
+fam.gam.12.num.serpulid
+ilink.gam.12.num.serpulid<- fam.gam.12.num.serpulid$linkinv
+ilink.gam.12.num.serpulid
+mod.num.serpulid<-gam.12.nb.num.serpulid.1
+ndata.12.num.serpulid <- with(invasion.exp.data.12_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                                                       length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+
+## add the fitted values by predicting from the model for the new data
+ndata.12.num.serpulid <- add_column(ndata.12.num.serpulid, fit = predict(mod.num.serpulid, newdata = ndata.12.num.serpulid, type = 'response'))
+
+predict(mod.num.serpulid, newdata = ndata.12.num.serpulid, type = 'response')
+ndata.12.num.serpulid <- bind_cols(ndata.12.num.serpulid, setNames(as_tibble(predict(mod.num.serpulid, ndata.12.num.serpulid, se.fit = TRUE)[1:2]),
+                                                                   c('fit_link','se_link')))
+## create the interval and backtransform
+ndata.12.num.serpulid <- mutate(ndata.12.num.serpulid,
+                                fit_resp  = ilink.gam.12.num.serpulid(fit_link),
+                                right_upr = ilink.gam.12.num.serpulid(fit_link + (2 * se_link)),
+                                right_lwr = ilink.gam.12.num.serpulid(fit_link - (2 * se_link)))
+ndata.12.num.serpulid$min.10.pH.unscaled<-ndata.12.num.serpulid$min.10.pH * attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.12_zscores$min.10.pH, 'scaled:center')
+
+# plot 
+plt.num.serpulid.12 <- ggplot(ndata.12.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.12_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
+  geom_ribbon(data = ndata.12.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')
+plt.num.serpulid.12
+ggsave("C:Graphs April 2020//num.serpulid_pred.12.png")
+
+
+
+# GAM negbin orange sponge / gam.16.nb.orange_sponge -------------------------------------------------------
+
+nbinom.12.orange_sponge <- fitdistr(invasion.exp.data.16_zscores$orange_sponge, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$orange_sponge, "nbinom", size = nbinom.12.orange_sponge$estimate[[1]], mu = nbinom.12.orange_sponge$estimate[[2]])
+#theta
+
+gam.16.nb.orange_sponge<- gam(orange_sponge ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.12.orange_sponge$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.orange_sponge.1<- gam(orange_sponge ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.orange_sponge<- gam(orange_sponge ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 
@@ -1378,7 +1577,7 @@ plot(gam.16.nb.orange_sponge, shade = TRUE, pages = 1, scale = 0, seWithMean = T
 #k_check(gam.16.nb.orange_sponge)
 summary(gam.16.nb.orange_sponge)
 
-gam.16.nb.orange_sponge.unordered<- gam(orange_sponge ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.orange_sponge$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.orange_sponge.unordered<- gam(orange_sponge ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.12.orange_sponge$estimate[[1]]), select=TRUE, method="REML")
 
 want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
 fam.gam.16.orange_sponge <- family(gam.16.nb.orange_sponge)
@@ -1425,11 +1624,11 @@ ggsave("C:Graphs April 2020//orange_sponge_pred.png")
 
 # GAM negbin corella / gam.16.nb.num.corella -------------------------------------------------------------
 
-nbinom12.num.corella <- fitdistr(invasion.exp.data.16_zscores$num.corella, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.corella, "nbinom", size = nbinom12.num.corella$estimate[[1]], mu = nbinom12.num.corella$estimate[[2]])
+nbinom.12.num.corella <- fitdistr(invasion.exp.data.16_zscores$num.corella, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$num.corella, "nbinom", size = nbinom.12.num.corella$estimate[[1]], mu = nbinom.12.num.corella$estimate[[2]])
 #extracting theta
 
-gam.16.nb.num.corella<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.corella$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.num.corella<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.12.num.corella$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.num.corella.1<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.num.corella<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 
@@ -1444,7 +1643,7 @@ plot(gam.16.nb.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRU
 summary(gam.16.nb.num.corella)
 
 
-gam.16.nb.num.corella.unordered<- gam(num.corella ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.num.corella$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.num.corella.unordered<- gam(num.corella ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.12.num.corella$estimate[[1]]), select=TRUE, method="REML")
 
 want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
 fam.gam.16.num.corella <- family(gam.16.nb.num.corella)
@@ -1490,12 +1689,12 @@ ggsave("C:Graphs April 2020//num.corella_pred.png")
 
 # GAM poisson clam / gam.16.poisson.clam ----------------------------------------------------------------
 
-nbinom12.clam <- fitdistr(invasion.exp.data.16_zscores$clam, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$clam, "nbinom", size = nbinom12.clam$estimate[[1]], mu = nbinom12.clam$estimate[[2]])
+nbinom.12.clam <- fitdistr(invasion.exp.data.16_zscores$clam, "Negative Binomial")
+qqp(invasion.exp.data.16_zscores$clam, "nbinom", size = nbinom.12.clam$estimate[[1]], mu = nbinom.12.clam$estimate[[2]])
 #theta
 
 #negative binomial first
-gam.16.nb.clam<- gam(clam ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom12.clam$estimate[[1]]), select=TRUE, method="REML")
+gam.16.nb.clam<- gam(clam ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.12.clam$estimate[[1]]), select=TRUE, method="REML")
 gam.16.nb.clam.1<- gam(clam ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
 gam.16.poisson.clam<- gam(clam ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 
