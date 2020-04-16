@@ -62,44 +62,11 @@ invasion.exp.data.16$oCO2.Treatment<-factor(invasion.exp.data.16$CO2.Treatment, 
 invasion.exp.data.16$CO2.Treatment<-factor(invasion.exp.data.16$CO2.Treatment, levels=c("AIR", "CO2"), ordered=FALSE)
 
 
-
-
-# #some variables need to be read over
-# invasion.exp.data.16$caprellid.percent<-invasion.exp.data.16$caprellid
-# invasion.exp.data.16$hydroid<-invasion.exp.data.16$hydroid
-# invasion.exp.data.16$botryllid<-invasion.exp.data.16$botryllid
-# invasion.exp.data.16$folliculina<-invasion.exp.data.16$folliculina
-# invasion.exp.data.16$membranipora<-invasion.exp.data.16$membranipora
-# invasion.exp.data.16$didemnum<-invasion.exp.data.16$didemnum
-# invasion.exp.data.16$total<-invasion.exp.data.16$total
-# invasion.exp.data.16$bare<-invasion.exp.data.16$bare
-# invasion.exp.data.16$occupied.space<-100-invasion.exp.data.16$bare
-# invasion.exp.data.16$occupied.space.001<-0.01*(invasion.exp.data.16$occupied.space)
-# invasion.exp.data.16$everything.wet.weight<-invasion.exp.data.16$everything.wet.weight
-# invasion.exp.data.16$everything.wet.weight.per.1<-(invasion.exp.data.16$everything.wet.weight)/invasion.exp.data.16$occupied.space
-# invasion.exp.data.16$Mussel.wet.weight<-invasion.exp.data.16$Mussel.wet.weight
-# invasion.exp.data.16$total_dry_biomass<-invasion.exp.data.16$total_dry_biomass
-# invasion.exp.data.16$total_dry_biomass_per1<-invasion.exp.data.16$total_dry_biomass/invasion.exp.data.16$occupied.space
-# invasion.exp.data.16$hydroid_dry_biomass<-invasion.exp.data.16$hydroid_dry_biomass
-# invasion.exp.data.16$caprellid_dry_biomass<-invasion.exp.data.16$caprellid_dry_biomass
-# invasion.exp.data.16$tunicate_dry_biomass<-invasion.exp.data.16$tunicate_dry_biomass
-# invasion.exp.data.16$hydtobot<-(invasion.exp.data.16$botryllid)/(invasion.exp.data.16$botryllid+invasion.exp.data.16$hydroid)
-# invasion.exp.data.16$rest_dry_biomass<-invasion.exp.data.16$rest_dry_biomass
-# 
-# #small negative biomass is within error of scale - change to zero
-# invasion.exp.data.16$hydroid_dry_biomass[invasion.exp.data.16$hydroid_dry_biomass<0]<-0
-# invasion.exp.data.16$tunicate_dry_biomass[invasion.exp.data.16$tunicate_dry_biomass<0]<-0
-# invasion.exp.data.16$hydtobot_dry_biomass<-(invasion.exp.data.16$tunicate_dry_biomass)/(invasion.exp.data.16$tunicate_dry_biomass+invasion.exp.data.16$hydroid_dry_biomass)
-# 
-# 
-# invasion.exp.data.16$Mussel.wet.weight.per.1<-(invasion.exp.data.16$Mussel.wet.weight)/(invasion.exp.data.16$mussel+1)
-# 
-# #making it a proportion instead of % cover
-# invasion.exp.data.16$caprellid.percent.001<-(0.01*(invasion.exp.data.16$caprellid.percent))+0.01
  invasion.exp.data.16$hydroid.001<-(0.01*(invasion.exp.data.16$hydroid))+0.01
  invasion.exp.data.16$botryllid.001<-(0.01*(invasion.exp.data.16$botryllid))+0.01
  invasion.exp.data.16$membranipora.001<-(0.01*(invasion.exp.data.16$membranipora))+0.01
- invasion.exp.data.16$didemnum<-invasion.exp.data.16$white.bryo
+ invasion.exp.data.16$mussel.001<-(0.01*(invasion.exp.data.16$mussel))+0.01
+  invasion.exp.data.16$didemnum<-invasion.exp.data.16$white.bryo
  invasion.exp.data.16$num.red.bryoporella<-invasion.exp.data.16$red.bryo
  invasion.exp.data.16$folliculina<-invasion.exp.data.16$protozoa
  invasion.exp.data.16$folliculina.001<-(0.01*(invasion.exp.data.16$folliculina))+0.01
@@ -148,7 +115,9 @@ hist(invasion.exp.data.16_pres$min.10.pH, breaks=18)#18 for the whole 16 weeks
  invasion.exp.data.8$hydroid.001<-(0.01*(invasion.exp.data.8$hydroid))+0.01
  invasion.exp.data.8$botryllid.001<-(0.01*(invasion.exp.data.8$botryllid))+0.01
  invasion.exp.data.8$membranipora.001<-(0.01*(invasion.exp.data.8$membranipora))+0.01
- invasion.exp.data.8$didemnum<-invasion.exp.data.8$white.bryo
+ invasion.exp.data.8$mussel.001<-(0.01*(invasion.exp.data.8$mussel))+0.01
+ 
+  invasion.exp.data.8$didemnum<-invasion.exp.data.8$white.bryo
  invasion.exp.data.8$num.red.bryoporella<-invasion.exp.data.8$red.bryo
  invasion.exp.data.8$folliculina<-invasion.exp.data.8$protozoa
  invasion.exp.data.8$folliculina.001<-(0.01*(invasion.exp.data.8$folliculina))+0.01
@@ -195,82 +164,11 @@ hist(invasion.exp.data.16_pres$min.10.pH, breaks=18)#18 for the whole 16 weeks
 
 # Plotting settings -------------------------------------------------------
 
-colorset_invasives = c("Present"="#5EC2DA" ,"Absent"="#EB549A")
-theme_set(theme_classic(base_size = 12))
+colorset_invasives = c("Present"="#A20226" ,"Absent"="#818392")
+theme_set(theme_classic(base_size = 6))
 theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
-
-
-# GAM beta hydroid / gam.16.beta.hydroid --------------------------------------------------------
-
-#distributions - binomial or beta with various families
-
-gam.16.binomial.hydroid<- gam(formula = cbind(hydroid, 100-hydroid)~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
-gam.16.beta.hydroid<- gam(hydroid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.hydroid.1<- gam(hydroid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.hydroid.2<- gam(hydroid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.16.beta.hydroid.3<- gam(hydroid.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-AICtab(gam.16.beta.hydroid, gam.16.beta.hydroid.1, gam.16.beta.hydroid.2, gam.16.beta.hydroid.3, gam.16.binomial.hydroid)
-#cauchit is the best
-
-plot(gam.16.beta.hydroid.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.hydroid.3)
-qq_plot(gam.16.beta.hydroid.3, method = 'simulate')
-k.check(gam.16.beta.hydroid.3)
-
-gam.16.beta.hydroid.3.unordered<- gam(hydroid.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-summary(gam.16.beta.hydroid.3)
-summary(gam.16.beta.hydroid.3.unordered)
-# need an unordered and an unordered model to get estimates for overall Invasives effect
-
-
-### plotting based on gam confidence intervals
-#using code from https://www.fromthebottomoftheheap.net/2018/12/10/confidence-intervals-for-glms/
-
-fam.gam.16.hydroid <- family(gam.16.beta.hydroid.3)
-fam.gam.16.hydroid 
-str(fam.gam.16.hydroid )
-ilink.gam.16.hydroid <- fam.gam.16.hydroid$linkinv
-ilink.gam.16.hydroid
-
-invasion.exp.data.16_zscores$min.10.pH.unscaled <-invasion.exp.data.16_zscores$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-head(invasion.exp.data.16_zscores)
-
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-            
-mod.hydroid<-gam.16.beta.hydroid.3
-ndata.16.hydroid <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH= seq(min(min.10.pH), max(min.10.pH),
-                                                length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.hydroid <- add_column(ndata.16.hydroid, fit = predict(mod.hydroid, newdata = ndata.16.hydroid, type = 'response'))
-ndata.16.hydroid <- bind_cols(ndata.16.hydroid, setNames(as_tibble(predict(mod.hydroid, ndata.16.hydroid, se.fit = TRUE)[1:2]),
-                                   c('fit_link','se_link')))
-
-## create the interval and backtransform
-ndata.16.hydroid <- mutate(ndata.16.hydroid,
-                fit_resp  = ilink.gam.16.hydroid(fit_link),
-                right_upr = ilink.gam.16.hydroid(fit_link + (2 * se_link)),
-                right_lwr = ilink.gam.16.hydroid(fit_link - (2 * se_link)))
-
-#make sure pH is unscaled in the plot
-ndata.16.hydroid$min.10.pH.unscaled<-ndata.16.hydroid$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-plt.gam.16.hydroid <- ggplot(ndata.16.hydroid, aes(x = min.10.pH.unscaled, y = fit)) + 
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = hydroid.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Obelia")~ "abundance"), textstyle("(proportion cover)")))))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.hydroid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.gam.16.hydroid 
-ggsave("C:Graphs April 2020//hydroid_pred.png")
-
+ 
 
 
 # GAM beta botryllus / gam.16.beta.botryllid.2 ----------------------------------------------------
@@ -289,7 +187,7 @@ AICtab(gam.16.beta.botryllid, gam.16.beta.botryllid.1, gam.16.beta.botryllid.2, 
 
 
 plot(gam.16.beta.botryllid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.botryllid)
+#appraise(gam.16.beta.botryllid)
 qq_plot(gam.16.beta.botryllid, method = 'simulate')
 k.check(gam.16.beta.botryllid)
 summary(gam.16.beta.botryllid)
@@ -359,7 +257,7 @@ AICtab(gam.8.beta.botryllid, gam.8.beta.botryllid.1, gam.8.beta.botryllid.2, gam
 #.3 is best
 
 plot(gam.8.beta.botryllid.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.botryllid.3)
+#appraise(gam.8.beta.botryllid.3)
 qq_plot(gam.8.beta.botryllid.3, method = 'simulate')
 k.check(gam.8.beta.botryllid.3)
 summary(gam.8.beta.botryllid.3)
@@ -433,7 +331,7 @@ AICtab(gam.16.beta.botryllid, gam.16.beta.botryllid.1, gam.16.beta.botryllid.2, 
 #cauchit is the best
 
 plot(gam.16.beta.botryllid.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.botryllid.3)
+#appraise(gam.16.beta.botryllid.3)
 qq_plot(gam.16.beta.botryllid.3, method = 'simulate')
 k.check(gam.16.beta.botryllid.3)
 summary(gam.16.beta.botryllid.3)
@@ -505,7 +403,7 @@ AICtab(gam.16.beta.folliculina, gam.16.beta.folliculina.1, gam.16.beta.folliculi
 
 
 plot(gam.16.beta.folliculina, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.folliculina)
+#appraise(gam.16.beta.folliculina)
 qq_plot(gam.16.beta.folliculina, method = 'simulate')
 k.check(gam.16.beta.folliculina)
 summary(gam.16.beta.folliculina)
@@ -570,7 +468,7 @@ AICtab(gam.8.beta.folliculina, gam.8.beta.folliculina.1, gam.8.beta.folliculina.
 
 
 plot(gam.8.beta.folliculina, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.folliculina)
+#appraise(gam.8.beta.folliculina)
 qq_plot(gam.8.beta.folliculina, method = 'simulate')
 k.check(gam.8.beta.folliculina)
 summary(gam.8.beta.folliculina)
@@ -639,7 +537,7 @@ AICtab( gam.16.beta.membranipora, gam.16.beta.membranipora.1, gam.16.beta.membra
 
 
 plot(gam.16.beta.membranipora.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.membranipora.3)
+#appraise(gam.16.beta.membranipora.3)
 qq_plot(gam.16.beta.membranipora.3, method = 'simulate')
 k.check(gam.16.beta.membranipora.3)
 summary(gam.16.beta.membranipora.3)
@@ -706,7 +604,7 @@ AICtab( gam.8.beta.membranipora, gam.8.beta.membranipora.1, gam.8.beta.membranip
 
 
 plot(gam.8.beta.membranipora.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.membranipora.3)
+#appraise(gam.8.beta.membranipora.3)
 qq_plot(gam.8.beta.membranipora.3, method = 'simulate')
 k.check(gam.8.beta.membranipora.3)
 summary(gam.8.beta.membranipora.3)
@@ -756,6 +654,140 @@ plt.membranipora.8 <- ggplot(ndata.8.membranipora, aes(x = min.10.pH.unscaled, y
 plt.membranipora.8
 ggsave("C:Graphs April 2020//membranipora_pred.8.png")
  
+# GAM beta mussel / gam.16.beta.mussel --------------------------------------------------------
+
+#binomial first
+gam.16.binomial.mussel<- gam(formula = cbind(mussel, 100-mussel)~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+
+#beta next
+gam.16.beta.mussel<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+gam.16.beta.mussel.1<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
+gam.16.beta.mussel.2<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
+gam.16.beta.mussel.3<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+
+
+AICtab( gam.16.beta.mussel, gam.16.beta.mussel.1, gam.16.beta.mussel.2, gam.16.binomial.mussel, gam.16.beta.mussel.3)
+#cauchit is best
+
+
+plot(gam.16.beta.mussel.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+#appraise(gam.16.beta.mussel.3)
+qq_plot(gam.16.beta.mussel.3, method = 'simulate')
+k.check(gam.16.beta.mussel.3)
+summary(gam.16.beta.mussel.3)
+vis.gam(gam.16.beta.mussel.3)
+
+gam.16.beta.mussel.3.unordered<- gam(mussel.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+
+
+fam.gam.16.mussel <- family(gam.16.beta.mussel.3)
+fam.gam.16.mussel
+ilink.gam.16.mussel<- fam.gam.16.mussel$linkinv
+ilink.gam.16.mussel
+
+
+mod.mussel<-gam.16.beta.mussel.3
+ndata.16.mussel <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                                                       length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+
+
+## add the fitted values by predicting from the mod.musselel for the new data
+ndata.16.mussel <- add_column(ndata.16.mussel, fit = predict(mod.mussel, newdata = ndata.16.mussel, type = 'response'))
+
+
+ndata.16.mussel <- bind_cols(ndata.16.mussel, setNames(as_tibble(predict(mod.mussel, ndata.16.mussel, se.fit = TRUE)[1:2]),
+                                                                   c('fit_link','se_link')))
+
+## create the interval and backtransform
+
+ndata.16.mussel <- mutate(ndata.16.mussel,
+                                fit_resp  = ilink.gam.16.mussel(fit_link),
+                                right_upr = ilink.gam.16.mussel(fit_link + (2 * se_link)),
+                                right_lwr = ilink.gam.16.mussel(fit_link - (2 * se_link)))
+
+ndata.16.mussel$min.10.pH.unscaled<-ndata.16.mussel$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
+
+# plot 
+
+plt.mussel.16 <- ggplot(ndata.16.mussel, aes(x = min.10.pH.unscaled, y = fit)) + 
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = mussel.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("mussel")~ "abundance"), textstyle("(proportion cover)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
+  geom_ribbon(data = ndata.16.mussel,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')
+plt.mussel.16
+ggsave("C:Graphs April 2020//mussel_pred.16.png")
+
+# GAM beta mussel / gam.8.beta.mussel --------------------------------------------------------
+
+#binomial first
+gam.8.binomial.mussel<- gam(formula = cbind(mussel, 100-mussel)~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+
+#beta next
+gam.8.beta.mussel<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+gam.8.beta.mussel.1<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="probit"), select=TRUE, method="REML")
+gam.8.beta.mussel.2<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
+gam.8.beta.mussel.3<- gam(mussel.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+
+
+AICtab( gam.8.beta.mussel, gam.8.beta.mussel.1, gam.8.beta.mussel.2, gam.8.binomial.mussel, gam.8.beta.mussel.3)
+#cauchit is best
+
+
+plot(gam.8.beta.mussel.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+#appraise(gam.8.beta.mussel.3)
+qq_plot(gam.8.beta.mussel.3, method = 'simulate')
+k.check(gam.8.beta.mussel.3)
+summary(gam.8.beta.mussel.3)
+vis.gam(gam.8.beta.mussel.3)
+
+gam.8.beta.mussel.3.unordered<- gam(mussel.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+
+
+fam.gam.8.mussel <- family(gam.8.beta.mussel.3)
+fam.gam.8.mussel
+ilink.gam.8.mussel<- fam.gam.8.mussel$linkinv
+ilink.gam.8.mussel
+
+
+mod.mussel<-gam.8.beta.mussel.3
+ndata.8.mussel <- with(invasion.exp.data.8_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                                                 length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+
+
+## add the fitted values by predicting from the mod.musselel for the new data
+ndata.8.mussel <- add_column(ndata.8.mussel, fit = predict(mod.mussel, newdata = ndata.8.mussel, type = 'response'))
+
+
+ndata.8.mussel <- bind_cols(ndata.8.mussel, setNames(as_tibble(predict(mod.mussel, ndata.8.mussel, se.fit = TRUE)[1:2]),
+                                                       c('fit_link','se_link')))
+
+## create the interval and backtransform
+
+ndata.8.mussel <- mutate(ndata.8.mussel,
+                          fit_resp  = ilink.gam.8.mussel(fit_link),
+                          right_upr = ilink.gam.8.mussel(fit_link + (2 * se_link)),
+                          right_lwr = ilink.gam.8.mussel(fit_link - (2 * se_link)))
+
+ndata.8.mussel$min.10.pH.unscaled<-ndata.8.mussel$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
+
+# plot 
+
+plt.mussel.8 <- ggplot(ndata.8.mussel, aes(x = min.10.pH.unscaled, y = fit)) + 
+  geom_line(aes(colour=oInvasives)) +
+  geom_point(aes(y = mussel.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("mussel")~ "abundance"), textstyle("(proportion cover)")))))+  
+  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
+  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
+  geom_ribbon(data = ndata.8.mussel,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')
+plt.mussel.8
+ggsave("C:Graphs April 2020//mussel_pred.8.png")
+
 
 # GAM negbin barnacles / gam.16.nb.num.barn -----------------------------------------------------------
 nbinom.16.barn <- fitdistr(invasion.exp.data.16_zscores$num.barn, "Negative Binomial")
@@ -769,7 +801,7 @@ gam.16.poisson.num.barn<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH,
 AICtab(gam.16.nb.num.barn, gam.16.nb.num.barn.1, gam.16.poisson.num.barn)
 
 plot(gam.16.poisson.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.poisson.num.barn)
+#appraise(gam.16.poisson.num.barn)
 qq_plot(gam.16.poisson.num.barn, method = 'simulate')
 #looks really good
 k.check(gam.16.poisson.num.barn)
@@ -777,7 +809,7 @@ summary(gam.16.poisson.num.barn)
 
 
 #a few outside the area
-#appraise a bit funnelly
+##appraise a bit funnelly
 
 gam.16.poisson.num.barn.unordered<- gam(num.barn ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.barnacles$estimate[[1]]), select=TRUE, method="REML")
 fam.gam.16.num.barn <- family(gam.16.poisson.num.barn)
@@ -829,7 +861,7 @@ AICtab(gam.8.nb.num.barn, gam.8.nb.num.barn.1, gam.8.poisson.num.barn)
 #poisson is better
 
 plot(gam.8.poisson.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.poisson.num.barn)
+#appraise(gam.8.poisson.num.barn)
 qq_plot(gam.8.poisson.num.barn, method = 'simulate')
 k.check(gam.8.poisson.num.barn)
 summary(gam.8.poisson.num.barn)
@@ -881,13 +913,13 @@ AICtab(gam.16.nb.num.white.bryo.1,gam.16.nb.num.white.bryo,gam.16.poisson.num.wh
 #used estimated theta
 
 plot(gam.16.nb.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.nb.num.white.bryo)
+#appraise(gam.16.nb.num.white.bryo)
 qq_plot(gam.16.nb.num.white.bryo, method = 'simulate')
 k.check(gam.16.nb.num.white.bryo)
 summary(gam.16.nb.num.white.bryo)
 
 #a few outside the area
-#appraise a bit funnelly
+##appraise a bit funnelly
 
 gam.16.nb.num.white.bryo.unordered<- gam(num.white.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
 
@@ -941,7 +973,7 @@ AICtab(gam.8.nb.num.white.bryo.1,gam.8.nb.num.white.bryo,gam.8.poisson.num.white
 #poisson is better for week 12
 
 plot(gam.8.poisson.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.poisson.num.white.bryo)
+#appraise(gam.8.poisson.num.white.bryo)
 #not that many points
 qq_plot(gam.8.poisson.num.white.bryo, method = 'simulate')
 k.check(gam.8.poisson.num.white.bryo)
@@ -995,7 +1027,7 @@ AICtab(gam.16.nb.num.red.bryo, gam.16.nb.num.red.bryo.1, gam.16.poisson.num.red.
 
 
 plot(gam.16.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.poisson.num.red.bryo)
+#appraise(gam.16.poisson.num.red.bryo)
 qq_plot(gam.16.poisson.num.red.bryo, method = 'simulate')
 k.check(gam.16.poisson.num.red.bryo)
 summary(gam.16.poisson.num.red.bryo)
@@ -1054,7 +1086,7 @@ AICtab(gam.8.nb.num.red.bryo, gam.8.nb.num.red.bryo.1, gam.8.poisson.num.red.bry
 
 
 plot(gam.8.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.poisson.num.red.bryo)
+#appraise(gam.8.poisson.num.red.bryo)
 #does not look good
 qq_plot(gam.8.poisson.num.red.bryo, method = 'simulate')
 k.check(gam.8.poisson.num.red.bryo)
@@ -1107,7 +1139,7 @@ gam.16.nb.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=o
 gam.16.poisson.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 AICtab(gam.16.nb.num.nudi, gam.16.nb.num.nudi.1, gam.16.poisson.num.nudi)
 
-appraise(gam.16.poisson.num.nudi)
+#appraise(gam.16.poisson.num.nudi)
 qq_plot(gam.16.poisson.num.nudi, method = 'simulate')
 #looks quite good!
 plot(gam.16.poisson.num.nudi, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1160,7 +1192,7 @@ gam.8.nb.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oI
 gam.8.poisson.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
 AICtab(gam.8.nb.num.nudi, gam.8.nb.num.nudi.1)
 
-appraise(gam.8.nb.num.nudi.1)
+#appraise(gam.8.nb.num.nudi.1)
 qq_plot(gam.8.nb.num.nudi.1, method = 'simulate')
 #looks quite good!
 plot(gam.8.nb.num.nudi.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1216,7 +1248,7 @@ gam.16.poisson.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(mi
 AICtab(gam.16.nb.num.serpulid, gam.16.nb.num.serpulid.1, gam.16.poisson.num.serpulid)
 ##gam.16.nb.num.serpulid.1 is best
 
-appraise(gam.16.nb.num.serpulid.1)
+#appraise(gam.16.nb.num.serpulid.1)
 qq_plot(gam.16.nb.num.serpulid.1, method = 'simulate')
 plot(gam.16.nb.num.serpulid.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 k.check(gam.16.nb.num.serpulid.1)
@@ -1271,7 +1303,7 @@ gam.8.poisson.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(min
 AICtab(gam.8.nb.num.serpulid, gam.8.nb.num.serpulid.1, gam.8.poisson.num.serpulid)
 ##gam.8.poisson is best
 
-appraise(gam.8.poisson.num.serpulid)
+#appraise(gam.8.poisson.num.serpulid)
 qq_plot(gam.8.poisson.num.serpulid, method = 'simulate')
 plot(gam.8.poisson.num.serpulid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 k.check(gam.8.poisson.num.serpulid)
@@ -1328,7 +1360,7 @@ gam.16.poisson.num.corella<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.
 AICtab(gam.16.nb.num.corella, gam.16.nb.num.corella.1, gam.16.poisson.num.corella)
 
 
-appraise(gam.16.nb.num.corella)
+#appraise(gam.16.nb.num.corella)
 #looks pretty good - slight pattern
 qq_plot(gam.16.nb.num.corella, method = 'simulate')
 plot(gam.16.nb.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1391,7 +1423,7 @@ gam.8.poisson.num.corella<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.1
 AICtab(gam.8.nb.num.corella, gam.8.nb.num.corella.1, gam.8.poisson.num.corella)
 #poisson
 
-appraise(gam.8.poisson.num.corella)
+#appraise(gam.8.poisson.num.corella)
 #looks pretty good - slight pattern
 qq_plot(gam.8.poisson.num.corella, method = 'simulate')
 plot(gam.8.poisson.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1439,86 +1471,28 @@ ggsave("C:Graphs April 2020//num.corella_pred.8.png")
 
 
 
-# GAM poisson clam / gam.16.poisson.clam ----------------------------------------------------------------
-
-nbinom.8.clam <- fitdistr(invasion.exp.data.16_zscores$clam, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$clam, "nbinom", size = nbinom.8.clam$estimate[[1]], mu = nbinom.8.clam$estimate[[2]])
-#theta
-
-#negative binomial first
-gam.16.nb.clam<- gam(clam ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.8.clam$estimate[[1]]), select=TRUE, method="REML")
-gam.16.nb.clam.1<- gam(clam ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.clam<- gam(clam ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-
-AICtab(gam.16.nb.clam, gam.16.nb.clam.1, gam.16.poisson.clam)
-
-###gam poisson is best
-
-#appraise(gam.16.poisson.clam)
-#qq_plot(gam.16.poisson.clam, method = 'simulate')
-plot(gam.16.poisson.clam, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#k.check(gam.16.poisson.clam)
-summary(gam.16.poisson.clam)
-
-#residuals a bit patterny as well 
-gam.16.poisson.clam.unordered<- gam(clam ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-summary(gam.16.poisson.clam.unordered)
-
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-
-fam.gam.16.clam <- family(gam.16.poisson.clam)
-fam.gam.16.clam
-str(fam.gam.16.clam)
-ilink.gam.16.clam<- fam.gam.16.clam$linkinv
-ilink.gam.16.clam
-
-mod.clam<-gam.16.poisson.clam
-ndata.16.clam <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                    length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.clam <- add_column(ndata.16.clam, fit = predict(mod.clam, newdata = ndata.16.clam, type = 'response'))
-
-predict(mod.clam, newdata = ndata.16.clam, type = 'response')
-ndata.16.clam <- bind_cols(ndata.16.clam, setNames(as_tibble(predict(mod.clam, ndata.16.clam, se.fit = TRUE)[1:2]),
-                                                           c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.clam <- mutate(ndata.16.clam,
-                            fit_resp  = ilink.gam.16.clam(fit_link),
-                            right_upr = ilink.gam.16.clam(fit_link + (2 * se_link)),
-                            right_lwr = ilink.gam.16.clam(fit_link - (2 * se_link)))
-
-
-ndata.16.clam$min.10.pH.unscaled<-ndata.16.clam$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-# plot 
-plt.clam <- ggplot(ndata.16.clam, aes(x = min.10.pH.unscaled, y = fit)) + 
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = clam, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Clam abundance\n(# of individuals)")+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.clam,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.clam
-ggsave("C:Graphs April 2020//clam_pred.png")
-
-
 # Fig 2 plot generation ---------------------------------------------------
 library(patchwork)
-fig.2<-wrap_plots(plt.gam.16.hydroid,plt.botryllid,plt.folliculina,plt.caprellid.percent,plt.membranipora,plt.didemnum,
-          plt.mussel,plt.num.barn,plt.num.white.bryo,plt.num.red.bryo,plt.num.nudi,plt.num.serpulid,
-          plt.orange_sponge,plt.num.corella,plt.clam, ncol=5)+
+fig.week.16<-wrap_plots(plt.botryllid.16,plt.folliculina.16,plt.membranipora.16,
+          plt.mussel.16,plt.num.barn.16,plt.num.white.bryo.16,plt.num.red.bryo.16,plt.num.nudi.16,plt.num.serpulid.16,
+          plt.num.corella.16, ncol=5)+
           plot_annotation(tag_levels = 'a')
 
-fig.2
+fig.week.16
 
-ggplot2::ggsave(plot=fig.2, "C:Data//For submission//For resubmission//RESUB2//First look//Fig2_resized.pdf", width=8.75, height=4.75, units="in")
+ggplot2::ggsave(plot=fig.week.16, "C:Graphs April 2020//Fig_wk_16.pdf", width=8.75, height=4.75, units="in")
 
-#ggplot2::ggsave("C:Data//For submission//For resubmission//Fig2.png", width=65, height=35, units="cm")
+
+
+fig.week.8<-wrap_plots(plt.botryllid.8,plt.folliculina.8,plt.membranipora.8,
+                        plt.mussel.8,plt.num.barn.8,plt.num.white.bryo.8,plt.num.red.bryo.8,plt.num.nudi.8,plt.num.serpulid.8,
+                        plt.num.corella.8, ncol=5)+
+  plot_annotation(tag_levels = 'a')
+
+fig.week.8
+
+ggplot2::ggsave(plot=fig.week.8, "C:Graphs April 2020//Fig_wk_8.pdf", width=8.75, height=4.75, units="in")
+
 
 
 # Pulling model results to a table ----------------------------------------
@@ -1750,7 +1724,7 @@ gam.16.poisson.richness<- gam(richness ~ s(min.10.pH)+ oInvasives + s(min.10.pH,
 AICtab(gam.16.nb.richness.1, gam.16.poisson.richness)
 
 plot(gam.16.poisson.richness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.poisson.richness)
+##appraise(gam.16.poisson.richness)
 #okay but qq plot not the best on ends
 #qq_plot(gam.16.poisson.richness, method = 'simulate')
 #k.check(gam.16.poisson.richness)
@@ -1816,7 +1790,7 @@ gam.16.gamma.evenness.1<- gam(evenness ~ s(min.10.pH)+ oInvasives + s(min.10.pH,
 AICtab( gam.16.lm.evenness, gam.16.gamma.evenness.1)
 
 plot(gam.16.lm.evenness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.lm.evenness)
+##appraise(gam.16.lm.evenness)
 #looks very good
 #qq_plot(gam.16.lm.evenness, method = 'simulate')
 #k.check(gam.16.lm.evenness)
@@ -1879,7 +1853,7 @@ AICtab(gam.16.lm.occupied.space, gam.16.beta.occupied.space.3, gam.16.gamma.occu
 #beta cauchit is best 
 
 plot(gam.16.beta.occupied.space.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.beta.occupied.space.3)
+##appraise(gam.16.beta.occupied.space.3)
 #a bit blocky
 #qq_plot(gam.16.beta.occupied.space.3, method = 'simulate')
 #k.check(gam.16.beta.occupied.space.3)
@@ -1949,7 +1923,7 @@ AICtab(gam.16.loglink.everything.wet.weight.1, gam.16.lm.log.everything.wet.weig
 
 
 plot(gam.16.lm.log.everything.wet.weight, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.lm.log.everything.wet.weight)
+##appraise(gam.16.lm.log.everything.wet.weight)
 #Looks quite good
 #qq_plot(gam.16.lm.log.everything.wet.weight, method = 'simulate')
 #k.check(gam.16.lm.log.everything.wet.weight)
@@ -2017,7 +1991,7 @@ AICtab(gam.16.loglink.everything.wet.weight.per.1.1, gam.16.lm.log.everything.we
 
 
 plot(gam.16.lm.log.everything.wet.weight.per.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.lm.log.everything.wet.weight.per.1)
+##appraise(gam.16.lm.log.everything.wet.weight.per.1)
 #good but mabe a bit funnelly
 #qq_plot(gam.16.lm.log.everything.wet.weight.per.1, method = 'simulate')
 #k.check(gam.16.lm.log.everything.wet.weight.per.1)
@@ -2085,7 +2059,7 @@ AICtab(gam.16.loglink.total_dry_biomass.1, gam.16.lm.log.total_dry_biomass, gam.
 
 
 plot(gam.16.lm.total_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.lm.total_dry_biomass )
+##appraise(gam.16.lm.total_dry_biomass )
 #Looks v good
 #qq_plot(gam.16.lm.total_dry_biomass , method = 'simulate')
 #k.check(gam.16.lm.total_dry_biomass )
@@ -2153,7 +2127,7 @@ AICtab(gam.16.loglink.total_dry_biomass_per1.1, gam.16.lm.log.total_dry_biomass_
 #tweedie is best by 1.7
 
 plot(gam.16.tweedie.total_dry_biomass_per1 , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.tweedie.total_dry_biomass_per1 )
+##appraise(gam.16.tweedie.total_dry_biomass_per1 )
 #not available for tweedie
 #qq_plot(gam.16.tweedie.total_dry_biomass_per1 , method = 'simulate')
 #looks good
@@ -2220,7 +2194,7 @@ AICtab(gam.16.loglink.hydroid_dry_biomass, gam.16.lm.log.hydroid_dry_biomass, ga
 
 #gamma is best 
 plot(gam.16.gamma.hydroid_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.gamma.hydroid_dry_biomass )
+##appraise(gam.16.gamma.hydroid_dry_biomass )
 #looks good, maybe slightly funnelly
 #qq_plot(gam.16.gamma.hydroid_dry_biomass , method = 'simulate')
 #k.check(gam.16.gamma.hydroid_dry_biomass )
@@ -2289,7 +2263,7 @@ AICtab(gam.16.loglink.tunicate_dry_biomass, gam.16.lm.log.tunicate_dry_biomass, 
 #gamma is the best
 
 plot(gam.16.gamma.tunicate_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.gamma.tunicate_dry_biomass )
+##appraise(gam.16.gamma.tunicate_dry_biomass )
 #a bit patterny
 #qq_plot(gam.16.gamma.tunicate_dry_biomass , method = 'simulate')
 #k.check(gam.16.gamma.tunicate_dry_biomass )
@@ -2354,7 +2328,7 @@ AICtab(gam.16.loglink.caprellid_dry_biomass, gam.16.lm.log.caprellid_dry_biomass
 #gamma by 1.2
 
 plot(gam.16.gamma.caprellid_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.gamma.caprellid_dry_biomass )
+##appraise(gam.16.gamma.caprellid_dry_biomass )
 # look good
 #qq_plot(gam.16.gamma.caprellid_dry_biomass , method = 'simulate')
 #k.check(gam.16.gamma.caprellid_dry_biomass )
@@ -2418,7 +2392,7 @@ AICtab(gam.16.loglink.caprellid_dry_biomass_per1, gam.16.lm.log.caprellid_dry_bi
 
 #gamma is the best by 2.2
 plot(gam.16.gamma.caprellid_dry_biomass_per1 , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.gamma.caprellid_dry_biomass_per1 )
+##appraise(gam.16.gamma.caprellid_dry_biomass_per1 )
 #a bit funnelly and qq right tail
 #qq_plot(gam.16.gamma.caprellid_dry_biomass_per1 , method = 'simulate')
 #k.check(gam.16.gamma.caprellid_dry_biomass_per1 )
@@ -2552,7 +2526,7 @@ AICtab(gam.16.loglink.Mussel.wet.weight.1, gam.16.lm.log.Mussel.wet.weight, gam.
 #gam.16.lm.log.Mussel.wet.weight is best 
 
 plot(gam.16.lm.log.Mussel.wet.weight, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.lm.log.Mussel.wet.weight)
+##appraise(gam.16.lm.log.Mussel.wet.weight)
 #look pretty good, esp qq
 #qq_plot(gam.16.lm.log.Mussel.wet.weight, method = 'simulate')
 #k.check(gam.16.lm.log.Mussel.wet.weight)
@@ -2625,7 +2599,7 @@ AICtab(gam.16.loglink.Mussel.wet.weight.per.1.1, gam.16.lm.log.Mussel.wet.weight
 
 #gamma is best 
 plot(gam.16.gamma.Mussel.wet.weight.per.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.gamma.Mussel.wet.weight.per.1)
+##appraise(gam.16.gamma.Mussel.wet.weight.per.1)
 # good but a bit funnelly
 #qq_plot(gam.16.gamma.Mussel.wet.weight.per.1, method = 'simulate')
 #k.check(gam.16.gamma.Mussel.wet.weight.per.1)
@@ -2697,7 +2671,7 @@ AICtab( gam.16.tweedie.hydtobot ,gam.16.beta.hydtobot, gam.16.lm.hydtobot, gam.1
 ### beta logit is the best 
 
 plot(gam.16.beta.hydtobot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.beta.hydtobot)
+##appraise(gam.16.beta.hydtobot)
 #qq a bit wiggly
 #qq_plot(gam.16.beta.hydtobot, method = 'simulate')
 #k.check(gam.16.beta.hydtobot)
@@ -2774,7 +2748,7 @@ AICtab(gam.16.tweedie.hydtobot_dry_biomass ,gam.16.beta.hydtobot_dry_biomass, ga
 ### logit is the best 
 
 plot(gam.16.beta.hydtobot_dry_biomass, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.beta.hydtobot_dry_biomass)
+##appraise(gam.16.beta.hydtobot_dry_biomass)
 #look ok, qq is bloacky
 #qq_plot(gam.16.beta.hydtobot_dry_biomass, method = 'simulate')
 #k.check(gam.16.beta.hydtobot_dry_biomass)
@@ -2844,7 +2818,7 @@ AICtab( gam.16.loglink.CAP1.1, gam.16.lm.CAP1)
 #gam.16.lm.CAP1
 
 plot(gam.16.lm.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.lm.CAP1)
+##appraise(gam.16.lm.CAP1)
 #look good
 #qq_plot(gam.16.lm.CAP1, method = 'simulate')
 #k.check(gam.16.lm.CAP1)
@@ -2911,7 +2885,7 @@ AICtab(gam.16.loglink.distances.1,  gam.16.lm.distances, gam.16.gamma.distances)
 
 
 plot(gam.16.lm.distances, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.lm.distances)
+##appraise(gam.16.lm.distances)
 #looks good
 #qq_plot(gam.16.lm.distances, method = 'simulate')
 #k.check(gam.16.lm.distances)
