@@ -45,34 +45,39 @@ library(installr)
 
 invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_without_pres.csv",stringsAsFactors = FALSE, na.strings = c("NA","") )
 
-invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
+#ordered and unordered factors
+invasion.exp.data$oTreatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=TRUE)
+invasion.exp.data$Treatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=FALSE)
 
+invasion.exp.data$oInvasives<-factor(invasion.exp.data$Invasives, levels=c("Absent", "Present"), ordered=TRUE)
+invasion.exp.data$Invasives<-factor(invasion.exp.data$Invasives, levels=c("Absent", "Present"), ordered=FALSE)
+
+invasion.exp.data$oCO2.Treatment<-factor(invasion.exp.data$CO2.Treatment, levels=c("AIR", "CO2"), ordered=TRUE)
+invasion.exp.data$CO2.Treatment<-factor(invasion.exp.data$CO2.Treatment, levels=c("AIR", "CO2"), ordered=FALSE)
+
+#New variables
+invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
+invasion.exp.data$hydroid.001<-(0.01*(invasion.exp.data$hydroid))+0.01
+invasion.exp.data$botryllid.001<-(0.01*(invasion.exp.data$botryllid))+0.01
+invasion.exp.data$membranipora.001<-(0.01*(invasion.exp.data$membranipora))+0.01
+invasion.exp.data$mussel.001<-(0.01*(invasion.exp.data$mussel))+0.01
+invasion.exp.data$didemnum<-invasion.exp.data$white.bryo
+invasion.exp.data$num.red.bryoporella<-invasion.exp.data$red.bryo
+invasion.exp.data$folliculina<-invasion.exp.data$protozoa
+invasion.exp.data$folliculina.001<-(0.01*(invasion.exp.data$folliculina))+0.01
+invasion.exp.data$didemnum.001<-(0.01*(invasion.exp.data$didemnum))+0.01
+invasion.exp.data$occupied.space<-(100 - invasion.exp.data$bare)
+invasion.exp.data$occupied.space.001<-(0.01*(invasion.exp.data$occupied.space))+0.01
+invasion.exp.data$native.occupied.space<-(100 - invasion.exp.data$botryllid  -invasion.exp.data$bot.eaten -  invasion.exp.data$bare)
+invasion.exp.data$native.occupied.space.001<-(0.01*(invasion.exp.data$native.occupied.space))+0.01
+
+
+head(invasion.exp.data)
+#splitting into mid and end
 invasion.exp.data.16<-invasion.exp.data %>% filter(Week==16)
 invasion.exp.data.8<-invasion.exp.data %>% filter(Week==8)
 
-#ordered and unordered factors
-invasion.exp.data.16$oTreatment<-factor(invasion.exp.data.16$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=TRUE)
-invasion.exp.data.16$Treatment<-factor(invasion.exp.data.16$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=FALSE)
-
-#I think I need just Invasives if we're going with CO2.Treatment
-invasion.exp.data.16$oInvasives<-factor(invasion.exp.data.16$Invasives, levels=c("Absent", "Present"), ordered=TRUE)
-invasion.exp.data.16$Invasives<-factor(invasion.exp.data.16$Invasives, levels=c("Absent", "Present"), ordered=FALSE)
-
-invasion.exp.data.16$oCO2.Treatment<-factor(invasion.exp.data.16$CO2.Treatment, levels=c("AIR", "CO2"), ordered=TRUE)
-invasion.exp.data.16$CO2.Treatment<-factor(invasion.exp.data.16$CO2.Treatment, levels=c("AIR", "CO2"), ordered=FALSE)
-
-
- invasion.exp.data.16$hydroid.001<-(0.01*(invasion.exp.data.16$hydroid))+0.01
- invasion.exp.data.16$botryllid.001<-(0.01*(invasion.exp.data.16$botryllid))+0.01
- invasion.exp.data.16$membranipora.001<-(0.01*(invasion.exp.data.16$membranipora))+0.01
- invasion.exp.data.16$mussel.001<-(0.01*(invasion.exp.data.16$mussel))+0.01
-  invasion.exp.data.16$didemnum<-invasion.exp.data.16$white.bryo
- invasion.exp.data.16$num.red.bryoporella<-invasion.exp.data.16$red.bryo
- invasion.exp.data.16$folliculina<-invasion.exp.data.16$protozoa
- invasion.exp.data.16$folliculina.001<-(0.01*(invasion.exp.data.16$folliculina))+0.01
- 
-  invasion.exp.data.16$didemnum.001<-(0.01*(invasion.exp.data.16$didemnum))+0.01
-
+  
 # need to have zscores for pH ... otherwise evaluating at 0 but not meaningful ... need to do something to resp. variables... 
 invasion.exp.data.16_zscores<-invasion.exp.data.16
 #invasion.exp.data.16_zscores$hydrogen.concentration<-scale(invasion.exp.data.16$hydrogen.concentration, center=TRUE, scale=TRUE)
@@ -87,59 +92,14 @@ invasion.exp.data.16_zscores$min.10.pH.unscaled <-invasion.exp.data.16_zscores$m
 invasion.exp.data.16_pres<-invasion.exp.data.16 %>% filter(Invasives=="Present")
 invasion.exp.data.16_abs<-invasion.exp.data.16 %>% filter(Invasives=="Absent")
 
-
-
-
-hist(invasion.exp.data.16_abs$min.10.pH, breaks=5)#5
-hist(invasion.exp.data.16_pres$min.10.pH, breaks=18)#18 for the whole 16 weeks
-#these are actually the exact same values b/c same mesocosms
-
-
- ggplot(invasion.exp.data.16, aes(x=min.10.pH))+geom_density()+theme_classic()
-
-# Week 12
-#ordered and unordered factors
- invasion.exp.data.8$oTreatment<-factor(invasion.exp.data.8$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=TRUE)
- invasion.exp.data.8$Treatment<-factor(invasion.exp.data.8$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=FALSE)
- 
-#I think I need just Invasives if we're going with CO2.Treatment
- invasion.exp.data.8$oInvasives<-factor(invasion.exp.data.8$Invasives, levels=c("Absent", "Present"), ordered=TRUE)
- invasion.exp.data.8$Invasives<-factor(invasion.exp.data.8$Invasives, levels=c("Absent", "Present"), ordered=FALSE)
- 
- invasion.exp.data.8$oCO2.Treatment<-factor(invasion.exp.data.8$CO2.Treatment, levels=c("AIR", "CO2"), ordered=TRUE)
- invasion.exp.data.8$CO2.Treatment<-factor(invasion.exp.data.8$CO2.Treatment, levels=c("AIR", "CO2"), ordered=FALSE)
- 
-  
- # #making it a proportion instead of % cover
- # invasion.exp.data.8$caprellid.percent.001<-(0.01*(invasion.exp.data.8$caprellid.percent))+0.01
- invasion.exp.data.8$hydroid.001<-(0.01*(invasion.exp.data.8$hydroid))+0.01
- invasion.exp.data.8$botryllid.001<-(0.01*(invasion.exp.data.8$botryllid))+0.01
- invasion.exp.data.8$membranipora.001<-(0.01*(invasion.exp.data.8$membranipora))+0.01
- invasion.exp.data.8$mussel.001<-(0.01*(invasion.exp.data.8$mussel))+0.01
- 
-  invasion.exp.data.8$didemnum<-invasion.exp.data.8$white.bryo
- invasion.exp.data.8$num.red.bryoporella<-invasion.exp.data.8$red.bryo
- invasion.exp.data.8$folliculina<-invasion.exp.data.8$protozoa
- invasion.exp.data.8$folliculina.001<-(0.01*(invasion.exp.data.8$folliculina))+0.01
- invasion.exp.data.8$didemnum.001<-(0.01*(invasion.exp.data.8$didemnum))+0.01
-
- # need to have zscores for pH ... otherwise evaluating at 0 but not meaningful ... need to do something to resp. variables... 
- invasion.exp.data.8_zscores<-invasion.exp.data.8
- #invasion.exp.data.8_zscores$hydrogen.concentration<-scale(invasion.exp.data.8$hydrogen.concentration, center=TRUE, scale=TRUE)
- invasion.exp.data.8_zscores$av.pH<-scale(invasion.exp.data.8$av.pH, center=TRUE, scale=TRUE)
- invasion.exp.data.8_zscores$min.10.pH<-scale(invasion.exp.data.8$min.10.pH, center=TRUE, scale=TRUE)
- invasion.exp.data.8_zscores$Mesocosm <- as.factor(invasion.exp.data.8$Mesocosm)
- invasion.exp.data.8_zscores$av.pH.unscaled <-invasion.exp.data.8_zscores$av.pH * attr(invasion.exp.data.8_zscores$av.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$av.pH, 'scaled:center')
- invasion.exp.data.8_zscores$min.10.pH.unscaled <-invasion.exp.data.8_zscores$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
- 
- 
-# Visualizing histograms of pH to use as continuous vs. discrete variable
- invasion.exp.data.8_pres<-invasion.exp.data.8 %>% filter(Invasives=="Present")
- invasion.exp.data.8_abs<-invasion.exp.data.8 %>% filter(Invasives=="Absent")
- 
- hist(invasion.exp.data.8_abs$min.10.pH, breaks=8)#8
- hist(invasion.exp.data.8_pres$min.10.pH, breaks=8)#8
- #these are actually the exact same values b/c same mesocosms
+# need to have zscores for pH ... otherwise evaluating at 0 but not meaningful ... need to do something to resp. variables... 
+invasion.exp.data.8_zscores<-invasion.exp.data.8
+#invasion.exp.data.8_zscores$hydrogen.concentration<-scale(invasion.exp.data.8$hydrogen.concentration, center=TRUE, scale=TRUE)
+invasion.exp.data.8_zscores$av.pH<-scale(invasion.exp.data.8$av.pH, center=TRUE, scale=TRUE)
+invasion.exp.data.8_zscores$min.10.pH<-scale(invasion.exp.data.8$min.10.pH, center=TRUE, scale=TRUE)
+invasion.exp.data.8_zscores$Mesocosm <- as.factor(invasion.exp.data.8$Mesocosm)
+invasion.exp.data.8_zscores$av.pH.unscaled <-invasion.exp.data.8_zscores$av.pH * attr(invasion.exp.data.8_zscores$av.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$av.pH, 'scaled:center')
+invasion.exp.data.8_zscores$min.10.pH.unscaled <-invasion.exp.data.8_zscores$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 # Notes on contrasts ------------------------------------------------------
 
@@ -169,8 +129,6 @@ theme_set(theme_classic(base_size = 6))
 theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
  
-
-
 # GAM beta botryllus / gam.16.beta.botryllid.2 ----------------------------------------------------
 
 #binomial first
@@ -1493,7 +1451,7 @@ fig.week.8
 
 ggplot2::ggsave(plot=fig.week.8, "C:Graphs April 2020//Fig_wk_8.pdf", width=8.75, height=4.75, units="in")
 
-
+head(invasion.exp.data.8_zscores)
 
 # Pulling model results to a table ----------------------------------------
 
@@ -1717,1095 +1675,258 @@ pstable %>%
   save_kable(file = "C:Data//For submission//For resubmission//RESUB2//First look//pstable.html", self_contained = T)
 
 
-# Richness ----------------------------------------------------------------
-gam.16.nb.richness.1<- gam(richness ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.richness<- gam(richness ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
+# num.species.no.bot 16 ----------------------------------------------------------------
+gam.16.nb.num.species.no.bot.1<- gam(num.species.no.bot ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
+gam.16.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 
-AICtab(gam.16.nb.richness.1, gam.16.poisson.richness)
+AICtab(gam.16.nb.num.species.no.bot.1, gam.16.poisson.num.species.no.bot)
 
-plot(gam.16.poisson.richness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.poisson.richness)
+plot(gam.16.poisson.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.16.poisson.num.species.no.bot)
 #okay but qq plot not the best on ends
-#qq_plot(gam.16.poisson.richness, method = 'simulate')
-#k.check(gam.16.poisson.richness)
-summary(gam.16.poisson.richness)
+qq_plot(gam.16.poisson.num.species.no.bot, method = 'simulate')
+k.check(gam.16.poisson.num.species.no.bot)
+summary(gam.16.poisson.num.species.no.bot)
 #a few outside the QQ plot on both ends
 #low p value for k - but NS and edf is not super close to k-index
 
-gam.16.poisson.richness.unordered<- gam(richness ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-fam.gam.16.richness <- family(gam.16.poisson.richness)
-ilink.gam.16.richness<- fam.gam.16.richness$linkinv
-ilink.gam.16.richness
+gam.16.poisson.num.species.no.bot.unordered<- gam(num.species.no.bot ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
+fam.gam.16.num.species.no.bot <- family(gam.16.poisson.num.species.no.bot)
+ilink.gam.16.num.species.no.bot<- fam.gam.16.num.species.no.bot$linkinv
+ilink.gam.16.num.species.no.bot
 
 
-mod.richness<-gam.16.poisson.richness
-ndata.16.richness <- with(invasion.exp.data.16_zscores, 
+mod.num.species.no.bot<-gam.16.poisson.num.species.no.bot
+ndata.16.num.species.no.bot <- with(invasion.exp.data.16_zscores, 
                        data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                        length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
 
 ## add the fitted values by predicting from the model for the new data
-ndata.16.richness <- add_column(ndata.16.richness, fit = predict(mod.richness, newdata = ndata.16.richness, type = 'response'))
+ndata.16.num.species.no.bot <- add_column(ndata.16.num.species.no.bot, fit = predict(mod.num.species.no.bot, newdata = ndata.16.num.species.no.bot, type = 'response'))
 
-predict(mod.richness, newdata = ndata.16.richness, type = 'response')
-ndata.16.richness <- bind_cols(ndata.16.richness, setNames(as_tibble(predict(mod.richness, ndata.16.richness, se.fit = TRUE)[1:2]),
+predict(mod.num.species.no.bot, newdata = ndata.16.num.species.no.bot, type = 'response')
+ndata.16.num.species.no.bot <- bind_cols(ndata.16.num.species.no.bot, setNames(as_tibble(predict(mod.num.species.no.bot, ndata.16.num.species.no.bot, se.fit = TRUE)[1:2]),
                                                                  c('fit_link','se_link')))
 
 ## create the interval and backtransform
 
-ndata.16.richness <- mutate(ndata.16.richness,
-                               fit_resp  = ilink.gam.16.richness(fit_link),
-                               right_upr = ilink.gam.16.richness(fit_link + (2 * se_link)),
-                               right_lwr = ilink.gam.16.richness(fit_link - (2 * se_link)))
+ndata.16.num.species.no.bot <- mutate(ndata.16.num.species.no.bot,
+                               fit_resp  = ilink.gam.16.num.species.no.bot(fit_link),
+                               right_upr = ilink.gam.16.num.species.no.bot(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.16.num.species.no.bot(fit_link - (2 * se_link)))
 
 
-ndata.16.richness$min.10.pH.unscaled<-ndata.16.richness$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
+ndata.16.num.species.no.bot$min.10.pH.unscaled<-ndata.16.num.species.no.bot$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.richness <- ggplot(ndata.16.richness, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
+plt.num.species.no.bot <- ggplot(ndata.16.num.species.no.bot, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = richness, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Species richness")+  
+  geom_point(aes(y = num.species.no.bot, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Native species richness")+  
   scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
   scale_fill_manual(values=colorset_invasives, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.richness,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  geom_ribbon(data = ndata.16.num.species.no.bot,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')+ylim(0,20)
-plt.richness
-ggsave("C:Graphs April 2020//richness_pred.png")
+plt.num.species.no.bot
+ggsave("C:Graphs April 2020//native_richness.png")
 
 
+# num.species.no.bot 8 ----------------------------------------------------------------
+gam.8.nb.num.species.no.bot.1<- gam(num.species.no.bot ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
+
+AICtab(gam.8.nb.num.species.no.bot.1, gam.8.poisson.num.species.no.bot)
+
+plot(gam.8.poisson.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.8.poisson.num.species.no.bot)
+#okay but qq plot not the best on ends
+qq_plot(gam.8.poisson.num.species.no.bot, method = 'simulate')
+k.check(gam.8.poisson.num.species.no.bot)
+summary(gam.8.poisson.num.species.no.bot)
+#a few outside the QQ plot on both ends
+#low p value for k - but NS and edf is not super close to k-index
+
+gam.8.poisson.num.species.no.bot.unordered<- gam(num.species.no.bot ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
+fam.gam.8.num.species.no.bot <- family(gam.8.poisson.num.species.no.bot)
+ilink.gam.8.num.species.no.bot<- fam.gam.8.num.species.no.bot$linkinv
+ilink.gam.8.num.species.no.bot
 
 
-
-
-
-# Evenness ----------------------------------------------------------------
-
-gam.16.lm.evenness<- gam(evenness ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.evenness.1<- gam(evenness ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-
-AICtab( gam.16.lm.evenness, gam.16.gamma.evenness.1)
-
-plot(gam.16.lm.evenness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.lm.evenness)
-#looks very good
-#qq_plot(gam.16.lm.evenness, method = 'simulate')
-#k.check(gam.16.lm.evenness)
-summary(gam.16.lm.evenness)
-
-gam.16.lm.evenness.unordered<- gam(evenness ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-
-fam.gam.16.evenness <- family(gam.16.lm.evenness)
-ilink.gam.16.evenness<- fam.gam.16.evenness$linkinv
-mod.evenness<-gam.16.lm.evenness
-ndata.16.evenness <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                 length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+mod.num.species.no.bot<-gam.8.poisson.num.species.no.bot
+ndata.8.num.species.no.bot <- with(invasion.exp.data.8_zscores, 
+                                    data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                               length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
 
 ## add the fitted values by predicting from the model for the new data
-ndata.16.evenness <- add_column(ndata.16.evenness, fit = predict(mod.evenness, newdata = ndata.16.evenness, type = 'response'))
+ndata.8.num.species.no.bot <- add_column(ndata.8.num.species.no.bot, fit = predict(mod.num.species.no.bot, newdata = ndata.8.num.species.no.bot, type = 'response'))
 
-predict(mod.evenness, newdata = ndata.16.evenness, type = 'response')
-ndata.16.evenness <- bind_cols(ndata.16.evenness, setNames(as_tibble(predict(mod.evenness, ndata.16.evenness, se.fit = TRUE)[1:2]),
-                                                     c('fit_link','se_link')))
+predict(mod.num.species.no.bot, newdata = ndata.8.num.species.no.bot, type = 'response')
+ndata.8.num.species.no.bot <- bind_cols(ndata.8.num.species.no.bot, setNames(as_tibble(predict(mod.num.species.no.bot, ndata.8.num.species.no.bot, se.fit = TRUE)[1:2]),
+                                                                               c('fit_link','se_link')))
 
 ## create the interval and backtransform
 
-ndata.16.evenness <- mutate(ndata.16.evenness,
-                         fit_resp  = ilink.gam.16.evenness(fit_link),
-                         right_upr = ilink.gam.16.evenness(fit_link + (2 * se_link)),
-                         right_lwr = ilink.gam.16.evenness(fit_link - (2 * se_link)))
+ndata.8.num.species.no.bot <- mutate(ndata.8.num.species.no.bot,
+                                      fit_resp  = ilink.gam.8.num.species.no.bot(fit_link),
+                                      right_upr = ilink.gam.8.num.species.no.bot(fit_link + (2 * se_link)),
+                                      right_lwr = ilink.gam.8.num.species.no.bot(fit_link - (2 * se_link)))
 
 
-ndata.16.evenness$min.10.pH.unscaled<-ndata.16.evenness$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
+ndata.8.num.species.no.bot$min.10.pH.unscaled<-ndata.8.num.species.no.bot$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.evenness <- ggplot(ndata.16.evenness, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
+plt.num.species.no.bot <- ggplot(ndata.8.num.species.no.bot, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = evenness, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Species evenness")+  
+  geom_point(aes(y = num.species.no.bot, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Native species richness")+  
   scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
   scale_fill_manual(values=colorset_invasives, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.evenness,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.evenness
-ggsave("C:Graphs April 2020//evenness_pred.png")
+  geom_ribbon(data = ndata.8.num.species.no.bot,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  theme(legend.position='none')+ylim(0,20)
+plt.num.species.no.bot
+ggsave("C:Graphs April 2020//native_richness.png")
 
 
-# Occupied space ----------------------------------------------------------
+# Occupied space 16 ----------------------------------------------------------
 
-gam.16.lm.occupied.space<- gam(occupied.space ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.occupied.space.1<- gam(occupied.space*0.01 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.binomial.occupied.space<- gam(formula = cbind(occupied.space, 100-occupied.space)~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+gam.16.lm.native.occupied.space<- gam(native.occupied.space ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+gam.16.gamma.native.occupied.space.1<- gam(native.occupied.space*0.01 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
+gam.16.binomial.native.occupied.space<- gam(formula = cbind(native.occupied.space, 100-native.occupied.space)~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
 
-gam.16.beta.occupied.space<- gam(occupied.space.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.occupied.space.1<- gam(occupied.space.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.occupied.space.2<- gam(occupied.space.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.16.beta.occupied.space.3<- gam(occupied.space.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+gam.16.beta.native.occupied.space<- gam(native.occupied.space.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+gam.16.beta.native.occupied.space.1<- gam(native.occupied.space.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
+gam.16.beta.native.occupied.space.2<- gam(native.occupied.space.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
+gam.16.beta.native.occupied.space.3<- gam(native.occupied.space.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
 
-AICtab(gam.16.lm.occupied.space, gam.16.beta.occupied.space.3, gam.16.gamma.occupied.space.1, gam.16.beta.occupied.space, gam.16.beta.occupied.space.1, gam.16.beta.occupied.space.2, gam.16.binomial.occupied.space)
-#beta cauchit is best 
-
-plot(gam.16.beta.occupied.space.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.beta.occupied.space.3)
-#a bit blocky
-#qq_plot(gam.16.beta.occupied.space.3, method = 'simulate')
-#k.check(gam.16.beta.occupied.space.3)
-#k gettinga bit low but ns
-summary(gam.16.beta.occupied.space.3)
-gam.16.beta.occupied.space.3.unordered<- gam(occupied.space.001~ s(min.10.pH, k=15)+ Invasives + s(min.10.pH, by=oInvasives, k=15), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-summary(gam.16.beta.occupied.space.3.unordered)
-
-fam.gam.16.occupied.space <- family(gam.16.beta.occupied.space.3)
-fam.gam.16.occupied.space
-str(fam.gam.16.occupied.space)
-ilink.gam.16.occupied.space<- fam.gam.16.occupied.space$linkinv
-ilink.gam.16.occupied.space
+AICtab(gam.16.lm.native.occupied.space, gam.16.beta.native.occupied.space.3, gam.16.gamma.native.occupied.space.1, gam.16.beta.native.occupied.space, gam.16.beta.native.occupied.space.1, gam.16.beta.native.occupied.space.2, gam.16.binomial.native.occupied.space)
 
 
-mod.occupied.space<-gam.16.beta.occupied.space.3
-ndata.16.occupied.space <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+plot(gam.16.beta.native.occupied.space.3 , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.16.beta.native.occupied.space.3 )
+#looks good
+qq_plot(gam.16.beta.native.occupied.space.3 , method = 'simulate')
+k.check(gam.16.beta.native.occupied.space.3 )
+summary(gam.16.beta.native.occupied.space.3 )
+gam.16.beta.native.occupied.space.3.unordered<- gam(native.occupied.space.001~ s(min.10.pH, k=15)+ Invasives + s(min.10.pH, by=oInvasives, k=15), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+summary(gam.16.beta.native.occupied.space.3.unordered)
+
+fam.gam.16.native.occupied.space <- family(gam.16.beta.native.occupied.space.3 )
+fam.gam.16.native.occupied.space
+str(fam.gam.16.native.occupied.space)
+ilink.gam.16.native.occupied.space<- fam.gam.16.native.occupied.space$linkinv
+ilink.gam.16.native.occupied.space
+
+
+mod.native.occupied.space<-gam.16.beta.native.occupied.space.3 
+ndata.16.native.occupied.space <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                  length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
 
 ## add the fitted values by predicting from the model for the new data
-ndata.16.occupied.space <- add_column(ndata.16.occupied.space, fit = predict(mod.occupied.space, newdata = ndata.16.occupied.space, type = 'response'))
+ndata.16.native.occupied.space <- add_column(ndata.16.native.occupied.space, fit = predict(mod.native.occupied.space, newdata = ndata.16.native.occupied.space, type = 'response'))
 
-predict(mod.occupied.space, newdata = ndata.16.occupied.space, type = 'response')
-ndata.16.occupied.space <- bind_cols(ndata.16.occupied.space, setNames(as_tibble(predict(mod.occupied.space, ndata.16.occupied.space, se.fit = TRUE)[1:2]),
+predict(mod.native.occupied.space, newdata = ndata.16.native.occupied.space, type = 'response')
+ndata.16.native.occupied.space <- bind_cols(ndata.16.native.occupied.space, setNames(as_tibble(predict(mod.native.occupied.space, ndata.16.native.occupied.space, se.fit = TRUE)[1:2]),
                                                      c('fit_link','se_link')))
 
 ## create the interval and backtransform
 
-ndata.16.occupied.space <- mutate(ndata.16.occupied.space,
-                         fit_resp  = ilink.gam.16.occupied.space(fit_link),
-                         right_upr = ilink.gam.16.occupied.space(fit_link + (2 * se_link)),
-                         right_lwr = ilink.gam.16.occupied.space(fit_link - (2 * se_link)))
+ndata.16.native.occupied.space <- mutate(ndata.16.native.occupied.space,
+                         fit_resp  = ilink.gam.16.native.occupied.space(fit_link),
+                         right_upr = ilink.gam.16.native.occupied.space(fit_link + (2 * se_link)),
+                         right_lwr = ilink.gam.16.native.occupied.space(fit_link - (2 * se_link)))
 
 
-ndata.16.occupied.space$min.10.pH.unscaled<-ndata.16.occupied.space$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
+ndata.16.native.occupied.space$min.10.pH.unscaled<-ndata.16.native.occupied.space$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.occupied.space <- ggplot(ndata.16.occupied.space, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
+plt.native.occupied.space.16 <- ggplot(ndata.16.native.occupied.space, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = occupied.space.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
+  geom_point(aes(y = native.occupied.space.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Proportion of space on tile occupied")+  
   scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
   scale_fill_manual(values=colorset_invasives, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  geom_ribbon(data = ndata.16.native.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.occupied.space
-ggsave("C:Graphs April 2020//occupied.space_pred.png")
+plt.native.occupied.space.16
+ggsave("C:Graphs April 2020//native.occupied.space_pred.16.png")
 
 
 
-# Everything wet weight ---------------------------------------------------
 
-gam.16.lm.everything.wet.weight<- gam(everything.wet.weight ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.everything.wet.weight.1<- gam(everything.wet.weight ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.everything.wet.weight<- gam(log(everything.wet.weight) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.everything.wet.weight.1<- gam(everything.wet.weight ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.everything.wet.weight.1<- gam(everything.wet.weight ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
+# Occupied space 8 ----------------------------------------------------------
 
+gam.8.lm.native.occupied.space<- gam(native.occupied.space ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
+gam.8.gamma.native.occupied.space.1<- gam(native.occupied.space*0.01 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, family = Gamma, select=TRUE, method="REML")
+gam.8.binomial.native.occupied.space<- gam(formula = cbind(native.occupied.space, 100-native.occupied.space)~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
 
-AICtab(gam.16.loglink.everything.wet.weight.1, gam.16.lm.log.everything.wet.weight, gam.16.tweedie.everything.wet.weight.1,  gam.16.lm.everything.wet.weight, gam.16.gamma.everything.wet.weight.1)
+gam.8.beta.native.occupied.space<- gam(native.occupied.space.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+gam.8.beta.native.occupied.space.1<- gam(native.occupied.space.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="probit"), select=TRUE, method="REML")
+gam.8.beta.native.occupied.space.2<- gam(native.occupied.space.001~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
+gam.8.beta.native.occupied.space.3<- gam(native.occupied.space.001~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
 
-#gam.16.lm.log.everything.wet.weight is best 
+AICtab(gam.8.lm.native.occupied.space, gam.8.beta.native.occupied.space.3, gam.8.gamma.native.occupied.space.1, gam.8.beta.native.occupied.space, gam.8.beta.native.occupied.space.1, gam.8.beta.native.occupied.space.2, gam.8.binomial.native.occupied.space)
+#beta is best 
 
-
-plot(gam.16.lm.log.everything.wet.weight, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.lm.log.everything.wet.weight)
-#Looks quite good
-#qq_plot(gam.16.lm.log.everything.wet.weight, method = 'simulate')
-#k.check(gam.16.lm.log.everything.wet.weight)
-summary(gam.16.lm.log.everything.wet.weight)
-
-gam.16.lm.log.everything.wet.weight.unordered<- gam(log(everything.wet.weight) ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-
-fam.gam.16.everything.wet.weight <- family(gam.16.lm.log.everything.wet.weight)
-fam.gam.16.everything.wet.weight
-ilink.gam.16.everything.wet.weight<- fam.gam.16.everything.wet.weight$linkinv
-ilink.gam.16.everything.wet.weight
-
-
-mod.everything.wet.weight<-gam.16.lm.log.everything.wet.weight
-ndata.16.everything.wet.weight <- with(invasion.exp.data.16_zscores, 
-                                    data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                    length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.everything.wet.weight <- add_column(ndata.16.everything.wet.weight, fit = predict(mod.everything.wet.weight, newdata = ndata.16.everything.wet.weight, type = 'response'))
-
-predict(mod.everything.wet.weight, newdata = ndata.16.everything.wet.weight, type = 'response')
-ndata.16.everything.wet.weight <- bind_cols(ndata.16.everything.wet.weight, setNames(as_tibble(predict(mod.everything.wet.weight, ndata.16.everything.wet.weight, se.fit = TRUE)[1:2]),
-                                                     c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.everything.wet.weight <- mutate(ndata.16.everything.wet.weight,
-                         fit_resp  = ilink.gam.16.everything.wet.weight(fit_link),
-                         right_upr = ilink.gam.16.everything.wet.weight(fit_link + (2 * se_link)),
-                         right_lwr = ilink.gam.16.everything.wet.weight(fit_link - (2 * se_link)))
-
-
-ndata.16.everything.wet.weight$min.10.pH.unscaled<-ndata.16.everything.wet.weight$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.everything.wet.weight <- ggplot(ndata.16.everything.wet.weight, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = log(everything.wet.weight), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Total wet biomass per mesocosm\n(g, log scale)")+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.everything.wet.weight,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.everything.wet.weight
-ggsave("C:Graphs April 2020//everything.wet.weight_pred.png")
-
-
-# Everything wet weight per 1 ---------------------------------------------
-
-gam.16.lm.everything.wet.weight.per.1<- gam(everything.wet.weight.per.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.everything.wet.weight.per.1.1<- gam(everything.wet.weight.per.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.everything.wet.weight.per.1<- gam(log(everything.wet.weight.per.1) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.everything.wet.weight.per.1.1<- gam(everything.wet.weight.per.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.everything.wet.weight.per.1.1<- gam(everything.wet.weight.per.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.everything.wet.weight.per.1.1, gam.16.lm.log.everything.wet.weight.per.1, gam.16.tweedie.everything.wet.weight.per.1.1,gam.16.lm.everything.wet.weight.per.1, gam.16.gamma.everything.wet.weight.per.1.1)
-
-#gam.16.lm.log.everything.wet.weight.per.1 is best by far
-
-
-plot(gam.16.lm.log.everything.wet.weight.per.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.lm.log.everything.wet.weight.per.1)
-#good but mabe a bit funnelly
-#qq_plot(gam.16.lm.log.everything.wet.weight.per.1, method = 'simulate')
-#k.check(gam.16.lm.log.everything.wet.weight.per.1)
-summary(gam.16.lm.log.everything.wet.weight.per.1)
-
-gam.16.lm.log.everything.wet.weight.per.1.unordered<- gam(log(everything.wet.weight.per.1) ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-
-fam.gam.16.everything.wet.weight.per.1 <- family(gam.16.lm.log.everything.wet.weight.per.1)
-fam.gam.16.everything.wet.weight.per.1
-ilink.gam.16.everything.wet.weight.per.1<- fam.gam.16.everything.wet.weight.per.1$linkinv
-ilink.gam.16.everything.wet.weight.per.1
-
-
-mod.everything.wet.weight.per.1<-gam.16.lm.log.everything.wet.weight.per.1
-ndata.16.everything.wet.weight.per.1 <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                              length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.everything.wet.weight.per.1 <- add_column(ndata.16.everything.wet.weight.per.1, fit = predict(mod.everything.wet.weight.per.1, newdata = ndata.16.everything.wet.weight.per.1, type = 'response'))
-
-predict(mod.everything.wet.weight.per.1, newdata = ndata.16.everything.wet.weight.per.1, type = 'response')
-ndata.16.everything.wet.weight.per.1 <- bind_cols(ndata.16.everything.wet.weight.per.1, setNames(as_tibble(predict(mod.everything.wet.weight.per.1, ndata.16.everything.wet.weight.per.1, se.fit = TRUE)[1:2]),
-                                                                               c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.everything.wet.weight.per.1 <- mutate(ndata.16.everything.wet.weight.per.1,
-                                      fit_resp  = ilink.gam.16.everything.wet.weight.per.1(fit_link),
-                                      right_upr = ilink.gam.16.everything.wet.weight.per.1(fit_link + (2 * se_link)),
-                                      right_lwr = ilink.gam.16.everything.wet.weight.per.1(fit_link - (2 * se_link)))
-
-
-ndata.16.everything.wet.weight.per.1$min.10.pH.unscaled<-ndata.16.everything.wet.weight.per.1$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.everything.wet.weight.per.1 <- ggplot(ndata.16.everything.wet.weight.per.1, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = log(everything.wet.weight.per.1), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Log Biomass per 1 % cover \n(wet weight)")+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.everything.wet.weight.per.1,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.everything.wet.weight.per.1
-ggsave("C:Graphs April 2020//everything.wet.weight.per.1_pred.png")
-
-
-
-
-# Dry weight --------------------------------------------------------------
-gam.16.lm.total_dry_biomass<- gam(total_dry_biomass ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.total_dry_biomass.1<- gam(total_dry_biomass ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.total_dry_biomass<- gam(log(total_dry_biomass) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.total_dry_biomass.1<- gam(total_dry_biomass ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.total_dry_biomass.1<- gam(total_dry_biomass ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.total_dry_biomass.1, gam.16.lm.log.total_dry_biomass, gam.16.tweedie.total_dry_biomass.1, gam.16.lm.total_dry_biomass, gam.16.gamma.total_dry_biomass.1)
-
-#gam.16.lm.loglink is best but lm is only 0.1 so going with simplest.... 
-
-
-plot(gam.16.lm.total_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.lm.total_dry_biomass )
-#Looks v good
-#qq_plot(gam.16.lm.total_dry_biomass , method = 'simulate')
-#k.check(gam.16.lm.total_dry_biomass )
-summary(gam.16.lm.total_dry_biomass )
-
-gam.16.lm.total_dry_biomass.unordered<- gam(total_dry_biomass ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-summary(gam.16.lm.total_dry_biomass.unordered)
-
-fam.gam.16.total_dry_biomass <- family(gam.16.lm.total_dry_biomass)
-fam.gam.16.total_dry_biomass
-str(fam.gam.16.total_dry_biomass)
-ilink.gam.16.total_dry_biomass<- fam.gam.16.total_dry_biomass$linkinv
-ilink.gam.16.total_dry_biomass
-
-
-mod.total_dry_biomass<-gam.16.lm.total_dry_biomass
-ndata.16.total_dry_biomass <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                              length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.total_dry_biomass <- add_column(ndata.16.total_dry_biomass, fit = predict(mod.total_dry_biomass, newdata = ndata.16.total_dry_biomass, type = 'response'))
-
-predict(mod.total_dry_biomass, newdata = ndata.16.total_dry_biomass, type = 'response')
-ndata.16.total_dry_biomass <- bind_cols(ndata.16.total_dry_biomass, setNames(as_tibble(predict(mod.total_dry_biomass, ndata.16.total_dry_biomass, se.fit = TRUE)[1:2]),
-                                                                               c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.total_dry_biomass <- mutate(ndata.16.total_dry_biomass,
-                                      fit_resp  = ilink.gam.16.total_dry_biomass(fit_link),
-                                      right_upr = ilink.gam.16.total_dry_biomass(fit_link + (2 * se_link)),
-                                      right_lwr = ilink.gam.16.total_dry_biomass(fit_link - (2 * se_link)))
-
-
-ndata.16.total_dry_biomass$min.10.pH.unscaled<-ndata.16.total_dry_biomass$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.total_dry_biomass <- ggplot(ndata.16.total_dry_biomass, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = (total_dry_biomass), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Total dry biomass per tile (g)")+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.total_dry_biomass,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.total_dry_biomass
-ggplot2::ggsave("C:Graphs April 2020//total_dry_biomass_pred.png")
-
-
-# Dry weight per 1 % cover --------------------------------------------------------------
-
-gam.16.lm.total_dry_biomass_per1<- gam(total_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.total_dry_biomass_per1.1<- gam(total_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.total_dry_biomass_per1<- gam(log(total_dry_biomass_per1) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.total_dry_biomass_per1<- gam(total_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.total_dry_biomass_per1.1<- gam(total_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.total_dry_biomass_per1.1, gam.16.lm.log.total_dry_biomass_per1, gam.16.tweedie.total_dry_biomass_per1, gam.16.lm.total_dry_biomass_per1, gam.16.gamma.total_dry_biomass_per1.1)
-
-#tweedie is best by 1.7
-
-plot(gam.16.tweedie.total_dry_biomass_per1 , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.tweedie.total_dry_biomass_per1 )
-#not available for tweedie
-#qq_plot(gam.16.tweedie.total_dry_biomass_per1 , method = 'simulate')
+plot(gam.8.beta.native.occupied.space, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(gam.8.beta.native.occupied.space)
 #looks good
-#k.check(gam.16.tweedie.total_dry_biomass_per1 )
-summary(gam.16.tweedie.total_dry_biomass_per1 )
+qq_plot(gam.8.beta.native.occupied.space, method = 'simulate')
+k.check(gam.8.beta.native.occupied.space)
+summary(gam.8.beta.native.occupied.space)
+gam.8.beta.native.occupied.space.unordered<- gam(native.occupied.space.001~ s(min.10.pH, k=15)+ Invasives + s(min.10.pH, by=oInvasives, k=15), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+summary(gam.8.beta.native.occupied.space.unordered)
 
-gam.16.tweedie.total_dry_biomass_per1.unordered<- gam(total_dry_biomass_per1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=Invasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-summary(gam.16.tweedie.total_dry_biomass_per1.unordered)
-
-fam.gam.16.total_dry_biomass_per1 <- family(gam.16.tweedie.total_dry_biomass_per1)
-fam.gam.16.total_dry_biomass_per1
-str(fam.gam.16.total_dry_biomass_per1)
-ilink.gam.16.total_dry_biomass_per1<- fam.gam.16.total_dry_biomass_per1$linkinv
-ilink.gam.16.total_dry_biomass_per1
+fam.gam.8.native.occupied.space <- family(gam.8.beta.native.occupied.space)
+fam.gam.8.native.occupied.space
+str(fam.gam.8.native.occupied.space)
+ilink.gam.8.native.occupied.space<- fam.gam.8.native.occupied.space$linkinv
+ilink.gam.8.native.occupied.space
 
 
-mod.total_dry_biomass_per1<-gam.16.tweedie.total_dry_biomass_per1
-ndata.16.total_dry_biomass_per1 <- with(invasion.exp.data.16_zscores, 
-                                     data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                     length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
+mod.native.occupied.space<-gam.8.beta.native.occupied.space
+ndata.8.native.occupied.space <- with(invasion.exp.data.8_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+                                                                                                length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
 
 ## add the fitted values by predicting from the model for the new data
-ndata.16.total_dry_biomass_per1 <- add_column(ndata.16.total_dry_biomass_per1, fit = predict(mod.total_dry_biomass_per1, newdata = ndata.16.total_dry_biomass_per1, type = 'response'))
+ndata.8.native.occupied.space <- add_column(ndata.8.native.occupied.space, fit = predict(mod.native.occupied.space, newdata = ndata.8.native.occupied.space, type = 'response'))
 
-predict(mod.total_dry_biomass_per1, newdata = ndata.16.total_dry_biomass_per1, type = 'response')
-ndata.16.total_dry_biomass_per1 <- bind_cols(ndata.16.total_dry_biomass_per1, setNames(as_tibble(predict(mod.total_dry_biomass_per1, ndata.16.total_dry_biomass_per1, se.fit = TRUE)[1:2]),
-                                                                       c('fit_link','se_link')))
+predict(mod.native.occupied.space, newdata = ndata.8.native.occupied.space, type = 'response')
+ndata.8.native.occupied.space <- bind_cols(ndata.8.native.occupied.space, setNames(as_tibble(predict(mod.native.occupied.space, ndata.8.native.occupied.space, se.fit = TRUE)[1:2]),
+                                                                                     c('fit_link','se_link')))
 
 ## create the interval and backtransform
 
-ndata.16.total_dry_biomass_per1 <- mutate(ndata.16.total_dry_biomass_per1,
-                                  fit_resp  = ilink.gam.16.total_dry_biomass_per1(fit_link),
-                                  right_upr = ilink.gam.16.total_dry_biomass_per1(fit_link + (2 * se_link)),
-                                  right_lwr = ilink.gam.16.total_dry_biomass_per1(fit_link - (2 * se_link)))
+ndata.8.native.occupied.space <- mutate(ndata.8.native.occupied.space,
+                                         fit_resp  = ilink.gam.8.native.occupied.space(fit_link),
+                                         right_upr = ilink.gam.8.native.occupied.space(fit_link + (2 * se_link)),
+                                         right_lwr = ilink.gam.8.native.occupied.space(fit_link - (2 * se_link)))
 
 
-ndata.16.total_dry_biomass_per1$min.10.pH.unscaled<-ndata.16.total_dry_biomass_per1$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
+ndata.8.native.occupied.space$min.10.pH.unscaled<-ndata.8.native.occupied.space$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.total_dry_biomass_per1 <- ggplot(ndata.16.total_dry_biomass_per1, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
+plt.native.occupied.space.8 <- ggplot(ndata.8.native.occupied.space, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = (total_dry_biomass_per1), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Total dry biomass per tile (g)")+  
+  geom_point(aes(y = native.occupied.space.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Proportion of space on tile occupied")+  
   scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
   scale_fill_manual(values=colorset_invasives, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.total_dry_biomass_per1,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  geom_ribbon(data = ndata.8.native.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.total_dry_biomass_per1
-ggplot2::ggsave("C:Graphs April 2020//total_dry_biomass_per1_pred.png")
-
-# hydroid biomass ---------------------------------------------------------
-
-gam.16.lm.hydroid_dry_biomass<- gam(hydroid_dry_biomass ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.hydroid_dry_biomass<- gam(hydroid_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.hydroid_dry_biomass<- gam(log(hydroid_dry_biomass+0.1) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.hydroid_dry_biomass<- gam(hydroid_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.hydroid_dry_biomass<- gam(hydroid_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-AICtab(gam.16.loglink.hydroid_dry_biomass, gam.16.lm.log.hydroid_dry_biomass, gam.16.tweedie.hydroid_dry_biomass,  gam.16.lm.hydroid_dry_biomass, gam.16.gamma.hydroid_dry_biomass)
-
-#gamma is best 
-plot(gam.16.gamma.hydroid_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.gamma.hydroid_dry_biomass )
-#looks good, maybe slightly funnelly
-#qq_plot(gam.16.gamma.hydroid_dry_biomass , method = 'simulate')
-#k.check(gam.16.gamma.hydroid_dry_biomass )
-summary(gam.16.gamma.hydroid_dry_biomass )
-
-gam.16.gamma.hydroid_dry_biomass.unordered<- gam(hydroid_dry_biomass+0.1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-fam.gam.16.hydroid_dry_biomass <- family(gam.16.gamma.hydroid_dry_biomass)
-fam.gam.16.hydroid_dry_biomass
-str(fam.gam.16.hydroid_dry_biomass)
-ilink.gam.16.hydroid_dry_biomass<- fam.gam.16.hydroid_dry_biomass$linkinv
-ilink.gam.16.hydroid_dry_biomass
-
-
-mod.hydroid_dry_biomass<-gam.16.gamma.hydroid_dry_biomass
-ndata.16.hydroid_dry_biomass <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                          length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.hydroid_dry_biomass <- add_column(ndata.16.hydroid_dry_biomass, fit = predict(mod.hydroid_dry_biomass, newdata = ndata.16.hydroid_dry_biomass, type = 'response'))
-
-predict(mod.hydroid_dry_biomass, newdata = ndata.16.hydroid_dry_biomass, type = 'response')
-ndata.16.hydroid_dry_biomass <- bind_cols(ndata.16.hydroid_dry_biomass, setNames(as_tibble(predict(mod.hydroid_dry_biomass, ndata.16.hydroid_dry_biomass, se.fit = TRUE)[1:2]),
-                                                                       c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.hydroid_dry_biomass <- mutate(ndata.16.hydroid_dry_biomass,
-                                  fit_resp  = ilink.gam.16.hydroid_dry_biomass(fit_link),
-                                  right_upr = ilink.gam.16.hydroid_dry_biomass(fit_link + (2 * se_link)),
-                                  right_lwr = ilink.gam.16.hydroid_dry_biomass(fit_link - (2 * se_link)))
-
-
-ndata.16.hydroid_dry_biomass$min.10.pH.unscaled<-ndata.16.hydroid_dry_biomass$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.hydroid_dry_biomass <- ggplot(ndata.16.hydroid_dry_biomass, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = (hydroid_dry_biomass+0.01), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(italic("Obelia") ~ "dry weight per tile (g)"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.hydroid_dry_biomass,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.hydroid_dry_biomass
-ggplot2::ggsave("C:Graphs April 2020//hydroid_dry_biomass_pred.png")
-
-
-
-
-# botryllus biomass -------------------------------------------------------
-invasion.exp.data.16_zscores$tunicate_dry_biomass[invasion.exp.data.16_zscores$tunicate_dry_biomass<0]<-0
-
-gam.16.lm.tunicate_dry_biomass<- gam(tunicate_dry_biomass ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.tunicate_dry_biomass<- gam(tunicate_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.tunicate_dry_biomass<- gam(log(tunicate_dry_biomass+0.1) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.tunicate_dry_biomass<- gam(tunicate_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.tunicate_dry_biomass<- gam(tunicate_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.tunicate_dry_biomass, gam.16.lm.log.tunicate_dry_biomass, gam.16.tweedie.tunicate_dry_biomass,gam.16.lm.tunicate_dry_biomass, gam.16.gamma.tunicate_dry_biomass)
-
-#gamma is the best
-
-plot(gam.16.gamma.tunicate_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.gamma.tunicate_dry_biomass )
-#a bit patterny
-#qq_plot(gam.16.gamma.tunicate_dry_biomass , method = 'simulate')
-#k.check(gam.16.gamma.tunicate_dry_biomass )
-summary(gam.16.gamma.tunicate_dry_biomass )
-
-gam.16.gamma.tunicate_dry_biomass.unordered<- gam(tunicate_dry_biomass+0.1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-fam.gam.16.tunicate_dry_biomass <- family(gam.16.gamma.tunicate_dry_biomass)
-fam.gam.16.tunicate_dry_biomass
-str(fam.gam.16.tunicate_dry_biomass)
-ilink.gam.16.tunicate_dry_biomass<- fam.gam.16.tunicate_dry_biomass$linkinv
-ilink.gam.16.tunicate_dry_biomass
-
-
-mod.tunicate_dry_biomass<-gam.16.gamma.tunicate_dry_biomass
-ndata.16.tunicate_dry_biomass <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                            length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.tunicate_dry_biomass <- add_column(ndata.16.tunicate_dry_biomass, fit = predict(mod.tunicate_dry_biomass, newdata = ndata.16.tunicate_dry_biomass, type = 'response'))
-
-predict(mod.tunicate_dry_biomass, newdata = ndata.16.tunicate_dry_biomass, type = 'response')
-ndata.16.tunicate_dry_biomass <- bind_cols(ndata.16.tunicate_dry_biomass, setNames(as_tibble(predict(mod.tunicate_dry_biomass, ndata.16.tunicate_dry_biomass, se.fit = TRUE)[1:2]),
-                                                                           c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.tunicate_dry_biomass <- mutate(ndata.16.tunicate_dry_biomass,
-                                    fit_resp  = ilink.gam.16.tunicate_dry_biomass(fit_link),
-                                    right_upr = ilink.gam.16.tunicate_dry_biomass(fit_link + (2 * se_link)),
-                                    right_lwr = ilink.gam.16.tunicate_dry_biomass(fit_link - (2 * se_link)))
-
-
-ndata.16.tunicate_dry_biomass$min.10.pH.unscaled<-ndata.16.tunicate_dry_biomass$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.tunicate_dry_biomass <- ggplot(ndata.16.tunicate_dry_biomass, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = (tunicate_dry_biomass+0.01), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(italic("Botryllus") ~ "dry weight per tile (g)"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.tunicate_dry_biomass,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.tunicate_dry_biomass
-ggplot2::ggsave("C:Graphs April 2020//tunicate_dry_biomass_pred.png")
-
-
-
-# caprellid biomass -------------------------------------------------------
-gam.16.lm.caprellid_dry_biomass<- gam(caprellid_dry_biomass ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.caprellid_dry_biomass<- gam(caprellid_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.caprellid_dry_biomass<- gam(log(caprellid_dry_biomass+0.1) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.caprellid_dry_biomass<- gam(caprellid_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.caprellid_dry_biomass<- gam(caprellid_dry_biomass+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.caprellid_dry_biomass, gam.16.lm.log.caprellid_dry_biomass, gam.16.tweedie.caprellid_dry_biomass, gam.16.lm.caprellid_dry_biomass, gam.16.gamma.caprellid_dry_biomass)
-#gamma by 1.2
-
-plot(gam.16.gamma.caprellid_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.gamma.caprellid_dry_biomass )
-# look good
-#qq_plot(gam.16.gamma.caprellid_dry_biomass , method = 'simulate')
-#k.check(gam.16.gamma.caprellid_dry_biomass )
-summary(gam.16.gamma.caprellid_dry_biomass )
-gam.16.gamma.caprellid_dry_biomass.unordered<- gam(caprellid_dry_biomass+0.1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-
-
-fam.gam.16.caprellid_dry_biomass <- family(gam.16.gamma.caprellid_dry_biomass)
-ilink.gam.16.caprellid_dry_biomass<- fam.gam.16.caprellid_dry_biomass$linkinv
-mod.caprellid_dry_biomass<-gam.16.gamma.caprellid_dry_biomass
-ndata.16.caprellid_dry_biomass <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                            length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.caprellid_dry_biomass <- add_column(ndata.16.caprellid_dry_biomass, fit = predict(mod.caprellid_dry_biomass, newdata = ndata.16.caprellid_dry_biomass, type = 'response'))
-
-predict(mod.caprellid_dry_biomass, newdata = ndata.16.caprellid_dry_biomass, type = 'response')
-ndata.16.caprellid_dry_biomass <- bind_cols(ndata.16.caprellid_dry_biomass, setNames(as_tibble(predict(mod.caprellid_dry_biomass, ndata.16.caprellid_dry_biomass, se.fit = TRUE)[1:2]),
-                                                                           c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.caprellid_dry_biomass <- mutate(ndata.16.caprellid_dry_biomass,
-                                    fit_resp  = ilink.gam.16.caprellid_dry_biomass(fit_link),
-                                    right_upr = ilink.gam.16.caprellid_dry_biomass(fit_link + (2 * se_link)),
-                                    right_lwr = ilink.gam.16.caprellid_dry_biomass(fit_link - (2 * se_link)))
-
-
-ndata.16.caprellid_dry_biomass$min.10.pH.unscaled<-ndata.16.caprellid_dry_biomass$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.caprellid_dry_biomass <- ggplot(ndata.16.caprellid_dry_biomass, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = (caprellid_dry_biomass+0.01), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(italic("Caprella") ~ "dry weight per tile (g)"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.caprellid_dry_biomass,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.caprellid_dry_biomass
-ggplot2::ggsave("C:Graphs April 2020//caprellid_dry_biomass_pred.png")
-
-
-
-# caprellid biomass per invididual -------------------------------------------------------
-
-invasion.exp.data.16_zscores$caprellid_dry_biomass_per1<-invasion.exp.data.16_zscores$caprellid_dry_biomass/(food.caprellid.data_zscores$total.caprellids)
-
-gam.16.lm.caprellid_dry_biomass_per1<- gam(caprellid_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.caprellid_dry_biomass_per1<- gam(caprellid_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.caprellid_dry_biomass_per1<- gam(log(caprellid_dry_biomass_per1) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.caprellid_dry_biomass_per1<- gam(caprellid_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.caprellid_dry_biomass_per1<- gam(caprellid_dry_biomass_per1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.caprellid_dry_biomass_per1, gam.16.lm.log.caprellid_dry_biomass_per1, gam.16.tweedie.caprellid_dry_biomass_per1,  gam.16.lm.caprellid_dry_biomass_per1, gam.16.gamma.caprellid_dry_biomass_per1)
-
-#gamma is the best by 2.2
-plot(gam.16.gamma.caprellid_dry_biomass_per1 , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.gamma.caprellid_dry_biomass_per1 )
-#a bit funnelly and qq right tail
-#qq_plot(gam.16.gamma.caprellid_dry_biomass_per1 , method = 'simulate')
-#k.check(gam.16.gamma.caprellid_dry_biomass_per1 )
-summary(gam.16.gamma.caprellid_dry_biomass_per1 )
-gam.16.gamma.caprellid_dry_biomass_per1.unordered<- gam(caprellid_dry_biomass_per1+0.1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-
-fam.gam.16.caprellid_dry_biomass_per1 <- family(gam.16.gamma.caprellid_dry_biomass_per1)
-fam.gam.16.caprellid_dry_biomass_per1
-str(fam.gam.16.caprellid_dry_biomass_per1)
-ilink.gam.16.caprellid_dry_biomass_per1<- fam.gam.16.caprellid_dry_biomass_per1$linkinv
-ilink.gam.16.caprellid_dry_biomass_per1
-
-
-mod.caprellid_dry_biomass_per1<-gam.16.gamma.caprellid_dry_biomass_per1
-ndata.16.caprellid_dry_biomass_per1 <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                              length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.caprellid_dry_biomass_per1 <- add_column(ndata.16.caprellid_dry_biomass_per1, fit = predict(mod.caprellid_dry_biomass_per1, newdata = ndata.16.caprellid_dry_biomass_per1, type = 'response'))
-
-predict(mod.caprellid_dry_biomass_per1, newdata = ndata.16.caprellid_dry_biomass_per1, type = 'response')
-ndata.16.caprellid_dry_biomass_per1 <- bind_cols(ndata.16.caprellid_dry_biomass_per1, setNames(as_tibble(predict(mod.caprellid_dry_biomass_per1, ndata.16.caprellid_dry_biomass_per1, se.fit = TRUE)[1:2]),
-                                                                               c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.caprellid_dry_biomass_per1 <- mutate(ndata.16.caprellid_dry_biomass_per1,
-                                      fit_resp  = ilink.gam.16.caprellid_dry_biomass_per1(fit_link),
-                                      right_upr = ilink.gam.16.caprellid_dry_biomass_per1(fit_link + (2 * se_link)),
-                                      right_lwr = ilink.gam.16.caprellid_dry_biomass_per1(fit_link - (2 * se_link)))
-
-
-ndata.16.caprellid_dry_biomass_per1$min.10.pH.unscaled<-ndata.16.caprellid_dry_biomass_per1$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.caprellid_dry_biomass_per1 <- ggplot(ndata.16.caprellid_dry_biomass_per1, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = (caprellid_dry_biomass_per1), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(italic("Caprella") ~ "dry weight per tile (g)"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.caprellid_dry_biomass_per1,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')+ylim(0,0.012)
-plt.caprellid_dry_biomass_per1
-ggplot2::ggsave("C:Graphs April 2020//caprellid_dry_biomass_per1_pred.png")
-
-
-# rest biomass ------------------------------------------------------------
-
-#kcheck was significant so increase k from 10 to 11
-gam.16.lm.rest_dry_biomass<- gam(rest_dry_biomass ~ s(min.10.pH, k=12)+ oInvasives + s(min.10.pH, by=oInvasives, k=12),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.rest_dry_biomass<- gam(rest_dry_biomass+0.1 ~ s(min.10.pH, k=12)+ oInvasives + s(min.10.pH, by=oInvasives, k=12),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.rest_dry_biomass<- gam(log(rest_dry_biomass+0.1) ~ s(min.10.pH, k=12)+ oInvasives + s(min.10.pH, by=oInvasives, k=12),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.rest_dry_biomass<- gam(rest_dry_biomass+0.1 ~ s(min.10.pH, k=12)+ oInvasives + s(min.10.pH, by=oInvasives, k=12),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.rest_dry_biomass<- gam(rest_dry_biomass+0.1 ~ s(min.10.pH, k=12)+ oInvasives + s(min.10.pH, by=oInvasives, k=12),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.rest_dry_biomass, gam.16.lm.log.rest_dry_biomass, gam.16.tweedie.rest_dry_biomass, gam.16.lm.rest_dry_biomass, gam.16.gamma.rest_dry_biomass)
-
-#tweedie the best 
-
-
-plot(gam.16.tweedie.rest_dry_biomass , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#qq_plot(gam.16.tweedie.rest_dry_biomass , method = 'simulate')
-#k.check(gam.16.tweedie.rest_dry_biomass )
-summary(gam.16.tweedie.rest_dry_biomass)
-
-gam.16.tweedie.rest_dry_biomass.unordered<- gam(rest_dry_biomass+0.1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-summary(gam.16.tweedie.rest_dry_biomass.unordered)
-
-fam.gam.16.rest_dry_biomass <- family(gam.16.tweedie.rest_dry_biomass)
-fam.gam.16.rest_dry_biomass
-str(fam.gam.16.rest_dry_biomass)
-ilink.gam.16.rest_dry_biomass<- fam.gam.16.rest_dry_biomass$linkinv
-ilink.gam.16.rest_dry_biomass
-
-
-mod.rest_dry_biomass<-gam.16.tweedie.rest_dry_biomass
-ndata.16.rest_dry_biomass <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                            length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-## add the fitted values by predicting from the model for the new data
-ndata.16.rest_dry_biomass <- add_column(ndata.16.rest_dry_biomass, fit = predict(mod.rest_dry_biomass, newdata = ndata.16.rest_dry_biomass, type = 'response'))
-
-predict(mod.rest_dry_biomass, newdata = ndata.16.rest_dry_biomass, type = 'response')
-ndata.16.rest_dry_biomass <- bind_cols(ndata.16.rest_dry_biomass, setNames(as_tibble(predict(mod.rest_dry_biomass, ndata.16.rest_dry_biomass, se.fit = TRUE)[1:2]),
-                                                                           c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.rest_dry_biomass <- mutate(ndata.16.rest_dry_biomass,
-                                    fit_resp  = ilink.gam.16.rest_dry_biomass(fit_link),
-                                    right_upr = ilink.gam.16.rest_dry_biomass(fit_link + (2 * se_link)),
-                                    right_lwr = ilink.gam.16.rest_dry_biomass(fit_link - (2 * se_link)))
-
-
-ndata.16.rest_dry_biomass$min.10.pH.unscaled<-ndata.16.rest_dry_biomass$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.rest_dry_biomass <- ggplot(ndata.16.rest_dry_biomass, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = (rest_dry_biomass+0.01), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression("Remaining dry weight per tile (g)"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.rest_dry_biomass,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.rest_dry_biomass
-ggplot2::ggsave("C:Graphs April 2020//rest_dry_biomass_pred.png")
-
-
-
-
-# Mussel wet weight -------------------------------------------------------
-
-gam.16.lm.Mussel.wet.weight<- gam(Mussel.wet.weight ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.Mussel.wet.weight.1<- gam(Mussel.wet.weight+0.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.Mussel.wet.weight<- gam(log(Mussel.wet.weight+0.1) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.Mussel.wet.weight.1<- gam(Mussel.wet.weight ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.Mussel.wet.weight.1<- gam(Mussel.wet.weight ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-
-AICtab(gam.16.loglink.Mussel.wet.weight.1, gam.16.lm.log.Mussel.wet.weight, gam.16.tweedie.Mussel.wet.weight.1,gam.16.lm.Mussel.wet.weight, gam.16.gamma.Mussel.wet.weight.1)
-
-#gam.16.lm.log.Mussel.wet.weight is best 
-
-plot(gam.16.lm.log.Mussel.wet.weight, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.lm.log.Mussel.wet.weight)
-#look pretty good, esp qq
-#qq_plot(gam.16.lm.log.Mussel.wet.weight, method = 'simulate')
-#k.check(gam.16.lm.log.Mussel.wet.weight)
-summary(gam.16.lm.log.Mussel.wet.weight)
-
-#residuals many in a straight line but otherwise good 
-
-gam.16.lm.log.Mussel.wet.weight.unordered<- gam(log(Mussel.wet.weight+0.1) ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-fam.gam.16.Mussel.wet.weight <- family(gam.16.lm.log.Mussel.wet.weight)
-fam.gam.16.Mussel.wet.weight
-ilink.gam.16.Mussel.wet.weight<- fam.gam.16.Mussel.wet.weight$linkinv
-ilink.gam.16.Mussel.wet.weight
-
-
-mod.Mussel.wet.weight<-gam.16.lm.log.Mussel.wet.weight
-ndata.16.Mussel.wet.weight <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                              length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.Mussel.wet.weight <- add_column(ndata.16.Mussel.wet.weight, fit = predict(mod.Mussel.wet.weight, newdata = ndata.16.Mussel.wet.weight, type = 'response'))
-
-predict(mod.Mussel.wet.weight, newdata = ndata.16.Mussel.wet.weight, type = 'response')
-ndata.16.Mussel.wet.weight <- bind_cols(ndata.16.Mussel.wet.weight, setNames(as_tibble(predict(mod.Mussel.wet.weight, ndata.16.Mussel.wet.weight, se.fit = TRUE)[1:2]),
-                                                                               c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.Mussel.wet.weight <- mutate(ndata.16.Mussel.wet.weight,
-                                      fit_resp  = ilink.gam.16.Mussel.wet.weight(fit_link),
-                                      right_upr = ilink.gam.16.Mussel.wet.weight(fit_link + (2 * se_link)),
-                                      right_lwr = ilink.gam.16.Mussel.wet.weight(fit_link - (2 * se_link)))
-
-
-ndata.16.Mussel.wet.weight$min.10.pH.unscaled<-ndata.16.Mussel.wet.weight$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.Mussel.wet.weight <- ggplot(ndata.16.Mussel.wet.weight, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = log(Mussel.wet.weight+0.1), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(italic("Mytilus") ~"wet weight (g, log scale)"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.Mussel.wet.weight,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.Mussel.wet.weight
-ggsave("C:Graphs April 2020//Mussel.wet.weight_pred.png")
-
-
-
-
-
-
-# Mussel wet weight per individual mussel ---------------------------------
-#big outlier .... 5 mussels weigh 105.5 g?? so 17 g per mussel? 
-
-invasion.exp.data.16_zscores$Mussel.wet.weight[invasion.exp.data.16_zscores$Mesocosm==8]<-14.0
-invasion.exp.data.16_zscores$Mussel.wet.weight.per.1<-(invasion.exp.data.16_zscores$Mussel.wet.weight)/(invasion.exp.data.16_zscores$mussel+1)
-
-gam.16.lm.Mussel.wet.weight.per.1<- gam(Mussel.wet.weight.per.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.Mussel.wet.weight.per.1<- gam(Mussel.wet.weight.per.1+0.01 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.lm.log.Mussel.wet.weight.per.1<- gam(log(Mussel.wet.weight.per.1+0.01) ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.tweedie.Mussel.wet.weight.per.1.1<- gam(Mussel.wet.weight.per.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = tw, select=TRUE, method="REML")
-gam.16.loglink.Mussel.wet.weight.per.1.1<- gam(Mussel.wet.weight.per.1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-
-AICtab(gam.16.loglink.Mussel.wet.weight.per.1.1, gam.16.lm.log.Mussel.wet.weight.per.1, gam.16.tweedie.Mussel.wet.weight.per.1.1,  gam.16.lm.Mussel.wet.weight.per.1, gam.16.gamma.Mussel.wet.weight.per.1)
-
-#gamma is best 
-plot(gam.16.gamma.Mussel.wet.weight.per.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.gamma.Mussel.wet.weight.per.1)
-# good but a bit funnelly
-#qq_plot(gam.16.gamma.Mussel.wet.weight.per.1, method = 'simulate')
-#k.check(gam.16.gamma.Mussel.wet.weight.per.1)
-summary(gam.16.gamma.Mussel.wet.weight.per.1)
-
-gam.16.gamma.Mussel.wet.weight.per.1.unordered<- gam(Mussel.wet.weight.per.1+0.01 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-
-fam.gam.16.Mussel.wet.weight.per.1 <- family(gam.16.gamma.Mussel.wet.weight.per.1)
-fam.gam.16.Mussel.wet.weight.per.1
-str(fam.gam.16.Mussel.wet.weight.per.1)
-ilink.gam.16.Mussel.wet.weight.per.1<- fam.gam.16.Mussel.wet.weight.per.1$linkinv
-ilink.gam.16.Mussel.wet.weight.per.1
-
-
-mod.Mussel.wet.weight.per.1<-gam.16.gamma.Mussel.wet.weight.per.1
-ndata.16.Mussel.wet.weight.per.1 <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
-                                                                                          length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.Mussel.wet.weight.per.1 <- add_column(ndata.16.Mussel.wet.weight.per.1, fit = predict(mod.Mussel.wet.weight.per.1, newdata = ndata.16.Mussel.wet.weight.per.1, type = 'response'))
-
-predict(mod.Mussel.wet.weight.per.1, newdata = ndata.16.Mussel.wet.weight.per.1, type = 'response')
-ndata.16.Mussel.wet.weight.per.1 <- bind_cols(ndata.16.Mussel.wet.weight.per.1, setNames(as_tibble(predict(mod.Mussel.wet.weight.per.1, ndata.16.Mussel.wet.weight.per.1, se.fit = TRUE)[1:2]),
-                                                                       c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.Mussel.wet.weight.per.1 <- mutate(ndata.16.Mussel.wet.weight.per.1,
-                                  fit_resp  = ilink.gam.16.Mussel.wet.weight.per.1(fit_link),
-                                  right_upr = ilink.gam.16.Mussel.wet.weight.per.1(fit_link + (2 * se_link)),
-                                  right_lwr = ilink.gam.16.Mussel.wet.weight.per.1(fit_link - (2 * se_link)))
-
-
-ndata.16.Mussel.wet.weight.per.1$min.10.pH.unscaled<-ndata.16.Mussel.wet.weight.per.1$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-
-# plot 
-plt.Mussel.wet.weight.per.1 <- ggplot(ndata.16.Mussel.wet.weight.per.1, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = Mussel.wet.weight.per.1, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Biomass per mussel \n(wet weight)")+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.Mussel.wet.weight.per.1,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')
-plt.Mussel.wet.weight.per.1
-ggsave("C:Graphs April 2020//Mussel.wet.weight.per.1_pred.png")
-
-
-
-
-# Hydtobot ----------------------------------------------------------------
-invasion.exp.data.16_zscores$hydtobot[invasion.exp.data.16_zscores$hydtobot==1]<-0.99
-invasion.exp.data.16_zscores$hydtobot[invasion.exp.data.16_zscores$hydtobot==0]<-0.01
-
-gam.16.lm.hydtobot<- gam(log(hydtobot+0.01)~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.log.lm.hydtobot<- gam(hydtobot~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-gam.16.tweedie.hydtobot<- gam(hydtobot~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family =tw(), select=TRUE, method="REML")
-
-gam.16.beta.hydtobot<- gam(hydtobot~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.hydtobot.1<- gam(hydtobot~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.hydtobot.2<- gam(hydtobot~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-
-
-AICtab( gam.16.tweedie.hydtobot ,gam.16.beta.hydtobot, gam.16.lm.hydtobot, gam.16.log.lm.hydtobot, gam.16.beta.hydtobot.1, gam.16.beta.hydtobot.2)
-### beta logit is the best 
-
-plot(gam.16.beta.hydtobot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.beta.hydtobot)
-#qq a bit wiggly
-#qq_plot(gam.16.beta.hydtobot, method = 'simulate')
-#k.check(gam.16.beta.hydtobot)
-gam.16.check(gam.16.tweedie.hydtobot)
-summary(gam.16.beta.hydtobot)
-#not the best qq plot
-#resids are in rows
-
-gam.16.beta.hydtobot.unordered<- gam(hydtobot~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-fam.gam.16.hydtobot <- family(gam.16.beta.hydtobot)
-fam.gam.16.hydtobot 
-
-ilink.gam.16.hydtobot <- fam.gam.16.hydtobot$linkinv
-ilink.gam.16.hydtobot
-
-
-invasion.exp.data.16_zscores$min.10.pH.unscaled <-invasion.exp.data.16_zscores$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-head(invasion.exp.data.16_zscores)
-
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-
-mod.hydtobot<-gam.16.beta.hydtobot
-ndata.16.hydtobot <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH= seq(min(min.10.pH), max(min.10.pH),
-                                                                               length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.hydtobot <- add_column(ndata.16.hydtobot, fit = predict(mod.hydtobot, newdata = ndata.16.hydtobot, type = 'response'))
-
-
-ndata.16.hydtobot <- bind_cols(ndata.16.hydtobot, setNames(as_tibble(predict(mod.hydtobot, ndata.16.hydtobot, se.fit = TRUE)[1:2]),
-                                                   c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.hydtobot <- mutate(ndata.16.hydtobot,
-                        fit_resp  = ilink.gam.16.hydtobot(fit_link),
-                        right_upr = ilink.gam.16.hydtobot(fit_link + (2 * se_link)),
-                        right_lwr = ilink.gam.16.hydtobot(fit_link - (2 * se_link)))
-
-
-
-
-ndata.16.hydtobot$min.10.pH.unscaled<-ndata.16.hydtobot$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-# plot 
-
-plt.gam.16.hydtobot <- ggplot(ndata.16.hydtobot, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = hydtobot, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(italic("Botryllus")~ "to" ~ italic("Obelia") ~ "cover ratio"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.hydtobot,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0.2, "cm"), legend.margin=margin(0, 0, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=6), legend.title = element_text(size=7))+ 
-  geom_hline(yintercept=0.5, linetype="dashed", color="black", size=1)+coord_cartesian(ylim = c(0, 1)) 
-plt.gam.16.hydtobot 
-
-
-# Hydtobot by weight ------------------------------------------------------
-invasion.exp.data.16_zscores$hydtobot_dry_biomass[invasion.exp.data.16_zscores$hydtobot_dry_biomass==1]<-0.99
-invasion.exp.data.16_zscores$hydtobot_dry_biomass[invasion.exp.data.16_zscores$hydtobot_dry_biomass==0]<-0.01
-
-gam.16.lm.hydtobot_dry_biomass<- gam(log(hydtobot_dry_biomass+0.01)~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.log.lm.hydtobot_dry_biomass<- gam(hydtobot_dry_biomass~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-gam.16.tweedie.hydtobot_dry_biomass<- gam(hydtobot_dry_biomass~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family =tw(), select=TRUE, method="REML")
-gam.16.beta.hydtobot_dry_biomass<- gam(hydtobot_dry_biomass~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.hydtobot_dry_biomass.1<- gam(hydtobot_dry_biomass~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.hydtobot_dry_biomass.2<- gam(hydtobot_dry_biomass~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-
-AICtab(gam.16.tweedie.hydtobot_dry_biomass ,gam.16.beta.hydtobot_dry_biomass, gam.16.lm.hydtobot_dry_biomass, gam.16.log.lm.hydtobot_dry_biomass, gam.16.beta.hydtobot_dry_biomass.1, gam.16.beta.hydtobot_dry_biomass.2, lm.hydtobot_dry_biomass, lm.log.hydtobot_dry_biomass)
-### logit is the best 
-
-plot(gam.16.beta.hydtobot_dry_biomass, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-##appraise(gam.16.beta.hydtobot_dry_biomass)
-#look ok, qq is bloacky
-#qq_plot(gam.16.beta.hydtobot_dry_biomass, method = 'simulate')
-#k.check(gam.16.beta.hydtobot_dry_biomass)
-summary(gam.16.beta.hydtobot_dry_biomass)
-gam.16.beta.hydtobot_dry_biomass.unordered<- gam(hydtobot_dry_biomass~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-
-fam.gam.16.hydtobot_dry_biomass <- family(gam.16.beta.hydtobot_dry_biomass)
-fam.gam.16.hydtobot_dry_biomass 
-str(fam.gam.16.hydtobot_dry_biomass )
-ilink.gam.16.hydtobot_dry_biomass <- fam.gam.16.hydtobot_dry_biomass$linkinv
-ilink.gam.16.hydtobot_dry_biomass
-
-invasion.exp.data.16_zscores$min.10.pH.unscaled <-invasion.exp.data.16_zscores$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-head(invasion.exp.data.16_zscores)
-
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-
-mod.hydtobot_dry_biomass<-gam.16.beta.hydtobot_dry_biomass
-ndata.16.hydtobot_dry_biomass <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH= seq(min(min.10.pH), max(min.10.pH),
-                                                                                length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.hydtobot_dry_biomass <- add_column(ndata.16.hydtobot_dry_biomass, fit = predict(mod.hydtobot_dry_biomass, newdata = ndata.16.hydtobot_dry_biomass, type = 'response'))
-
-
-ndata.16.hydtobot_dry_biomass <- bind_cols(ndata.16.hydtobot_dry_biomass, setNames(as_tibble(predict(mod.hydtobot_dry_biomass, ndata.16.hydtobot_dry_biomass, se.fit = TRUE)[1:2]),
-                                                     c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.hydtobot_dry_biomass <- mutate(ndata.16.hydtobot_dry_biomass,
-                         fit_resp  = ilink.gam.16.hydtobot_dry_biomass(fit_link),
-                         right_upr = ilink.gam.16.hydtobot_dry_biomass(fit_link + (2 * se_link)),
-                         right_lwr = ilink.gam.16.hydtobot_dry_biomass(fit_link - (2 * se_link)))
-
-
-
-
-ndata.16.hydtobot_dry_biomass$min.10.pH.unscaled<-ndata.16.hydtobot_dry_biomass$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
-
-# plot 
-
-plt.gam.16.hydtobot_dry_biomass <- ggplot(ndata.16.hydtobot_dry_biomass, aes(x = min.10.pH.unscaled, y = fit)) + 
-  
-  geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y = hydtobot_dry_biomass, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(italic("Botryllus")~ "to" ~ italic("Obelia") ~ "biomass ratio"))+  
-  scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
-  scale_fill_manual(values=colorset_invasives, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.hydtobot_dry_biomass,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
-  theme(legend.position='none')+ geom_hline(yintercept=0.5, linetype="dashed", color="black", size=1)#+coord_cartesian(ylim = c(0, 1)) 
-plt.gam.16.hydtobot_dry_biomass 
-
-
-#mesocosm #8 didn't have either tunicates or hydroids weight - 0% hydroids, 2% tunicates
+plt.native.occupied.space.8
+ggsave("C:Graphs April 2020//native.occupied.space_pred.8.png")
 
 
 # CAP1 --------------------------------------------------------------------
@@ -2944,7 +2065,7 @@ library(cowplot)
 
 #### revised community fig
 fig.4.community<-wrap_plots( plt.occupied.space,plt.total_dry_biomass,
-                            plt.richness, plt.evenness,
+                            plt.num.species.no.bot, plt.evenness,
                             plt.CAP1, plt.distances, ncol=2)+
                             plot_annotation(tag_levels = 'a')
 
@@ -2965,8 +2086,8 @@ ggplot2::ggsave("C:Data//For submission//For resubmission//RESUB2//First look//F
 
 # Community level tables --------------------------------------------------
 
-richness.gam<- summary(gam.16.poisson.richness)
-richness.gam.16.unordered<- summary(gam.16.poisson.richness.unordered)
+num.species.no.bot.gam<- summary(gam.16.poisson.num.species.no.bot)
+num.species.no.bot.gam.16.unordered<- summary(gam.16.poisson.num.species.no.bot.unordered)
 
 evenness.gam<-summary(gam.16.lm.evenness)
 evenness.gam.16.unordered<-summary(gam.16.lm.evenness.unordered)
@@ -3021,8 +2142,8 @@ hydtobot.gam <- summary(gam.16.beta.hydtobot)
 hydtobot.gam.16.unordered <- summary(gam.16.beta.hydtobot.unordered)
 
 #ptable building
-richness.gam.16.p.table<-as.data.frame(richness.gam.16.unordered$p.table)
-richness.gam.16.s.table<-as.data.frame(richness.gam$s.table)
+num.species.no.bot.gam.16.p.table<-as.data.frame(num.species.no.bot.gam.16.unordered$p.table)
+num.species.no.bot.gam.16.s.table<-as.data.frame(num.species.no.bot.gam$s.table)
 
 evenness.gam.16.p.table<-as.data.frame(evenness.gam.16.unordered$p.table)
 evenness.gam.16.s.table<-as.data.frame(evenness.gam$s.table)
@@ -3072,15 +2193,15 @@ hydtobot_dry_biomass.gam.16.s.table<-as.data.frame(hydtobot_dry_biomass.gam$s.ta
 hydtobot_dry_biomass.gam.16.p.table
 hydtobot_dry_biomass.gam.16.s.table
 
-#richness.gam.16.p.table and  hydtobot.gam.16.p.table, is with z value 
-colnames(richness.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+#num.species.no.bot.gam.16.p.table and  hydtobot.gam.16.p.table, is with z value 
+colnames(num.species.no.bot.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
 colnames(hydtobot.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
 colnames(hydtobot_dry_biomass.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
 colnames(occupied.space.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
 
 
 #### Building the stats table
-ptable.community.t<-rbind(richness.gam.16.p.table,
+ptable.community.t<-rbind(num.species.no.bot.gam.16.p.table,
               evenness.gam.16.p.table,
               occupied.space.gam.16.p.table,
               total_dry_biomass.gam.16.p.table,
@@ -3102,7 +2223,7 @@ ptable.community.t %>%
   dplyr::select(Factor, Estimate, SE, t, p) %>% 
   kable(escape=F, digits=4) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("Richness, poisson (z)", 1,3) %>% 
+  group_rows("num.species.no.bot, poisson (z)", 1,3) %>% 
   group_rows("Evenness, normal", 4,6) %>%
   group_rows("Occupied space, beta (z)", 7,9) %>% 
   group_rows("Total dry biomass, normal", 10,12) %>% 
@@ -3115,9 +2236,9 @@ ptable.community.t %>%
   save_kable(file = "C:Data//For submission//ptable.community.t.html", self_contained = T)
 
 
-#again hydtobot and richness
-#richness.gam.16.p.table and  hydtobot.gam.16.p.table, is with Chisq
-colnames(richness.gam.16.s.table) <- c("edf", "Ref.df", "F", "p-value")
+#again hydtobot and num.species.no.bot
+#num.species.no.bot.gam.16.p.table and  hydtobot.gam.16.p.table, is with Chisq
+colnames(num.species.no.bot.gam.16.s.table) <- c("edf", "Ref.df", "F", "p-value")
 colnames(hydtobot.gam.16.s.table) <- c("edf", "Ref.df",  "F", "p-value")
 colnames(hydtobot_dry_biomass.gam.16.s.table) <- c("edf", "Ref.df",  "F", "p-value")
 
@@ -3125,7 +2246,7 @@ colnames(occupied.space.gam.16.s.table) <- c("edf", "Ref.df",  "F", "p-value")
 
 
 ### s table
-stable.community.f<-rbind(richness.gam.16.s.table,
+stable.community.f<-rbind(num.species.no.bot.gam.16.s.table,
                           evenness.gam.16.s.table,
                           occupied.space.gam.16.s.table,
                           total_dry_biomass.gam.16.s.table,
@@ -3147,7 +2268,7 @@ stable.community.f %>%
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth) %>% 
   kable(escape=F, digits=4) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("Richness, poisson (Chi-square)", 1,3) %>% 
+  group_rows("num.species.no.bot, poisson (Chi-square)", 1,3) %>% 
   group_rows("Evenness, normal", 4,6) %>%
   group_rows("Occupied space, beta (Chi-square)", 7,9) %>% 
   group_rows("Total dry biomass, normal", 10,12) %>% 
@@ -3171,7 +2292,7 @@ pstable.community %>%
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth, Factor, Estimate, SE, t, p) %>% 
   kable(escape=F, digits=2, row.names = FALSE) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("Richness, poisson (Chi-square, z)", 1,3) %>% 
+  group_rows("num.species.no.bot, poisson (Chi-square, z)", 1,3) %>% 
   group_rows("Evenness, normal", 4,6) %>%
   group_rows("Occupied space, beta (Chi-square, z)", 7,9) %>% 
   group_rows("Total dry biomass, normal", 10,12) %>% 
