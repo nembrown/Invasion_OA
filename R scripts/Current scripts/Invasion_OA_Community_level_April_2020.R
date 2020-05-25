@@ -12,7 +12,9 @@ library(fitdistrplus)
   invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_without_pres.csv",stringsAsFactors = FALSE, na.strings = c("NA","") )
   head(invasion.exp.data)
   invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
-  invasion.exp.data$disporella<-invasion.exp.data$white.bryo+invasion.exp.data$fan.bryos+invasion.exp.data$erect.bryo
+  invasion.exp.data$nudi.cover<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.hatched
+  
+    invasion.exp.data$disporella<-invasion.exp.data$white.bryo+invasion.exp.data$fan.bryos+invasion.exp.data$erect.bryo
   
   invasion.exp.data$hydroid.001<-(0.01*(invasion.exp.data$hydroid))+0.01
   invasion.exp.data$botryllid.001<-(0.01*(invasion.exp.data$botryllid))+0.01
@@ -46,7 +48,7 @@ native_sp_names<-c("Tile.ID",
                           "num.serpulid" ,
                           "num.barn" ,
                           "other.bryo" ,
-                          "clam" )
+                          "clam")
                           
 
 invasion.exp.data.8.tile.selected<-invasion.exp.data.8[,colnames(invasion.exp.data.8) %in% native_sp_names]
@@ -64,14 +66,14 @@ head(just.species.rec_cover.8)
 ##### making a newdataframe for % cover only - to be used for evenness and shannon diversity
 
 names_cover_food_exp_tile<-c("Tile.ID",
-                             "num.nudi" ,"disporella",
-                             "mussel" ,"hydroid","membranipora", "mem.eaten", "folliculina",
+                             "disporella",
+                             "mussel" ,"hydroid","membranipora","mem.dead", "mem.eaten", "folliculina",
                              "corella" ,"dead.corella",
                              "red.bryo" ,
-                             "nserpulid" ,
+                             "serpulid" ,
                              "barn" ,
                              "other.bryo" ,
-                             "clam" )
+                             "clam", "oyster", "disporella", "nudi.cover", "nudi eggs", "bubble snail", "bubble eggs", "slime", "chiton")
 
 
 
