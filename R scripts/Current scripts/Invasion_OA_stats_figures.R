@@ -40,7 +40,7 @@ library(cowplot)
 library(devtools)
 library(installr)
 library(patchwork)
-
+library(codyn)
 
 
 # dataframe management ----------------------------------------------------
@@ -2713,3 +2713,25 @@ pstable.community %>%
   group_rows("Botryllus to Obelia dominance ratio by biomass, beta (Chi-square, z)", 22,24) %>% 
   group_rows("Total wet biomass, normal (log)", 25,27) %>% 
   save_kable(file = "C:Data//For submission//For resubmission//RESUB2//First look//pstable.community.html ", self_contained = T)
+
+
+
+
+
+###################
+head(invasion.exp.data)
+native_sp_names_allwks<-c("Tile.ID", 
+                   "num.nudi" ,
+                   "mussel" ,"hydroid","membranipora", "mem.eaten", "folliculina",
+                   "num.corella" ,
+                   "num.red.bryo" ,
+                   "num.white.bryo" ,
+                   "num.serpulid" ,
+                   "num.barn" ,
+                   "other.bryo" ,
+                   "clam" )
+
+
+invasion.exp.data.8.tile.selected<-invasion.exp.data.8[,colnames(invasion.exp.data.8) %in% native_sp_names]
+head(invasion.exp.data.8.tile.selected)
+
