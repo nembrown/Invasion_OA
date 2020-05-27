@@ -1056,7 +1056,7 @@ summary(gam.16.poisson.num.barn)
 #a few outside the area
 ##appraise a bit funnelly
 
-gam.16.poisson.num.barn.unordered<- gam(num.barn ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.barnacles$estimate[[1]]), select=TRUE, method="REML")
+gam.16.poisson.num.barn.unordered<- gam(num.barn ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
 fam.gam.16.num.barn <- family(gam.16.poisson.num.barn)
 fam.gam.16.num.barn
 str(fam.gam.16.num.barn)
@@ -1322,6 +1322,8 @@ ggsave("C:Graphs April 2020//num.red.bryo_pred.16.png")
 nbinom.8.num.red.bryo <- fitdistr(invasion.exp.data.8_zscores$num.red.bryo, "Negative Binomial")
 qqp(invasion.exp.data.8_zscores$num.red.bryo, "nbinom", size = nbinom.8.num.red.bryo$estimate[[1]], mu = nbinom.8.num.red.bryo$estimate[[2]])
 #getting theta
+invasion.exp.data.8_zscores$num.red.bryo
+
 
 gam.8.nb.num.red.bryo<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
 gam.8.nb.num.red.bryo.1<- gam(num.red.bryo ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
@@ -1739,202 +1741,157 @@ ggplot2::ggsave(plot=fig.week.8, "C:Graphs April 2020//Fig_wk_8.pdf", width=8.75
 
 head(invasion.exp.data.8_zscores)
 
-# Pulling model results to a table ----------------------------------------
+# Pulling model 16 results to a table ----------------------------------------
 
-hydroid.gam<-summary(gam.16.beta.hydroid.3)
-botryllus.gam<-summary(gam.16.beta.botryllid.3)
-caprellid.gam<-summary(gam.16.beta.caprellid.percent)
-folliculina.gam<-summary(gam.16.beta.folliculina)
-membranipora.gam<-summary(gam.16.beta.membranipora)
-didemnum.gam<-summary(gam.16.beta.didemnum)
-mussel.gam<-summary(gam.16.nb.mussel)
-alive.barn.gam<-summary(gam.16.nb.num.barn)
-num.white.bryo.gam<-summary(gam.16.nb.num.white.bryo)
-num.red.bryo.gam<-summary(gam.16.nb.num.red.bryo)
-num.nudi.gam<-summary(gam.16.poisson.num.nudi)
-num.serpulid.gam<-summary(gam.16.nb.num.serpulid.1)
-clam.gam<-summary(gam.16.poisson.clam)
-corella.gam<-summary(gam.16.nb.num.corella)
-orange_sponge.gam<-summary(gam.16.nb.orange_sponge)
+botryllus.gam.16<-summary(gam.16.beta.botryllid)
+botryllus.eaten.gam.16<-summary(gam.16.beta.bot.eaten)
+folliculina.gam.16<-summary(gam.16.beta.folliculina)
+membranipora.gam.16<-summary(gam.16.beta.membranipora.3)
+membranipora.eaten.gam.16<-summary(gam.16.beta.mem.eaten.3)
+mussel.gam.16<-summary(gam.16.beta.mussel.3)
+alive.barn.gam.16<-summary(gam.16.poisson.num.barn)
+num.white.bryo.gam.16<-summary(gam.16.nb.num.white.bryo)
+num.red.bryo.gam.16<-summary(gam.16.poisson.num.red.bryo)
+num.nudi.gam.16<-summary(gam.16.poisson.num.nudi)
+num.serpulid.gam.16<-summary(gam.16.nb.num.serpulid.1)
+corella.gam.16<-summary(gam.16.nb.num.corella)
 
-hydroid.gam.16.unordered<-summary(gam.16.beta.hydroid.3.unordered)
-botryllus.gam.16.unordered<-summary(gam.16.beta.botryllid.3.unordered)
-caprellid.gam.16.unordered<-summary(gam.16.beta.caprellid.percent.unordered)
+
+botryllus.gam.16.unordered<-summary(gam.16.beta.botryllid.unordered)
+botryllus.eaten.gam.16.unordered<-summary(gam.16.beta.bot.eaten.unordered)
 folliculina.gam.16.unordered<-summary(gam.16.beta.folliculina.unordered)
-membranipora.gam.16.unordered<-summary(gam.16.beta.membranipora.unordered)
-didemnum.gam.16.unordered<-summary(gam.16.beta.didemnum.unordered)
-mussel.gam.16.unordered<-summary(gam.16.nb.mussel.unordered)
-alive.barn.gam.16.unordered<-summary(gam.16.nb.num.barn.unordered)
+membranipora.gam.16.unordered<-summary(gam.16.beta.membranipora.3.unordered)
+membranipora.eaten.gam.16.unordered<-summary(gam.16.beta.mem.eaten.3.unordered)
+mussel.gam.16.unordered<-summary(gam.16.beta.mussel.3.unordered)
+alive.barn.gam.16.unordered<-summary(gam.16.poisson.num.barn.unordered)
 num.white.bryo.gam.16.unordered<-summary(gam.16.nb.num.white.bryo.unordered)
-num.red.bryo.gam.16.unordered<-summary(gam.16.nb.num.red.bryo.unordered)
+num.red.bryo.gam.16.unordered<-summary(gam.16.poisson.num.red.bryo.unordered)
 num.nudi.gam.16.unordered<-summary(gam.16.poisson.num.nudi.unordered)
 num.serpulid.gam.16.unordered<-summary(gam.16.nb.num.serpulid.1.unordered)
-clam.gam.16.unordered<-summary(gam.16.poisson.clam.unordered)
 corella.gam.16.unordered<-summary(gam.16.nb.num.corella.unordered)
-orange_sponge.gam.16.unordered<-summary(gam.16.nb.orange_sponge.unordered)
 
-hydroid.gam.16.p.table<-as.data.frame(hydroid.gam.16.unordered$p.table)
-hydroid.gam.16.s.table<-as.data.frame(hydroid.gam$s.table)
 
 botryllus.gam.16.p.table<-as.data.frame(botryllus.gam.16.unordered$p.table)
-botryllus.gam.16.s.table<-as.data.frame(botryllus.gam$s.table)
+botryllus.gam.16.s.table<-as.data.frame(botryllus.gam.16$s.table)
 
-caprellid.gam.16.p.table<-as.data.frame(caprellid.gam.16.unordered$p.table)
-caprellid.gam.16.s.table<-as.data.frame(caprellid.gam$s.table)
+botryllus.eaten.gam.16.p.table<-as.data.frame(botryllus.eaten.gam.16.unordered$p.table)
+botryllus.eaten.gam.16.s.table<-as.data.frame(botryllus.eaten.gam.16$s.table)
 
 folliculina.gam.16.p.table<-as.data.frame(folliculina.gam.16.unordered$p.table)
-folliculina.gam.16.s.table<-as.data.frame(folliculina.gam$s.table)
+folliculina.gam.16.s.table<-as.data.frame(folliculina.gam.16$s.table)
 
 membranipora.gam.16.p.table<-as.data.frame(membranipora.gam.16.unordered$p.table)
-membranipora.gam.16.s.table<-as.data.frame(membranipora.gam$s.table)
+membranipora.gam.16.s.table<-as.data.frame(membranipora.gam.16$s.table)
 
-didemnum.gam.16.p.table<-as.data.frame(didemnum.gam.16.unordered$p.table)
-didemnum.gam.16.s.table<-as.data.frame(didemnum.gam$s.table)
+membranipora.eaten.gam.16.p.table<-as.data.frame(membranipora.eaten.gam.16.unordered$p.table)
+membranipora.eaten.gam.16.s.table<-as.data.frame(membranipora.eaten.gam.16$s.table)
 
 mussel.gam.16.p.table<-as.data.frame(mussel.gam.16.unordered$p.table)
-mussel.gam.16.s.table<-as.data.frame(mussel.gam$s.table)
+mussel.gam.16.s.table<-as.data.frame(mussel.gam.16$s.table)
 
 alive.barn.gam.16.p.table<-as.data.frame(alive.barn.gam.16.unordered$p.table)
-alive.barn.gam.16.s.table<-as.data.frame(alive.barn.gam$s.table)
+alive.barn.gam.16.s.table<-as.data.frame(alive.barn.gam.16$s.table)
 
 num.white.bryo.gam.16.p.table<-as.data.frame(num.white.bryo.gam.16.unordered$p.table)
-num.white.bryo.gam.16.s.table<-as.data.frame(num.white.bryo.gam$s.table)
+num.white.bryo.gam.16.s.table<-as.data.frame(num.white.bryo.gam.16$s.table)
 
 num.red.bryo.gam.16.p.table<-as.data.frame(num.red.bryo.gam.16.unordered$p.table)
-num.red.bryo.gam.16.s.table<-as.data.frame(num.red.bryo.gam$s.table)
+num.red.bryo.gam.16.s.table<-as.data.frame(num.red.bryo.gam.16$s.table)
 
 num.nudi.gam.16.p.table<-as.data.frame(num.nudi.gam.16.unordered$p.table)
-num.nudi.gam.16.s.table<-as.data.frame(num.nudi.gam$s.table)
+num.nudi.gam.16.s.table<-as.data.frame(num.nudi.gam.16$s.table)
 
 num.serpulid.gam.16.p.table<-as.data.frame(num.serpulid.gam.16.unordered$p.table)
-num.serpulid.gam.16.s.table<-as.data.frame(num.serpulid.gam$s.table)
-
-orange_sponge.gam.16.p.table<-as.data.frame(orange_sponge.gam.16.unordered$p.table)
-orange_sponge.gam.16.s.table<-as.data.frame(orange_sponge.gam$s.table)
+num.serpulid.gam.16.s.table<-as.data.frame(num.serpulid.gam.16$s.table)
 
 corella.gam.16.p.table<-as.data.frame(corella.gam.16.unordered$p.table)
-corella.gam.16.s.table<-as.data.frame(corella.gam$s.table)
+corella.gam.16.s.table<-as.data.frame(corella.gam.16$s.table)
 
-clam.gam.16.p.table<-as.data.frame(clam.gam.16.unordered$p.table)
-clam.gam.16.s.table<-as.data.frame(clam.gam$s.table)
-
-
-
-head(clam.gam.16.p.table)
 #### Building the stats table
-ptable<-rbind(hydroid.gam.16.p.table, 
-               botryllus.gam.16.p.table, 
-               caprellid.gam.16.p.table,
+ptable.16<-rbind( botryllus.gam.16.p.table, 
+               botryllus.eaten.gam.16.p.table,
                folliculina.gam.16.p.table,
-               membranipora.gam.16.p.table,
-               didemnum.gam.16.p.table,
+               membranipora.gam.16.p.table, 
+               membranipora.eaten.gam.16.p.table,
                mussel.gam.16.p.table,
                alive.barn.gam.16.p.table,
                num.white.bryo.gam.16.p.table,
                num.red.bryo.gam.16.p.table,
                num.nudi.gam.16.p.table,
                num.serpulid.gam.16.p.table,
-               orange_sponge.gam.16.p.table,
-               corella.gam.16.p.table,
-               clam.gam.16.p.table)
+               corella.gam.16.p.table)
 
 
-colnames(ptable) <- c("Estimate", "SE", "z", "p")
-ptable$Factor<-rep(c("Intercept", "Low quality food", "High quality food"))
+colnames(ptable.16) <- c("Estimate", "SE", "z", "p")
+ptable.16$Factor<-rep(c("Intercept", "Invasives Present"))
 
 
 
 #development of kable will make it so that modified cells can apply to round - i.e. after "cel_spec"
 
-ptable %>% 
+ptable.16 %>% 
   mutate_if(is.numeric, round, 4) %>% 
   mutate(p = cell_spec(p, bold = ifelse(p < 0.05, "TRUE", "FALSE"))) %>% 
   dplyr::select(Factor, Estimate, SE, z, p) %>% 
   kable(escape=F, digits=2) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("Obelia", 1, 3) %>%
-  group_rows("Botryllus", 4, 6) %>% 
-  group_rows("Caprella",7, 9) %>% 
-  group_rows("Folliculina", 10, 12) %>% 
-  group_rows("Membranipora", 13,15) %>% 
-  group_rows("Didemnum", 16, 18) %>% 
-  group_rows("Mussels", 19, 21) %>% 
-  group_rows("Barnacles", 22, 24) %>% 
-  group_rows("num.white.bryo", 25, 27) %>% 
-  group_rows("num.red.bryoporella", 28, 30) %>% 
-  group_rows("Hermissenda", 31, 33) %>% 
-  group_rows("Serpulid", 34, 36) %>% 
-  group_rows("Sponge", 37, 39) %>% 
-  group_rows("Corella", 40, 42) %>% 
-  group_rows("Clams", 43, 45) %>% 
-save_kable(file = "C:Data//For submission//ptable.html", self_contained = T)
+  group_rows("Botryllus", 1, 2) %>%
+  group_rows("Botryllus eaten", 3, 4) %>% 
+  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Membranipora", 7, 8) %>% 
+  group_rows("Membranipora eaten", 9,10) %>% 
+  group_rows("Mussels", 11, 12) %>% 
+  group_rows("Barnacles", 13, 14) %>% 
+  group_rows("Disporella", 15, 16) %>% 
+  group_rows("Schizoporella", 17, 18) %>% 
+  group_rows("Hermissenda", 19, 20) %>% 
+  group_rows("Serpulid", 21, 22) %>% 
+  group_rows("Corella", 23, 24) %>% 
+save_kable(file = "C:Biological data//ptable.16.html", self_contained = T)
 
 
 ### s table
-stable<-rbind(hydroid.gam.16.s.table, 
-              botryllus.gam.16.s.table, 
-              caprellid.gam.16.s.table,
+stable.16<-rbind(botryllus.gam.16.s.table, 
+              botryllus.eaten.gam.16.s.table,
               folliculina.gam.16.s.table,
               membranipora.gam.16.s.table,
-              didemnum.gam.16.s.table,
+              membranipora.eaten.gam.16.s.table,
               mussel.gam.16.s.table,
               alive.barn.gam.16.s.table,
               num.white.bryo.gam.16.s.table,
               num.red.bryo.gam.16.s.table,
               num.nudi.gam.16.s.table,
               num.serpulid.gam.16.s.table,
-              orange_sponge.gam.16.s.table,
-              corella.gam.16.s.table,
-              clam.gam.16.s.table)
+              corella.gam.16.s.table)
 
 
-colnames(stable) <- c("Estimated_df", "Reference_df", "Chi_squared", "p_smooth")
-stable$Smooth_terms<-rep(c("smooth min.10.pH", "smooth min.10.pH * Low quality food", "smooth min.10.pH * High quality food"))
+colnames(stable.16) <- c("Estimated_df", "Reference_df", "Chi_squared", "p_smooth")
+stable.16$Smooth_terms<-rep(c("smooth min.10.pH", "smooth min.10.pH * Invasives present"))
 
-#stable$species<-rep(c("hydroid", 
-#                      "botryllus", 
-#                       "caprellid",
-#                     "folliculina",
-#                     "membranipora",
-#                    "didemnum",
-  #                    "mussel",
-  #                   "alive.barn",
-  #                   "num.white.bryo",
-  #                   "num.red.bryo",
-  #                   "num.nudi",
-  #                   "num.serpulid",
-  #                   "orange_sponge",
-  #                   "corella",
-  #                   "clam"), each=3)
-
-
-stable %>% 
+stable.16 %>% 
   mutate_if(is.numeric, round, 4) %>% 
   mutate(p_smooth = cell_spec(p_smooth, bold = ifelse(p_smooth < 0.05, "TRUE", "FALSE"))) %>% 
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, Chi_squared, p_smooth) %>% 
   kable(escape=F, digits=2) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("Obelia", 1, 3) %>%
-  group_rows("Botryllus", 4, 6) %>% 
-  group_rows("Caprella",7, 9) %>% 
-  group_rows("Folliculina", 10, 12) %>% 
-  group_rows("Membranipora", 13,15) %>% 
-  group_rows("Didemnum", 16, 18) %>% 
-  group_rows("Mussels", 19, 21) %>% 
-  group_rows("Barnacles", 22, 24) %>% 
-  group_rows("num.white.bryo", 25, 27) %>% 
-  group_rows("num.red.bryoporella", 28, 30) %>% 
-  group_rows("Hermissenda", 31, 33) %>% 
-  group_rows("Serpulid", 34, 36) %>% 
-  group_rows("Sponge", 37, 39) %>% 
-  group_rows("Corella", 40, 42) %>% 
-  group_rows("Clams", 43, 45) %>% 
-  save_kable(file = "C:Data//For submission//stable.html", self_contained = T)
+  group_rows("Botryllus", 1, 2) %>%
+  group_rows("Botryllus eaten", 3, 4) %>% 
+  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Membranipora", 7, 8) %>% 
+  group_rows("Membranipora eaten", 9,10) %>% 
+  group_rows("Mussels", 11, 12) %>% 
+  group_rows("Barnacles", 13, 14) %>% 
+  group_rows("Disporella", 15, 16) %>% 
+  group_rows("Schizoporella", 17, 18) %>% 
+  group_rows("Hermissenda", 19, 20) %>% 
+  group_rows("Serpulid", 21, 22) %>% 
+  group_rows("Corella", 23, 24) %>% 
+  save_kable(file = "C:Data//For submission//stable.16.html", self_contained = T)
 
   
-pstable<-cbind(ptable, stable)
+pstable.16<-cbind(ptable.16, stable.16)
 
-pstable %>% 
+pstable.16 %>% 
   mutate_if(is.numeric, round, 3) %>% 
   mutate(p = ifelse(p<0.001, "<0.001",p)) %>%
   mutate(p_smooth = ifelse(p_smooth<0.001, "<0.001",p_smooth)) %>%
@@ -1943,22 +1900,184 @@ pstable %>%
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, Chi_squared, p_smooth, Factor, Estimate, SE, z, p) %>% 
   kable(escape=F, digits=2, row.names = FALSE) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("Obelia, beta", 1, 3) %>%
-  group_rows("Botryllus, beta", 4, 6) %>% 
-  group_rows("Caprella, beta",7, 9) %>% 
-  group_rows("Folliculina, beta", 10, 12) %>% 
-  group_rows("Membranipora, beta", 13,15) %>% 
-  group_rows("Didemnum, beta", 16, 18) %>% 
-  group_rows("Mussels, negative binomial", 19, 21) %>% 
-  group_rows("Barnacles, negative binomial", 22, 24) %>% 
-  group_rows("num.white.bryo, negative binomial", 25, 27) %>% 
-  group_rows("num.red.bryoporella, negative binomial", 28, 30) %>% 
-  group_rows("Hermissenda, negative binomial", 31, 33) %>% 
-  group_rows("Serpulid, negative binomial", 34, 36) %>% 
-  group_rows("Sponge, negative binomial", 37, 39) %>% 
-  group_rows("Corella, negative binomial", 40, 42) %>% 
-  group_rows("Clams, poisson", 43, 45) %>% 
-  save_kable(file = "C:Data//For submission//For resubmission//RESUB2//First look//pstable.html", self_contained = T)
+  group_rows("Botryllus", 1, 2) %>%
+  group_rows("Botryllus eaten", 3, 4) %>% 
+  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Membranipora", 7, 8) %>% 
+  group_rows("Membranipora eaten", 9,10) %>% 
+  group_rows("Mussels", 11, 12) %>% 
+  group_rows("Barnacles", 13, 14) %>% 
+  group_rows("Disporella", 15, 16) %>% 
+  group_rows("Schizoporella", 17, 18) %>% 
+  group_rows("Hermissenda", 19, 20) %>% 
+  group_rows("Serpulid", 21, 22) %>% 
+  group_rows("Corella", 23, 24) %>% 
+  save_kable(file = "C:Biological data//pstable.16.html", self_contained = T)
+
+
+
+# Pulling model 8  results to a table ----------------------------------------
+
+botryllus.gam.8<-summary(gam.8.beta.botryllid.3)
+botryllus.eaten.gam.8<-summary(gam.8.beta.bot.eaten.3)
+folliculina.gam.8<-summary(gam.8.beta.folliculina)
+membranipora.gam.8<-summary(gam.8.beta.membranipora.3)
+membranipora.eaten.gam.8<-summary(gam.8.beta.mem.eaten.3)
+mussel.gam.8<-summary(gam.8.beta.mussel.3)
+alive.barn.gam.8<-summary(gam.8.poisson.num.barn)
+num.white.bryo.gam.8<-summary(gam.8.poisson.num.white.bryo)
+num.nudi.gam.8<-summary(gam.8.nb.num.nudi.1)
+num.serpulid.gam.8<-summary(gam.8.poisson.num.serpulid)
+corella.gam.8<-summary(gam.8.poisson.num.corella)
+
+botryllus.gam.8.unordered<-summary(gam.8.beta.botryllid.3.unordered)
+botryllus.eaten.gam.8.unordered<-summary(gam.8.beta.bot.eaten.3.unordered)
+folliculina.gam.8.unordered<-summary(gam.8.beta.folliculina.unordered)
+membranipora.gam.8.unordered<-summary(gam.8.beta.membranipora.3.unordered)
+membranipora.eaten.gam.8.unordered<-summary(gam.8.beta.mem.eaten.3.unordered)
+mussel.gam.8.unordered<-summary(gam.8.beta.mussel.3.unordered)
+alive.barn.gam.8.unordered<-summary(gam.8.poisson.num.barn.unordered)
+num.white.bryo.gam.8.unordered<-summary(gam.8.poisson.num.white.bryo.unordered)
+num.nudi.gam.8.unordered<-summary(gam.8.nb.num.nudi.1.unordered)
+num.serpulid.gam.8.unordered<-summary(gam.8.poisson.num.serpulid.unordered)
+corella.gam.8.unordered<-summary(gam.8.poisson.num.corella.unordered)
+
+botryllus.gam.8.p.table<-as.data.frame(botryllus.gam.8.unordered$p.table)
+botryllus.gam.8.s.table<-as.data.frame(botryllus.gam.8$s.table)
+
+botryllus.eaten.gam.8.p.table<-as.data.frame(botryllus.eaten.gam.8.unordered$p.table)
+botryllus.eaten.gam.8.s.table<-as.data.frame(botryllus.eaten.gam.8$s.table)
+
+folliculina.gam.8.p.table<-as.data.frame(folliculina.gam.8.unordered$p.table)
+folliculina.gam.8.s.table<-as.data.frame(folliculina.gam.8$s.table)
+
+membranipora.gam.8.p.table<-as.data.frame(membranipora.gam.8.unordered$p.table)
+membranipora.gam.8.s.table<-as.data.frame(membranipora.gam.8$s.table)
+
+membranipora.eaten.gam.8.p.table<-as.data.frame(membranipora.eaten.gam.8.unordered$p.table)
+membranipora.eaten.gam.8.s.table<-as.data.frame(membranipora.eaten.gam.8$s.table)
+
+mussel.gam.8.p.table<-as.data.frame(mussel.gam.8.unordered$p.table)
+mussel.gam.8.s.table<-as.data.frame(mussel.gam.8$s.table)
+
+alive.barn.gam.8.p.table<-as.data.frame(alive.barn.gam.8.unordered$p.table)
+alive.barn.gam.8.s.table<-as.data.frame(alive.barn.gam.8$s.table)
+
+num.white.bryo.gam.8.p.table<-as.data.frame(num.white.bryo.gam.8.unordered$p.table)
+num.white.bryo.gam.8.s.table<-as.data.frame(num.white.bryo.gam.8$s.table)
+
+num.nudi.gam.8.p.table<-as.data.frame(num.nudi.gam.8.unordered$p.table)
+num.nudi.gam.8.s.table<-as.data.frame(num.nudi.gam.8$s.table)
+
+num.serpulid.gam.8.p.table<-as.data.frame(num.serpulid.gam.8.unordered$p.table)
+num.serpulid.gam.8.s.table<-as.data.frame(num.serpulid.gam.8$s.table)
+
+corella.gam.8.p.table<-as.data.frame(corella.gam.8.unordered$p.table)
+corella.gam.8.s.table<-as.data.frame(corella.gam.8$s.table)
+
+
+#### Building the stats table
+ptable.8<-rbind( botryllus.gam.8.p.table, 
+                  botryllus.eaten.gam.8.p.table,
+                  folliculina.gam.8.p.table,
+                  membranipora.gam.8.p.table, 
+                  membranipora.eaten.gam.8.p.table,
+                  mussel.gam.8.p.table,
+                  alive.barn.gam.8.p.table,
+                  num.white.bryo.gam.8.p.table,
+                  num.nudi.gam.8.p.table,
+                  num.serpulid.gam.8.p.table,
+                  corella.gam.8.p.table)
+
+
+colnames(ptable.8) <- c("Estimate", "SE", "z", "p")
+ptable.8$Factor<-rep(c("Intercept", "Invasives Present"))
+
+
+
+#development of kable will make it so that modified cells can apply to round - i.e. after "cel_spec"
+
+ptable.8 %>% 
+  mutate_if(is.numeric, round, 4) %>% 
+  mutate(p = cell_spec(p, bold = ifelse(p < 0.05, "TRUE", "FALSE"))) %>% 
+  dplyr::select(Factor, Estimate, SE, z, p) %>% 
+  kable(escape=F, digits=2) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  group_rows("Botryllus", 1, 2) %>%
+  group_rows("Botryllus eaten", 3, 4) %>% 
+  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Membranipora", 7, 8) %>% 
+  group_rows("Membranipora eaten", 9,10) %>% 
+  group_rows("Mussels", 11, 12) %>% 
+  group_rows("Barnacles", 13, 14) %>% 
+  group_rows("Disporella", 15, 16) %>% 
+  group_rows("Hermissenda", 17, 18) %>% 
+  group_rows("Serpulid", 19, 20) %>% 
+  group_rows("Corella", 21, 22) %>% 
+  save_kable(file = "C:Biological data//ptable.8.html", self_contained = T)
+
+
+### s table
+stable.8<-rbind(botryllus.gam.8.s.table, 
+                 botryllus.eaten.gam.8.s.table,
+                 folliculina.gam.8.s.table,
+                 membranipora.gam.8.s.table,
+                 membranipora.eaten.gam.8.s.table,
+                 mussel.gam.8.s.table,
+                 alive.barn.gam.8.s.table,
+                 num.white.bryo.gam.8.s.table,
+                 num.nudi.gam.8.s.table,
+                 num.serpulid.gam.8.s.table,
+                 corella.gam.8.s.table)
+
+
+colnames(stable.8) <- c("Estimated_df", "Reference_df", "Chi_squared", "p_smooth")
+stable.8$Smooth_terms<-rep(c("smooth min.10.pH", "smooth min.10.pH * Invasives present"))
+
+stable.8 %>% 
+  mutate_if(is.numeric, round, 4) %>% 
+  mutate(p_smooth = cell_spec(p_smooth, bold = ifelse(p_smooth < 0.05, "TRUE", "FALSE"))) %>% 
+  dplyr::select(Smooth_terms, Estimated_df, Reference_df, Chi_squared, p_smooth) %>% 
+  kable(escape=F, digits=2) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  group_rows("Botryllus", 1, 2) %>%
+  group_rows("Botryllus eaten", 3, 4) %>% 
+  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Membranipora", 7, 8) %>% 
+  group_rows("Membranipora eaten", 9,10) %>% 
+  group_rows("Mussels", 11, 12) %>% 
+  group_rows("Barnacles", 13, 14) %>% 
+  group_rows("Disporella", 15, 16) %>% 
+  group_rows("Hermissenda", 17, 18) %>% 
+  group_rows("Serpulid", 19, 20) %>% 
+  group_rows("Corella", 21, 22) %>% 
+  save_kable(file = "C:Data//For submission//stable.8.html", self_contained = T)
+
+
+pstable.8<-cbind(ptable.8, stable.8)
+
+pstable.8 %>% 
+  mutate_if(is.numeric, round, 3) %>% 
+  mutate(p = ifelse(p<0.001, "<0.001",p)) %>%
+  mutate(p_smooth = ifelse(p_smooth<0.001, "<0.001",p_smooth)) %>%
+  mutate(p_smooth = cell_spec(p_smooth, bold = ifelse(p_smooth < 0.05, "TRUE", "FALSE"))) %>% 
+  mutate(p = cell_spec(p, bold = ifelse(p < 0.051, "TRUE", "FALSE"))) %>% 
+  dplyr::select(Smooth_terms, Estimated_df, Reference_df, Chi_squared, p_smooth, Factor, Estimate, SE, z, p) %>% 
+  kable(escape=F, digits=2, row.names = FALSE) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  group_rows("Botryllus", 1, 2) %>%
+  group_rows("Botryllus eaten", 3, 4) %>% 
+  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Membranipora", 7, 8) %>% 
+  group_rows("Membranipora eaten", 9,10) %>% 
+  group_rows("Mussels", 11, 12) %>% 
+  group_rows("Barnacles", 13, 14) %>% 
+  group_rows("Disporella", 15, 16) %>% 
+  group_rows("Hermissenda", 17, 18) %>% 
+  group_rows("Serpulid", 19, 20) %>% 
+  group_rows("Corella", 21, 22) %>% 
+  save_kable(file = "C:Biological data//pstable.8.html", self_contained = T)
+
 
 
 # num.species.no.bot 16 ----------------------------------------------------------------
@@ -2495,206 +2614,89 @@ ggplot2::ggsave(plot=fig.community.week.8, "C:Graphs April 2020//Fig.community.w
 
 
 
-# Community level tables --------------------------------------------------
+# Community level 16 tables --------------------------------------------------
 
-num.species.no.bot.gam<- summary(gam.16.poisson.num.species.no.bot)
+num.species.no.bot.gam.16<- summary(gam.16.poisson.num.species.no.bot)
 num.species.no.bot.gam.16.unordered<- summary(gam.16.poisson.num.species.no.bot.unordered)
 
-evenness.gam<-summary(gam.16.lm.evenness)
-evenness.gam.16.unordered<-summary(gam.16.lm.evenness.unordered)
+occupied.space.gam.16<- summary(gam.16.beta.native.occupied.space.3)
+occupied.space.gam.16.unordered<- summary(gam.16.beta.native.occupied.space.3.unordered)
 
-
-occupied.space.gam<- summary(gam.16.beta.occupied.space.3)
-occupied.space.gam.16.unordered<- summary(gam.16.beta.occupied.space.3.unordered)
-
-distances.gam<- summary(gam.16.lm.distances)
+distances.gam.16<- summary(gam.16.lm.distances)
 distances.gam.16.unordered<- summary(gam.16.lm.distances.unordered)
 
-
-CAP1.gam <- summary(gam.16.lm.CAP1)
+CAP1.gam.16 <- summary(gam.16.lm.CAP1)
 CAP1.gam.16.unordered <- summary(gam.16.lm.CAP1.unordered)
-
-#dry biomass
-total_dry_biomass.gam <- summary(gam.16.lm.total_dry_biomass)
-total_dry_biomass.gam.16.unordered <- summary(gam.16.lm.total_dry_biomass.unordered)
-
-hydroid_dry_biomass.gam.16.unordered <- summary(gam.16.gamma.hydroid_dry_biomass.unordered) 
-hydroid_dry_biomass.gam<- summary(gam.16.gamma.hydroid_dry_biomass) 
-
-caprellid_dry_biomass.gam.16.unordered <- summary(gam.16.gamma.caprellid_dry_biomass.unordered)
-caprellid_dry_biomass.gam <- summary(gam.16.gamma.caprellid_dry_biomass)
-
-tunicate_dry_biomass.gam <- summary(gam.16.gamma.tunicate_dry_biomass)
-tunicate_dry_biomass.gam.16.unordered <- summary(gam.16.gamma.tunicate_dry_biomass.unordered)
-
-rest_dry_biomass.gam.16.unordered <- summary(gam.16.tweedie.rest_dry_biomass.unordered)
-rest_dry_biomass.gam <- summary(gam.16.tweedie.rest_dry_biomass)
-
-hydtobot_dry_biomass.gam.16.unordered<-summary(gam.16.beta.hydtobot_dry_biomass.unordered)
-hydtobot_dry_biomass.gam<-summary(gam.16.beta.hydtobot_dry_biomass)
-
-#wet biomass
-everything.wet.weight.gam <-summary(gam.16.lm.log.everything.wet.weight)
-everything.wet.weight.gam.16.unordered <- summary(gam.16.lm.log.everything.wet.weight.unordered)
-
-everything.wet.weight.per.1.gam <-summary(gam.16.lm.log.everything.wet.weight.per.1)
-everything.wet.weight.per.1.gam.16.unordered <- summary(gam.16.lm.log.everything.wet.weight.per.1.unordered)
-
-
-Mussel.wet.weight.gam <- summary(gam.16.lm.log.Mussel.wet.weight)
-Mussel.wet.weight.gam.16.unordered <-summary(gam.16.lm.log.Mussel.wet.weight.unordered)
-
-Mussel.wet.weight.per.1.gam <- summary(gam.16.gamma.Mussel.wet.weight.per.1)
-Mussel.wet.weight.per.1.gam.16.unordered <-summary(gam.16.gamma.Mussel.wet.weight.per.1.unordered)
-
-
-#competition metric 
-hydtobot.gam <- summary(gam.16.beta.hydtobot)
-hydtobot.gam.16.unordered <- summary(gam.16.beta.hydtobot.unordered)
 
 #ptable building
 num.species.no.bot.gam.16.p.table<-as.data.frame(num.species.no.bot.gam.16.unordered$p.table)
-num.species.no.bot.gam.16.s.table<-as.data.frame(num.species.no.bot.gam$s.table)
-
-evenness.gam.16.p.table<-as.data.frame(evenness.gam.16.unordered$p.table)
-evenness.gam.16.s.table<-as.data.frame(evenness.gam$s.table)
+num.species.no.bot.gam.16.s.table<-as.data.frame(num.species.no.bot.gam.16$s.table)
 
 occupied.space.gam.16.p.table<-as.data.frame(occupied.space.gam.16.unordered$p.table)
-occupied.space.gam.16.s.table<-as.data.frame(occupied.space.gam$s.table)
+occupied.space.gam.16.s.table<-as.data.frame(occupied.space.gam.16$s.table)
 
 distances.gam.16.p.table<-as.data.frame(distances.gam.16.unordered$p.table)
-distances.gam.16.s.table<-as.data.frame(distances.gam$s.table)
+distances.gam.16.s.table<-as.data.frame(distances.gam.16$s.table)
 
 CAP1.gam.16.p.table<-as.data.frame(CAP1.gam.16.unordered$p.table)
-CAP1.gam.16.s.table<-as.data.frame(CAP1.gam$s.table)
-
-total_dry_biomass.gam.16.p.table<-as.data.frame(total_dry_biomass.gam.16.unordered$p.table)
-total_dry_biomass.gam.16.s.table<-as.data.frame(total_dry_biomass.gam$s.table)
-
-hydroid_dry_biomass.gam.16.p.table<-as.data.frame(hydroid_dry_biomass.gam.16.unordered$p.table)
-hydroid_dry_biomass.gam.16.s.table<-as.data.frame(hydroid_dry_biomass.gam$s.table)
-
-caprellid_dry_biomass.gam.16.p.table<-as.data.frame(caprellid_dry_biomass.gam.16.unordered$p.table)
-caprellid_dry_biomass.gam.16.s.table<-as.data.frame(caprellid_dry_biomass.gam$s.table)
-
-tunicate_dry_biomass.gam.16.p.table<-as.data.frame(tunicate_dry_biomass.gam.16.unordered$p.table)
-tunicate_dry_biomass.gam.16.s.table<-as.data.frame(tunicate_dry_biomass.gam$s.table)
-
-rest_dry_biomass.gam.16.p.table<-as.data.frame(rest_dry_biomass.gam.16.unordered$p.table)
-rest_dry_biomass.gam.16.s.table<-as.data.frame(rest_dry_biomass.gam$s.table)
-
-everything.wet.weight.gam.16.p.table<-as.data.frame(everything.wet.weight.gam.16.unordered$p.table)
-everything.wet.weight.gam.16.s.table<-as.data.frame(everything.wet.weight.gam$s.table)
-
-everything.wet.weight.per.1.gam.16.p.table<-as.data.frame(everything.wet.weight.per.1.gam.16.unordered$p.table)
-everything.wet.weight.per.1.gam.16.s.table<-as.data.frame(everything.wet.weight.per.1.gam$s.table)
-
-Mussel.wet.weight.gam.16.p.table<-as.data.frame(Mussel.wet.weight.gam.16.unordered$p.table)
-Mussel.wet.weight.gam.16.s.table<-as.data.frame(Mussel.wet.weight.gam$s.table)
-
-Mussel.wet.weight.per.1.gam.16.p.table<-as.data.frame(Mussel.wet.weight.per.1.gam.16.unordered$p.table)
-Mussel.wet.weight.per.1.gam.16.s.table<-as.data.frame(Mussel.wet.weight.per.1.gam$s.table)
-
-hydtobot.gam.16.p.table<-as.data.frame(hydtobot.gam.16.unordered$p.table)
-hydtobot.gam.16.s.table<-as.data.frame(hydtobot.gam$s.table)
-
-hydtobot_dry_biomass.gam.16.p.table<-as.data.frame(hydtobot_dry_biomass.gam.16.unordered$p.table)
-hydtobot_dry_biomass.gam.16.s.table<-as.data.frame(hydtobot_dry_biomass.gam$s.table)
-
-hydtobot_dry_biomass.gam.16.p.table
-hydtobot_dry_biomass.gam.16.s.table
+CAP1.gam.16.s.table<-as.data.frame(CAP1.gam.16$s.table)
 
 #num.species.no.bot.gam.16.p.table and  hydtobot.gam.16.p.table, is with z value 
 colnames(num.species.no.bot.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
-colnames(hydtobot.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
-colnames(hydtobot_dry_biomass.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
 colnames(occupied.space.gam.16.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
 
 
 #### Building the stats table
-ptable.community.t<-rbind(num.species.no.bot.gam.16.p.table,
-              evenness.gam.16.p.table,
+ptable.community.t.16<-rbind(num.species.no.bot.gam.16.p.table,
               occupied.space.gam.16.p.table,
-              total_dry_biomass.gam.16.p.table,
               CAP1.gam.16.p.table,
-              distances.gam.16.p.table,
-              hydtobot.gam.16.p.table, 
-              hydtobot_dry_biomass.gam.16.p.table,
-              everything.wet.weight.gam.16.p.table
+              distances.gam.16.p.table
               )
 
 
-colnames(ptable.community.t) <- c("Estimate", "SE", "t", "p")
-ptable.community.t$Factor<-rep(c("Intercept", "Low quality food", "High quality food"))
+colnames(ptable.community.t.16) <- c("Estimate", "SE", "t", "p")
+ptable.community.t.16$Factor<-rep(c("Intercept", "Invasives Present"))
 
-
-#development of kable will make it so that modified cells can apply to round - i.e. after "cel_spec"
-
-ptable.community.t %>% 
+ptable.community.t.16 %>% 
   dplyr::select(Factor, Estimate, SE, t, p) %>% 
   kable(escape=F, digits=4) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("num.species.no.bot, poisson (z)", 1,3) %>% 
-  group_rows("Evenness, normal", 4,6) %>%
-  group_rows("Occupied space, beta (z)", 7,9) %>% 
-  group_rows("Total dry biomass, normal", 10,12) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",13,15) %>% 
-  group_rows("Heterogeneity of dispersions, normal", 16,18) %>% 
-  group_rows("Botryllus to Obelia dominance ratio by space, beta (z)", 19,21) %>% 
-  group_rows("Botryllus to Obelia dominance ratio by biomass, beta (z)", 22,24) %>% 
-  group_rows("Total wet biomass, normal (log)", 25,27) %>% 
-  
-  save_kable(file = "C:Data//For submission//ptable.community.t.html", self_contained = T)
+  group_rows("num.species.no.bot, poisson (z)", 1,2) %>% 
+  group_rows("Occupied space, beta (z)", 3,4) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
+  save_kable(file = "C:Biological Data//ptable.community.t.16.html", self_contained = T)
 
 
-#again hydtobot and num.species.no.bot
 #num.species.no.bot.gam.16.p.table and  hydtobot.gam.16.p.table, is with Chisq
 colnames(num.species.no.bot.gam.16.s.table) <- c("edf", "Ref.df", "F", "p-value")
-colnames(hydtobot.gam.16.s.table) <- c("edf", "Ref.df",  "F", "p-value")
-colnames(hydtobot_dry_biomass.gam.16.s.table) <- c("edf", "Ref.df",  "F", "p-value")
-
 colnames(occupied.space.gam.16.s.table) <- c("edf", "Ref.df",  "F", "p-value")
 
 
 ### s table
-stable.community.f<-rbind(num.species.no.bot.gam.16.s.table,
-                          evenness.gam.16.s.table,
+stable.community.f.16<-rbind(num.species.no.bot.gam.16.s.table,
                           occupied.space.gam.16.s.table,
-                          total_dry_biomass.gam.16.s.table,
                           CAP1.gam.16.s.table,
-                          distances.gam.16.s.table,
-                          hydtobot.gam.16.s.table, 
-                          hydtobot_dry_biomass.gam.16.s.table,
-                          everything.wet.weight.gam.16.s.table
-)
+                          distances.gam.16.s.table)
 
 
-colnames(stable.community.f) <- c("Estimated_df", "Reference_df", "F", "p_smooth")
-stable.community.f$Smooth_terms<-rep(c("smooth min.10.pH", "smooth min.10.pH * Low quality food", "smooth min.10.pH * High quality food"))
+colnames(stable.community.f.16) <- c("Estimated_df", "Reference_df", "F", "p_smooth")
+stable.community.f.16$Smooth_terms<-rep(c("smooth min.10.pH", "smooth min.10.pH * Invasives Present"))
 
-
-#development of kable will make it so that modified cells can apply to round - i.e. after "cel_spec"
-
-stable.community.f %>% 
+stable.community.f.16 %>% 
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth) %>% 
   kable(escape=F, digits=4) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("num.species.no.bot, poisson (Chi-square)", 1,3) %>% 
-  group_rows("Evenness, normal", 4,6) %>%
-  group_rows("Occupied space, beta (Chi-square)", 7,9) %>% 
-  group_rows("Total dry biomass, normal", 10,12) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",13,15) %>% 
-  group_rows("Heterogeneity of dispersions, normal", 16,18) %>% 
-  group_rows("Botryllus to Obelia dominance ratio by space, beta (Chi-square)", 19,21) %>% 
-  group_rows("Botryllus to Obelia dominance ratio by biomass, beta (Chi-square)", 22,24) %>% 
-  group_rows("Total wet biomass, normal (log)", 25,27) %>% 
-  
-  save_kable(file = "C:Data//For submission//stable.community.f.html", self_contained = T)
+  group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
+  group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
+  save_kable(file = "C:Biological Data//stable.community.f.16.html", self_contained = T)
 
-pstable.community<-cbind(ptable.community.t, stable.community.f)
+pstable.community.16<-cbind(ptable.community.t.16, stable.community.f.16)
 
 
-pstable.community %>% 
+pstable.community.16 %>% 
   mutate_if(is.numeric, round, 3) %>% 
   mutate(p = ifelse(p<0.001, "<0.001",p)) %>%
   mutate(p_smooth = ifelse(p_smooth<0.001, "<0.001",p_smooth)) %>%
@@ -2703,35 +2705,104 @@ pstable.community %>%
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth, Factor, Estimate, SE, t, p) %>% 
   kable(escape=F, digits=2, row.names = FALSE) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
-  group_rows("num.species.no.bot, poisson (Chi-square, z)", 1,3) %>% 
-  group_rows("Evenness, normal", 4,6) %>%
-  group_rows("Occupied space, beta (Chi-square, z)", 7,9) %>% 
-  group_rows("Total dry biomass, normal", 10,12) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",13,15) %>% 
-  group_rows("Heterogeneity of dispersions, normal", 16,18) %>% 
-  group_rows("Botryllus to Obelia dominance ratio by space, beta (Chi-square, z)", 19,21) %>% 
-  group_rows("Botryllus to Obelia dominance ratio by biomass, beta (Chi-square, z)", 22,24) %>% 
-  group_rows("Total wet biomass, normal (log)", 25,27) %>% 
-  save_kable(file = "C:Data//For submission//For resubmission//RESUB2//First look//pstable.community.html ", self_contained = T)
+  group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
+  group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
+  save_kable(file = "C:Biological Data//pstable.community.16.html ", self_contained = T)
+
+# Community level 8 tables --------------------------------------------------
+
+num.species.no.bot.gam.8<- summary(gam.8.poisson.num.species.no.bot)
+num.species.no.bot.gam.8.unordered<- summary(gam.8.poisson.num.species.no.bot.unordered)
+
+occupied.space.gam.8<- summary(gam.8.beta.native.occupied.space)
+occupied.space.gam.8.unordered<- summary(gam.8.beta.native.occupied.space.unordered)
+
+distances.gam.8<- summary(gam.8.lm.distances)
+distances.gam.8.unordered<- summary(gam.8.lm.distances.unordered)
+
+CAP1.gam.8 <- summary(gam.8.lm.CAP1)
+CAP1.gam.8.unordered <- summary(gam.8.lm.CAP1.unordered)
+
+#ptable building
+num.species.no.bot.gam.8.p.table<-as.data.frame(num.species.no.bot.gam.8.unordered$p.table)
+num.species.no.bot.gam.8.s.table<-as.data.frame(num.species.no.bot.gam.8$s.table)
+
+occupied.space.gam.8.p.table<-as.data.frame(occupied.space.gam.8.unordered$p.table)
+occupied.space.gam.8.s.table<-as.data.frame(occupied.space.gam.8$s.table)
+
+distances.gam.8.p.table<-as.data.frame(distances.gam.8.unordered$p.table)
+distances.gam.8.s.table<-as.data.frame(distances.gam.8$s.table)
+
+CAP1.gam.8.p.table<-as.data.frame(CAP1.gam.8.unordered$p.table)
+CAP1.gam.8.s.table<-as.data.frame(CAP1.gam.8$s.table)
+
+#num.species.no.bot.gam.8.p.table and  hydtobot.gam.8.p.table, is with z value 
+colnames(num.species.no.bot.gam.8.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+colnames(occupied.space.gam.8.p.table) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
 
 
+#### Building the stats table
+ptable.community.t.8<-rbind(num.species.no.bot.gam.8.p.table,
+                             occupied.space.gam.8.p.table,
+                             CAP1.gam.8.p.table,
+                             distances.gam.8.p.table)
 
 
+colnames(ptable.community.t.8) <- c("Estimate", "SE", "t", "p")
+ptable.community.t.8$Factor<-rep(c("Intercept", "Invasives Present"))
 
-###################
-head(invasion.exp.data)
-native_sp_names_allwks<-c("Tile.ID", 
-                   "num.nudi" ,
-                   "mussel" ,"hydroid","membranipora", "mem.eaten", "folliculina",
-                   "num.corella" ,
-                   "num.red.bryo" ,
-                   "num.white.bryo" ,
-                   "num.serpulid" ,
-                   "num.barn" ,
-                   "other.bryo" ,
-                   "clam" )
+ptable.community.t.8 %>% 
+  dplyr::select(Factor, Estimate, SE, t, p) %>% 
+  kable(escape=F, digits=4) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  group_rows("num.species.no.bot, poisson (z)", 1,2) %>% 
+  group_rows("Occupied space, beta (z)", 3,4) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
+  save_kable(file = "C:Biological Data//ptable.community.t.8.html", self_contained = T)
 
 
-invasion.exp.data.8.tile.selected<-invasion.exp.data.8[,colnames(invasion.exp.data.8) %in% native_sp_names]
-head(invasion.exp.data.8.tile.selected)
+#num.species.no.bot.gam.8.p.table and  hydtobot.gam.8.p.table, is with Chisq
+colnames(num.species.no.bot.gam.8.s.table) <- c("edf", "Ref.df", "F", "p-value")
+colnames(occupied.space.gam.8.s.table) <- c("edf", "Ref.df",  "F", "p-value")
 
+
+### s table
+stable.community.f.8<-rbind(num.species.no.bot.gam.8.s.table,
+                             occupied.space.gam.8.s.table,
+                             CAP1.gam.8.s.table,
+                             distances.gam.8.s.table)
+
+
+colnames(stable.community.f.8) <- c("Estimated_df", "Reference_df", "F", "p_smooth")
+stable.community.f.8$Smooth_terms<-rep(c("smooth min.10.pH", "smooth min.10.pH * Invasives Present"))
+
+stable.community.f.8 %>% 
+  dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth) %>% 
+  kable(escape=F, digits=4) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
+  group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
+  save_kable(file = "C:Biological Data//stable.community.f.8.html", self_contained = T)
+
+pstable.community.8<-cbind(ptable.community.t.8, stable.community.f.8)
+
+
+pstable.community.8 %>% 
+  mutate_if(is.numeric, round, 3) %>% 
+  mutate(p = ifelse(p<0.001, "<0.001",p)) %>%
+  mutate(p_smooth = ifelse(p_smooth<0.001, "<0.001",p_smooth)) %>%
+  mutate(p_smooth = cell_spec(p_smooth, bold = ifelse(p_smooth < 0.051, "TRUE", "FALSE"))) %>% 
+  mutate(p = cell_spec(p, bold = ifelse(p < 0.051, "TRUE", "FALSE"))) %>% 
+  dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth, Factor, Estimate, SE, t, p) %>% 
+  kable(escape=F, digits=2, row.names = FALSE) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
+  group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
+  save_kable(file = "C:Biological Data//pstable.community.8.html ", self_contained = T)
