@@ -58,22 +58,35 @@ invasion.exp.data$oCO2.Treatment<-factor(invasion.exp.data$CO2.Treatment, levels
 invasion.exp.data$CO2.Treatment<-factor(invasion.exp.data$CO2.Treatment, levels=c("AIR", "CO2"), ordered=FALSE)
 
 #New variables
-invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
-invasion.exp.data$hydroid.001<-(0.01*(invasion.exp.data$hydroid))
-invasion.exp.data$botryllid.001<-(0.01*(invasion.exp.data$botryllid))
-invasion.exp.data$bot.eaten.001<-(0.01*(invasion.exp.data$bot.eaten))
-invasion.exp.data$mem.eaten.001<-(0.01*(invasion.exp.data$mem.eaten))
+# invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
 
-invasion.exp.data$membranipora.001<-(0.01*(invasion.exp.data$membranipora))
-invasion.exp.data$mussel.001<-(0.01*(invasion.exp.data$mussel))
-invasion.exp.data$didemnum<-invasion.exp.data$white.bryo
+invasion.exp.data$bot.total<-invasion.exp.data$botryllid + invasion.exp.data$bot.eaten
+invasion.exp.data$mem.total<-invasion.exp.data$membranipora + invasion.exp.data$mem.eaten + invasion.exp.data$mem.dead
+invasion.exp.data$corella.total<-invasion.exp.data$corella + invasion.exp.data$dead.corella
+
+invasion.exp.data$prop.mem.dead<-invasion.exp.data$mem.dead/invasion.exp.data$membranipora
+invasion.exp.data$prop.mem.eaten<-invasion.exp.data$mem.eaten/invasion.exp.data$membranipora
+
+
+invasion.exp.data$hydroid.001<-(0.01*(invasion.exp.data$hydroid))+0.01
+invasion.exp.data$botryllid.001<-(0.01*(invasion.exp.data$botryllid))+0.01
+invasion.exp.data$bot.eaten.001<-(0.01*(invasion.exp.data$bot.eaten))+0.01
+invasion.exp.data$mem.eaten.001<-(0.01*(invasion.exp.data$mem.eaten))+0.01
+invasion.exp.data$mem.total.001<-(0.01*(invasion.exp.data$mem.total))+0.01
+
+invasion.exp.data$membranipora.001<-(0.01*(invasion.exp.data$membranipora))+0.01
+invasion.exp.data$mussel.001<-(0.01*(invasion.exp.data$mussel))+0.01
+invasion.exp.data$didemnum<-invasion.exp.data$white.bryo+invasion.exp.data$fan.bryo
 invasion.exp.data$folliculina<-invasion.exp.data$protozoa
 invasion.exp.data$folliculina.001<-(0.01*(invasion.exp.data$folliculina))+0.01
-invasion.exp.data$didemnum.001<-(0.01*(invasion.exp.data$didemnum))
+invasion.exp.data$didemnum.001<-(0.01*(invasion.exp.data$didemnum))+0.01
 invasion.exp.data$occupied.space<-(100 - invasion.exp.data$bare)
-invasion.exp.data$occupied.space.001<-(0.01*(invasion.exp.data$occupied.space))
+invasion.exp.data$occupied.space.001<-(0.01*(invasion.exp.data$occupied.space))+0.01
 invasion.exp.data$native.occupied.space<-(100 - invasion.exp.data$botryllid  -invasion.exp.data$bot.eaten -  invasion.exp.data$bare)
-invasion.exp.data$native.occupied.space.001<-(0.01*(invasion.exp.data$native.occupied.space))
+invasion.exp.data$native.occupied.space.001<-(0.01*(invasion.exp.data$native.occupied.space))+0.01
+
+invasion.exp.data$prop.mem.dead.001<-(0.01*invasion.exp.data$prop.mem.dead)+0.01
+invasion.exp.data$prop.mem.eaten.001<-(0.01*invasion.exp.data$prop.mem.eaten)+0.01
 
 
 head(invasion.exp.data)
@@ -110,6 +123,7 @@ invasion.exp.data.8_zscores$Mesocosm <- as.factor(invasion.exp.data.8$Mesocosm)
 invasion.exp.data.8_zscores$av.pH.unscaled <-invasion.exp.data.8_zscores$av.pH * attr(invasion.exp.data.8_zscores$av.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$av.pH, 'scaled:center')
 #invasion.exp.data.8_zscores$botryllid.001.unscaled <-invasion.exp.data.8_zscores$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
 
+
 # Notes on contrasts ------------------------------------------------------
 
 #Notes on ordered factors: the factor Invasives is ordered
@@ -130,142 +144,58 @@ invasion.exp.data.8_zscores$av.pH.unscaled <-invasion.exp.data.8_zscores$av.pH *
 
 # Plotting settings -------------------------------------------------------
 
-colorset_invasives = c("Present"="#A20226" ,"Absent"="#818392")
-colorset_CO2.Treatment = c("CO2"="#A20226" ,"AIR"="#818392")
+colorset_invasives = c("Present"="#A20228" ,"Absent"="#816392")
+colorset_CO2.Treatment = c("CO2"="#A20228" ,"AIR"="#816392")
 
 theme_set(theme_classic(base_size = 12))
 theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
  
 
-# GAM beta folliculina / gam.16.beta.folliculina -----------------------------------------------------------
+# GAM beta folliculina -----------------------------------------------------------
 
-gam.16.binomial.folliculina<- gam(formula = cbind(folliculina, 100-folliculina)~ s(botryllid, k=4)+ oCO2.Treatment + s(botryllid, by=oCO2.Treatment, k=4), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
-gam.16.beta.folliculina<- gam(folliculina.001~ s(botryllid)+ oCO2.Treatment + s(botryllid, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.folliculina.1<- gam(folliculina.001~ s(botryllid)+ CO2.Treatment + s(botryllid, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.folliculina.2<- gam(folliculina.001~ s(botryllid)+ CO2.Treatment + s(botryllid, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.16.beta.folliculina.3<- gam(folliculina.001~ s(botryllid)+ oCO2.Treatment + s(botryllid, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+gam.8.binomial.folliculina<- gam(formula = cbind(folliculina, 100-folliculina)~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+gam.8.beta.folliculina<- gam(folliculina.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+#beta explains more deviance
 
-
-
-
-
-
-mod.folliculina<-gam.16.binomial.folliculina
+mod.folliculina<-gam.8.beta.folliculina
 plot(mod.folliculina, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 appraise(mod.folliculina)
 qq_plot(mod.folliculina, method = 'simulate')
 k.check(mod.folliculina)
 summary(mod.folliculina)
 
-mod.folliculina.unordered<- gam(formula = cbind(folliculina, 100-folliculina)~ s(botryllid, k=4)+ CO2.Treatment + s(botryllid, by=oCO2.Treatment, k=4), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+mod.folliculina.unordered<- gam(folliculina.001~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
 
-fam.gam.16.folliculina <- family(mod.folliculina)
-ilink.gam.16.folliculina<- fam.gam.16.folliculina$linkinv
-
-
-x1<-list(seq(min(invasion.exp.data.16_zscores$botryllid),max(invasion.exp.data.16_zscores$botryllid),length=100))
-x2<-list(unique(invasion.exp.data.16_zscores$CO2.Treatment))
+x1<-list(seq(min(invasion.exp.data.8_zscores$bot.total),max(invasion.exp.data.8_zscores$bot.total),length=100))
+x2<-list(unique(invasion.exp.data.8_zscores$CO2.Treatment))
 all_var<-x1
 all_var<-c(x1,x2)
 #expand.grid on it
 all_var<-expand.grid(all_var)
-names(all_var)[1]<-"botryllid"
+names(all_var)[1]<-"bot.total"
 names(all_var)[2]<-"CO2.Treatment"
 all_var$oCO2.Treatment<-all_var$CO2.Treatment
-ndata.16.folliculina<-as_tibble(all_var)
+ndata.8.folliculina<-as_tibble(all_var)
 
-## add the fitted values by predicting from the mod.folliculinael for the new data
-ndata.16.folliculina <- add_column(ndata.16.folliculina, fit = predict(mod.folliculina, newdata = ndata.16.folliculina, type = 'response'))
-
-ndata.16.folliculina <- bind_cols(ndata.16.folliculina, setNames(as_tibble(predict(mod.folliculina, ndata.16.folliculina, se.fit = TRUE)[1:2]),
-                                                       c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.folliculina <- mutate(ndata.16.folliculina,
-                          fit_resp  = ilink.gam.16.folliculina(fit_link),
-                          right_upr = ilink.gam.16.folliculina(fit_link + (2 * se_link)),
-                          right_lwr = ilink.gam.16.folliculina(fit_link - (2 * se_link)))
-
-
-# ndata.16.folliculina$botryllid.001.unscaled<-ndata.16.folliculina$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.folliculina.16 <- ggplot(ndata.16.folliculina, aes(x = botryllid, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = folliculina.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Folliculina")~ "abundance"), textstyle("(proportion cover)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.folliculina,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.folliculina.16
-ggsave("C:Graphs av.pH//folliculina_pred.16.png")
-
-
-
-# GAM beta folliculina / gam.8.beta.folliculina -----------------------------------------------------------
-
-gam.8.binomial.folliculina<- gam(formula = cbind(folliculina, 100-folliculina)~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
-gam.8.beta.folliculina<- gam(folliculina.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.8.beta.folliculina.1<- gam(folliculina.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.8.beta.folliculina.2<- gam(folliculina.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.8.beta.folliculina.3<- gam(folliculina.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-AICtab(gam.8.beta.folliculina, gam.8.beta.folliculina.1, gam.8.beta.folliculina.2,gam.8.binomial.folliculina, gam.8.beta.folliculina.3)
-#simplest logit
-
-
-plot(gam.8.beta.folliculina.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.folliculina.3)
-qq_plot(gam.8.beta.folliculina.3, method = 'simulate')
-k.check(gam.8.beta.folliculina.3)
-summary(gam.8.beta.folliculina.3)
-
-gam.8.beta.folliculina.3.unordered<- gam(folliculina.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-fam.gam.8.folliculina <- family(gam.8.beta.folliculina.3)
-fam.gam.8.folliculina
-str(fam.gam.8.folliculina)
+fam.gam.8.folliculina <- family(mod.folliculina)
 ilink.gam.8.folliculina<- fam.gam.8.folliculina$linkinv
-ilink.gam.8.folliculina
 
-
-mod.folliculina<-gam.8.beta.folliculina.3
-ndata.8.folliculina <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                      length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-min(invasion.exp.data.8_zscores$botryllid.001)
 ## add the fitted values by predicting from the mod.folliculinael for the new data
 ndata.8.folliculina <- add_column(ndata.8.folliculina, fit = predict(mod.folliculina, newdata = ndata.8.folliculina, type = 'response'))
-
-
 ndata.8.folliculina <- bind_cols(ndata.8.folliculina, setNames(as_tibble(predict(mod.folliculina, ndata.8.folliculina, se.fit = TRUE)[1:2]),
                                                                  c('fit_link','se_link')))
-
-## create the interval and backtransform
-
 ndata.8.folliculina <- mutate(ndata.8.folliculina,
                                fit_resp  = ilink.gam.8.folliculina(fit_link),
                                right_upr = ilink.gam.8.folliculina(fit_link + (2 * se_link)),
                                right_lwr = ilink.gam.8.folliculina(fit_link - (2 * se_link)))
 
-
-ndata.8.folliculina$botryllid.001.unscaled<-ndata.8.folliculina$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.folliculina.8 <- ggplot(ndata.8.folliculina, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.folliculina.8 <- ggplot(ndata.8.folliculina, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = folliculina.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
+  geom_jitter(aes(y = folliculina.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
   xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Folliculina")~ "abundance"), textstyle("(proportion cover)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.folliculina,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
@@ -273,134 +203,42 @@ plt.folliculina.8
 ggsave("C:Graphs August 2020//folliculina_pred.8.png")
 
 
-# GAM beta membranipora / gam.16.beta.membranipora --------------------------------------------------------
+# GAM binomial membranipora --------------------------------------------------------
+gam.8.binomial.membranipora<- gam(formula = cbind(membranipora, 100-membranipora)~ s(bot.total, k=6)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment, k=6), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+gam.8.beta.membranipora<- gam(membranipora.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+#binomial explains more deviance 40 vs. 12%
 
-#binomial first
-gam.16.binomial.membranipora<- gam(formula = cbind(membranipora, 100-membranipora)~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+summary(gam.8.beta.membranipora)
 
-#beta next
-gam.16.beta.membranipora<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML", eps=.Machine$double.eps*100)
-gam.16.beta.membranipora.1<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.membranipora.2<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.16.beta.membranipora.3<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+mod.membranipora<-gam.8.binomial.membranipora
+plot(mod.membranipora, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.membranipora)
+qq_plot(mod.membranipora, method = 'simulate')
+k.check(mod.membranipora)
+summary(mod.membranipora)
 
+mod.membranipora.unordered<-gam(formula = cbind(membranipora, 100-membranipora)~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
 
-AICtab( gam.16.beta.membranipora, gam.16.beta.membranipora.1, gam.16.beta.membranipora.2, gam.16.binomial.membranipora, gam.16.beta.membranipora.3)
-#cauchit is best
-
-
-plot(gam.16.beta.membranipora.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.membranipora.3)
-qq_plot(gam.16.beta.membranipora.3, method = 'simulate')
-k.check(gam.16.beta.membranipora.3)
-summary(gam.16.beta.membranipora.3)
-vis.gam(gam.16.beta.membranipora.3)
-
-gam.16.beta.membranipora.3.unordered<- gam(membranipora.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-fam.gam.16.membranipora <- family(gam.16.beta.membranipora.3)
-fam.gam.16.membranipora
-ilink.gam.16.membranipora<- fam.gam.16.membranipora$linkinv
-ilink.gam.16.membranipora
-
-
-mod.membranipora<-gam.16.beta.membranipora.3
-ndata.16.membranipora <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                  length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the mod.membraniporael for the new data
-ndata.16.membranipora <- add_column(ndata.16.membranipora, fit = predict(mod.membranipora, newdata = ndata.16.membranipora, type = 'response'))
-
-
-ndata.16.membranipora <- bind_cols(ndata.16.membranipora, setNames(as_tibble(predict(mod.membranipora, ndata.16.membranipora, se.fit = TRUE)[1:2]),
-                                                       c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.membranipora <- mutate(ndata.16.membranipora,
-                          fit_resp  = ilink.gam.16.membranipora(fit_link),
-                          right_upr = ilink.gam.16.membranipora(fit_link + (2 * se_link)),
-                          right_lwr = ilink.gam.16.membranipora(fit_link - (2 * se_link)))
-
-ndata.16.membranipora$botryllid.001.unscaled<-ndata.16.membranipora$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.membranipora.16 <- ggplot(ndata.16.membranipora, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = membranipora.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Membranipora")~ "abundance"), textstyle("(proportion cover)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.membranipora,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.membranipora.16
-ggsave("C:Graphs August 2020//membranipora_pred.16.png")
-
-# GAM beta membranipora / gam.8.beta.membranipora --------------------------------------------------------
-
-#binomial first
-gam.8.binomial.membranipora<- gam(formula = cbind(membranipora, 100-membranipora)~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
-
-#beta next
-gam.8.beta.membranipora<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.8.beta.membranipora.1<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.8.beta.membranipora.2<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.8.beta.membranipora.3<- gam(membranipora.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-AICtab( gam.8.beta.membranipora, gam.8.beta.membranipora.1, gam.8.beta.membranipora.2, gam.8.binomial.membranipora, gam.8.beta.membranipora.3)
-#cauchit is best
-
-
-plot(gam.8.beta.membranipora.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.beta.membranipora.3)
-qq_plot(gam.8.beta.membranipora.3, method = 'simulate')
-k.check(gam.8.beta.membranipora.3)
-summary(gam.8.beta.membranipora.3)
-vis.gam(gam.8.beta.membranipora.3)
-
-gam.8.beta.membranipora.3.unordered<- gam(membranipora.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-fam.gam.8.membranipora <- family(gam.8.beta.membranipora.3)
-fam.gam.8.membranipora
+ndata.8.membranipora<-as_tibble(all_var)
+fam.gam.8.membranipora <- family(mod.membranipora)
 ilink.gam.8.membranipora<- fam.gam.8.membranipora$linkinv
-ilink.gam.8.membranipora
-
-
-mod.membranipora<-gam.8.beta.membranipora.3
-ndata.8.membranipora <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
 
 ## add the fitted values by predicting from the mod.membraniporael for the new data
 ndata.8.membranipora <- add_column(ndata.8.membranipora, fit = predict(mod.membranipora, newdata = ndata.8.membranipora, type = 'response'))
-
-
 ndata.8.membranipora <- bind_cols(ndata.8.membranipora, setNames(as_tibble(predict(mod.membranipora, ndata.8.membranipora, se.fit = TRUE)[1:2]),
                                                                    c('fit_link','se_link')))
-
-## create the interval and backtransform
 
 ndata.8.membranipora <- mutate(ndata.8.membranipora,
                                 fit_resp  = ilink.gam.8.membranipora(fit_link),
                                 right_upr = ilink.gam.8.membranipora(fit_link + (2 * se_link)),
                                 right_lwr = ilink.gam.8.membranipora(fit_link - (2 * se_link)))
 
-ndata.8.membranipora$botryllid.001.unscaled<-ndata.8.membranipora$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.membranipora.8 <- ggplot(ndata.8.membranipora, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.membranipora.8 <- ggplot(ndata.8.membranipora, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = membranipora.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
+  geom_jitter(aes(y = membranipora.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
   xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Membranipora")~ "abundance"), textstyle("(proportion cover)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.membranipora,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
@@ -408,270 +246,168 @@ plt.membranipora.8
 ggsave("C:Graphs August 2020//membranipora_pred.8.png")
 
 
-# GAM beta mem.eaten / gam.16.beta.mem.eaten --------------------------------------------------------
+# GAM binomial mem.total --------------------------------------------------------
+gam.8.binomial.mem.total<- gam(formula = cbind(mem.total, 100-mem.total)~ s(bot.total, k=6)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment, k=6), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+gam.8.beta.mem.total<- gam(mem.total.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+#binomial explains more deviance 40 vs. 12%
 
-#binomial first
-gam.16.binomial.mem.eaten<- gam(formula = cbind(mem.eaten, 100-mem.eaten)~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+summary(gam.8.beta.mem.total)
 
-#beta next
-gam.16.beta.mem.eaten<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.mem.eaten.1<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.mem.eaten.2<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.16.beta.mem.eaten.3<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+mod.mem.total<-gam.8.binomial.mem.total
+plot(mod.mem.total, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.mem.total)
+qq_plot(mod.mem.total, method = 'simulate')
+k.check(mod.mem.total)
+summary(mod.mem.total)
 
+mod.mem.total.unordered<-gam(formula = cbind(mem.total, 100-mem.total)~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
 
-AICtab( gam.16.beta.mem.eaten, gam.16.beta.mem.eaten.1, gam.16.beta.mem.eaten.2, gam.16.binomial.mem.eaten, gam.16.beta.mem.eaten.3)
-#cauchit is best
+ndata.8.mem.total<-as_tibble(all_var)
+fam.gam.8.mem.total <- family(mod.mem.total)
+ilink.gam.8.mem.total<- fam.gam.8.mem.total$linkinv
 
-
-plot(gam.16.beta.mem.eaten.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.mem.eaten.3)
-#not great
-qq_plot(gam.16.beta.mem.eaten.3, method = 'simulate')
-k.check(gam.16.beta.mem.eaten.3)
-summary(gam.16.beta.mem.eaten.3)
-vis.gam(gam.16.beta.mem.eaten.3)
-
-gam.16.beta.mem.eaten.3.unordered<- gam(mem.eaten.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-fam.gam.16.mem.eaten <- family(gam.16.beta.mem.eaten.3)
-fam.gam.16.mem.eaten
-ilink.gam.16.mem.eaten<- fam.gam.16.mem.eaten$linkinv
-ilink.gam.16.mem.eaten
-
-
-mod.mem.eaten<-gam.16.beta.mem.eaten.3
-ndata.16.mem.eaten <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the mod.mem.eatenel for the new data
-ndata.16.mem.eaten <- add_column(ndata.16.mem.eaten, fit = predict(mod.mem.eaten, newdata = ndata.16.mem.eaten, type = 'response'))
-
-
-ndata.16.mem.eaten <- bind_cols(ndata.16.mem.eaten, setNames(as_tibble(predict(mod.mem.eaten, ndata.16.mem.eaten, se.fit = TRUE)[1:2]),
-                                                                   c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.mem.eaten <- mutate(ndata.16.mem.eaten,
-                                fit_resp  = ilink.gam.16.mem.eaten(fit_link),
-                                right_upr = ilink.gam.16.mem.eaten(fit_link + (2 * se_link)),
-                                right_lwr = ilink.gam.16.mem.eaten(fit_link - (2 * se_link)))
-
-ndata.16.mem.eaten$botryllid.001.unscaled<-ndata.16.mem.eaten$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.mem.eaten.16 <- ggplot(ndata.16.mem.eaten, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = mem.eaten.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("mem.eaten")~ "abundance"), textstyle("(proportion cover)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.mem.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.mem.eaten.16
-ggsave("C:Graphs August 2020//mem.eaten_pred.16.png")
-
-# GAM beta mem.eaten / gam.8.beta.mem.eaten --------------------------------------------------------
-
-#binomial first
-gam.8.binomial.mem.eaten<- gam(formula = cbind(mem.eaten, 100-mem.eaten)~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
-
-#beta next
-gam.8.beta.mem.eaten<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.8.beta.mem.eaten.1<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.8.beta.mem.eaten.2<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.8.beta.mem.eaten.3<- gam(mem.eaten.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-AICtab( gam.8.beta.mem.eaten, gam.8.beta.mem.eaten.1, gam.8.beta.mem.eaten.2, gam.8.binomial.mem.eaten, gam.8.beta.mem.eaten.3)
-#cauchit is best
-
-
-plot(gam.8.beta.mem.eaten.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.mem.eaten.3)
-qq_plot(gam.8.beta.mem.eaten.3, method = 'simulate')
-k.check(gam.8.beta.mem.eaten.3)
-summary(gam.8.beta.mem.eaten.3)
-vis.gam(gam.8.beta.mem.eaten.3)
-
-gam.8.beta.mem.eaten.3.unordered<- gam(mem.eaten.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-fam.gam.8.mem.eaten <- family(gam.8.beta.mem.eaten.3)
-fam.gam.8.mem.eaten
-ilink.gam.8.mem.eaten<- fam.gam.8.mem.eaten$linkinv
-ilink.gam.8.mem.eaten
-
-
-mod.mem.eaten<-gam.8.beta.mem.eaten.3
-ndata.8.mem.eaten <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                     length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the mod.mem.eatenel for the new data
-ndata.8.mem.eaten <- add_column(ndata.8.mem.eaten, fit = predict(mod.mem.eaten, newdata = ndata.8.mem.eaten, type = 'response'))
-
-
-ndata.8.mem.eaten <- bind_cols(ndata.8.mem.eaten, setNames(as_tibble(predict(mod.mem.eaten, ndata.8.mem.eaten, se.fit = TRUE)[1:2]),
+## add the fitted values by predicting from the mod.mem.totalel for the new data
+ndata.8.mem.total <- add_column(ndata.8.mem.total, fit = predict(mod.mem.total, newdata = ndata.8.mem.total, type = 'response'))
+ndata.8.mem.total <- bind_cols(ndata.8.mem.total, setNames(as_tibble(predict(mod.mem.total, ndata.8.mem.total, se.fit = TRUE)[1:2]),
                                                                  c('fit_link','se_link')))
 
-## create the interval and backtransform
+ndata.8.mem.total <- mutate(ndata.8.mem.total,
+                               fit_resp  = ilink.gam.8.mem.total(fit_link),
+                               right_upr = ilink.gam.8.mem.total(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.mem.total(fit_link - (2 * se_link)))
 
-ndata.8.mem.eaten <- mutate(ndata.8.mem.eaten,
-                               fit_resp  = ilink.gam.8.mem.eaten(fit_link),
-                               right_upr = ilink.gam.8.mem.eaten(fit_link + (2 * se_link)),
-                               right_lwr = ilink.gam.8.mem.eaten(fit_link - (2 * se_link)))
-
-ndata.8.mem.eaten$botryllid.001.unscaled<-ndata.8.mem.eaten$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.mem.eaten.8 <- ggplot(ndata.8.mem.eaten, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.mem.total.8 <- ggplot(ndata.8.mem.total, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = mem.eaten.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("mem.eaten")~ "abundance"), textstyle("(proportion cover)")))))+  
+  geom_jitter(aes(y = mem.total.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("mem.total")~ "abundance"), textstyle("(proportion cover)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.8.mem.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  geom_ribbon(data = ndata.8.mem.total,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
-plt.mem.eaten.8
-ggsave("C:Graphs August 2020//mem.eaten_pred.8.png")
-
- 
-# GAM beta mussel / gam.16.beta.mussel --------------------------------------------------------
-
-#binomial first
-gam.16.binomial.mussel<- gam(formula = cbind(mussel, 100-mussel)~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
-
-#beta next
-gam.16.beta.mussel<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.mussel.1<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.mussel.2<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.16.beta.mussel.3<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-
-AICtab( gam.16.beta.mussel, gam.16.beta.mussel.1, gam.16.beta.mussel.2, gam.16.binomial.mussel, gam.16.beta.mussel.3)
+plt.mem.total.8
+ggsave("C:Graphs August 2020//mem.total_pred.8.png")
 
 
 
-plot(gam.16.beta.mussel, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.beta.mussel)
-qq_plot(gam.16.beta.mussel, method = 'simulate')
-k.check(gam.16.beta.mussel)
-summary(gam.16.beta.mussel)
-vis.gam(gam.16.beta.mussel)
+# Prop mem eaten ----------------------------------------------------------
+gam.8.binomial.prop.mem.eaten<- gam(formula = cbind(prop.mem.eaten, 100-prop.mem.eaten)~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+gam.8.beta.prop.mem.eaten<- gam(prop.mem.eaten.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+#binomial explains more deviance 40 vs. 12%
 
-gam.16.beta.mussel.unordered<- gam(mussel.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logitt"), select=TRUE, method="REML")
+mod.prop.mem.eaten<-gam.8.binomial.prop.mem.eaten
+plot(mod.prop.mem.eaten, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.prop.mem.eaten)
+qq_plot(mod.prop.mem.eaten, method = 'simulate')
+k.check(mod.prop.mem.eaten)
+summary(mod.prop.mem.eaten)
 
+mod.prop.mem.eaten.unordered<-gam(formula = cbind(prop.mem.eaten, 100-prop.mem.eaten)~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
 
-fam.gam.16.mussel <- family(gam.16.beta.mussel.3)
-fam.gam.16.mussel
-ilink.gam.16.mussel<- fam.gam.16.mussel$linkinv
-ilink.gam.16.mussel
+ndata.8.prop.mem.eaten<-as_tibble(all_var)
+fam.gam.8.prop.mem.eaten <- family(mod.prop.mem.eaten)
+ilink.gam.8.prop.mem.eaten<- fam.gam.8.prop.mem.eaten$linkinv
 
+## add the fitted values by predicting from the mod.prop.mem.eatenel for the new data
+ndata.8.prop.mem.eaten <- add_column(ndata.8.prop.mem.eaten, fit = predict(mod.prop.mem.eaten, newdata = ndata.8.prop.mem.eaten, type = 'response'))
+ndata.8.prop.mem.eaten <- bind_cols(ndata.8.prop.mem.eaten, setNames(as_tibble(predict(mod.prop.mem.eaten, ndata.8.prop.mem.eaten, se.fit = TRUE)[1:2]),
+                                                           c('fit_link','se_link')))
 
-mod.mussel<-gam.16.beta.mussel.3
-ndata.16.mussel <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
+ndata.8.prop.mem.eaten <- mutate(ndata.8.prop.mem.eaten,
+                            fit_resp  = ilink.gam.8.prop.mem.eaten(fit_link),
+                            right_upr = ilink.gam.8.prop.mem.eaten(fit_link + (2 * se_link)),
+                            right_lwr = ilink.gam.8.prop.mem.eaten(fit_link - (2 * se_link)))
 
-
-## add the fitted values by predicting from the mod.musselel for the new data
-ndata.16.mussel <- add_column(ndata.16.mussel, fit = predict(mod.mussel, newdata = ndata.16.mussel, type = 'response'))
-
-
-ndata.16.mussel <- bind_cols(ndata.16.mussel, setNames(as_tibble(predict(mod.mussel, ndata.16.mussel, se.fit = TRUE)[1:2]),
-                                                                   c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.mussel <- mutate(ndata.16.mussel,
-                                fit_resp  = ilink.gam.16.mussel(fit_link),
-                                right_upr = ilink.gam.16.mussel(fit_link + (2 * se_link)),
-                                right_lwr = ilink.gam.16.mussel(fit_link - (2 * se_link)))
-
-ndata.16.mussel$botryllid.001.unscaled<-ndata.16.mussel$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.mussel.16 <- ggplot(ndata.16.mussel, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.prop.mem.eaten.8 <- ggplot(ndata.8.prop.mem.eaten, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = mussel.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("mussel")~ "abundance"), textstyle("(proportion cover)")))))+  
+  geom_jitter(aes(y = prop.mem.eaten.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("prop.mem.eaten")~ "abundance"), textstyle("(proportion cover)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.mussel,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  geom_ribbon(data = ndata.8.prop.mem.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
-plt.mussel.16
-ggsave("C:Graphs August 2020//mussel_pred.16.png")
-
-# GAM beta mussel / gam.8.beta.mussel --------------------------------------------------------
-
-#binomial first
-gam.8.binomial.mussel<- gam(formula = cbind(mussel, 100-mussel)~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
-
-#beta next
-gam.8.beta.mussel<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.8.beta.mussel.1<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.8.beta.mussel.2<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.8.beta.mussel.3<- gam(mussel.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+plt.prop.mem.eaten.8
+ggsave("C:Graphs August 2020//prop.mem.eaten_pred.8.png")
 
 
-AICtab( gam.8.beta.mussel, gam.8.beta.mussel.1, gam.8.beta.mussel.2, gam.8.binomial.mussel, gam.8.beta.mussel.3)
+# Week 16 prop mem eaten --------------------------------------------------
+
+gam.16.binomial.prop.mem.eaten<- gam(formula = cbind(prop.mem.eaten, 100-prop.mem.eaten)~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+gam.16.beta.prop.mem.eaten<- gam(prop.mem.eaten.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+
+mod.prop.mem.eaten<-gam.16.beta.prop.mem.eaten
+plot(mod.prop.mem.eaten, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.prop.mem.eaten)
+qq_plot(mod.prop.mem.eaten, method = 'simulate')
+k.check(mod.prop.mem.eaten)
+summary(mod.prop.mem.eaten)
+
+mod.prop.mem.eaten.unordered<-gam(formula = cbind(prop.mem.eaten, 100-prop.mem.eaten)~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+
+ndata.16.prop.mem.eaten<-as_tibble(all_var)
+fam.gam.16.prop.mem.eaten <- family(mod.prop.mem.eaten)
+ilink.gam.16.prop.mem.eaten<- fam.gam.16.prop.mem.eaten$linkinv
+
+## add the fitted values by predicting from the mod.prop.mem.eatenel for the new data
+ndata.16.prop.mem.eaten <- add_column(ndata.16.prop.mem.eaten, fit = predict(mod.prop.mem.eaten, newdata = ndata.16.prop.mem.eaten, type = 'response'))
+ndata.16.prop.mem.eaten <- bind_cols(ndata.16.prop.mem.eaten, setNames(as_tibble(predict(mod.prop.mem.eaten, ndata.16.prop.mem.eaten, se.fit = TRUE)[1:2]),
+                                                                     c('fit_link','se_link')))
+
+ndata.16.prop.mem.eaten <- mutate(ndata.16.prop.mem.eaten,
+                                 fit_resp  = ilink.gam.16.prop.mem.eaten(fit_link),
+                                 right_upr = ilink.gam.16.prop.mem.eaten(fit_link + (2 * se_link)),
+                                 right_lwr = ilink.gam.16.prop.mem.eaten(fit_link - (2 * se_link)))
+
+plt.prop.mem.eaten.16 <- ggplot(ndata.16.prop.mem.eaten, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = prop.mem.eaten.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("prop.mem.eaten")~ "abundance"), textstyle("(proportion cover)")))))+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.16.prop.mem.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.prop.mem.eaten.16
+ggsave("C:Graphs August 2020//prop.mem.eaten_pred.16.png")
 
 
 
-plot(gam.8.beta.mussel, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.mussel)
-qq_plot(gam.8.beta.mussel, method = 'simulate')
-k.check(gam.8.beta.mussel)
-summary(gam.8.beta.mussel)
-vis.gam(gam.8.beta.mussel)
 
-gam.8.beta.mussel.unordered<- gam(mussel.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+# GAM binomial mussel --------------------------------------------------------
+gam.8.binomial.mussel<- gam(formula = cbind(mussel, 100-mussel)~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+gam.8.beta.mussel<- gam(mussel.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+#binomial explains more deviance 4 vs. 1%
 
+mod.mussel<-gam.8.binomial.mussel
+plot(mod.mussel, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.mussel)
+qq_plot(mod.mussel, method = 'simulate')
+k.check(mod.mussel)
+summary(mod.mussel)
 
-fam.gam.8.mussel <- family(gam.8.beta.mussel)
-fam.gam.8.mussel
+mod.mussel.unordered<-gam(formula = cbind(mussel, 100-mussel)~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+
+ndata.8.mussel<-as_tibble(all_var)
+fam.gam.8.mussel <- family(mod.mussel)
 ilink.gam.8.mussel<- fam.gam.8.mussel$linkinv
-ilink.gam.8.mussel
-
-
-mod.mussel<-gam.8.beta.mussel
-ndata.8.mussel <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                 length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
 
 ## add the fitted values by predicting from the mod.musselel for the new data
 ndata.8.mussel <- add_column(ndata.8.mussel, fit = predict(mod.mussel, newdata = ndata.8.mussel, type = 'response'))
-
-
 ndata.8.mussel <- bind_cols(ndata.8.mussel, setNames(as_tibble(predict(mod.mussel, ndata.8.mussel, se.fit = TRUE)[1:2]),
-                                                       c('fit_link','se_link')))
-
-## create the interval and backtransform
+                                                                 c('fit_link','se_link')))
 
 ndata.8.mussel <- mutate(ndata.8.mussel,
-                          fit_resp  = ilink.gam.8.mussel(fit_link),
-                          right_upr = ilink.gam.8.mussel(fit_link + (2 * se_link)),
-                          right_lwr = ilink.gam.8.mussel(fit_link - (2 * se_link)))
+                               fit_resp  = ilink.gam.8.mussel(fit_link),
+                               right_upr = ilink.gam.8.mussel(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.mussel(fit_link - (2 * se_link)))
 
-ndata.8.mussel$botryllid.001.unscaled<-ndata.8.mussel$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-
-plt.mussel.8 <- ggplot(ndata.8.mussel, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.mussel.8 <- ggplot(ndata.8.mussel, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = mussel.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
+  geom_jitter(aes(y = mussel.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
   xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("mussel")~ "abundance"), textstyle("(proportion cover)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.mussel,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
@@ -679,341 +415,140 @@ plt.mussel.8
 ggsave("C:Graphs August 2020//mussel_pred.8.png")
 
 
-# GAM negbin barnacles / gam.16.nb.num.barn -----------------------------------------------------------
-nbinom.16.barn <- fitdistr(invasion.exp.data.16_zscores$num.barn, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.barn, "nbinom", size = nbinom.16.barn$estimate[[1]], mu = nbinom.16.barn$estimate[[2]])
+# GAM poisson barnacles -----------------------------------------------------------
+nbinom.8.num.barn <- fitdistr(invasion.exp.data.8_zscores$num.barn, "Negative Binomial")
+qqp(invasion.exp.data.8_zscores$num.barn, "nbinom", size = nbinom.8.num.barn$estimate[[1]], mu = nbinom.8.num.barn$estimate[[2]])
 
 #negative binomial 
-gam.16.nb.num.barn<- gam(num.barn ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.barn$estimate[[1]]), select=TRUE, method="REML")
-gam.16.nb.num.barn.1<- gam(num.barn ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.num.barn<- gam(num.barn ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
-
-AICtab(gam.16.nb.num.barn, gam.16.nb.num.barn.1, gam.16.poisson.num.barn)
-
-plot(gam.16.poisson.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.poisson.num.barn)
-qq_plot(gam.16.poisson.num.barn, method = 'simulate')
-#looks really good
-k.check(gam.16.poisson.num.barn)
-summary(gam.16.poisson.num.barn)
-
-
-#a few outside the area
-##appraise a bit funnelly
-
-gam.16.poisson.num.barn.unordered<- gam(num.barn ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
-fam.gam.16.num.barn <- family(gam.16.poisson.num.barn)
-fam.gam.16.num.barn
-str(fam.gam.16.num.barn)
-ilink.gam.16.num.barn<- fam.gam.16.num.barn$linkinv
-ilink.gam.16.num.barn
-
-
-mod.num.barn<-gam.16.poisson.num.barn
-ndata.16.num.barn <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                          length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.num.barn <- add_column(ndata.16.num.barn, fit = predict(mod.num.barn, newdata = ndata.16.num.barn, type = 'response'))
-predict(mod.num.barn, newdata = ndata.16.num.barn, type = 'response')
-ndata.16.num.barn <- bind_cols(ndata.16.num.barn, setNames(as_tibble(predict(mod.num.barn, ndata.16.num.barn, se.fit = TRUE)[1:2]),
-                                                                       c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.16.num.barn <- mutate(ndata.16.num.barn,
-                                  fit_resp  = ilink.gam.16.num.barn(fit_link),
-                                  right_upr = ilink.gam.16.num.barn(fit_link + (2 * se_link)),
-                                  right_lwr = ilink.gam.16.num.barn(fit_link - (2 * se_link)))
-ndata.16.num.barn$botryllid.001.unscaled<-ndata.16.num.barn$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-plt.num.barn.16 <- ggplot(ndata.16.num.barn, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.barn, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Balanus")~ "abundance"), textstyle("(# of individuals)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.num.barn,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.num.barn.16
-ggsave("C:Graphs August 2020//num.barn_pred.16.png")
-
-# GAM negbin barnacles / gam.8.nb.num.barn -----------------------------------------------------------
-nbinom.8.barn <- fitdistr(invasion.exp.data.8_zscores$num.barn, "Negative Binomial")
-qqp(invasion.exp.data.8_zscores$num.barn, "nbinom", size = nbinom.8.barn$estimate[[1]], mu = nbinom.8.barn$estimate[[2]])
-
-#negative binomial 
-gam.8.nb.num.barn<- gam(num.barn ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.barn$estimate[[1]]), select=TRUE, method="REML")
-gam.8.nb.num.barn.1<- gam(num.barn ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-gam.8.poisson.num.barn<- gam(num.barn ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+gam.8.nb.num.barn<- gam(num.barn ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.barn$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.barn.1<- gam(num.barn ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.barn<- gam(num.barn ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
 AICtab(gam.8.nb.num.barn, gam.8.nb.num.barn.1, gam.8.poisson.num.barn)
 #poisson is better
 
-plot(gam.8.poisson.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.poisson.num.barn)
-qq_plot(gam.8.poisson.num.barn, method = 'simulate')
-k.check(gam.8.poisson.num.barn)
-summary(gam.8.poisson.num.barn)
-
-gam.8.poisson.num.barn.unordered<- gam(num.barn ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
-fam.gam.8.num.barn <- family(gam.8.poisson.num.barn)
-ilink.gam.8.num.barn<- fam.gam.8.num.barn$linkinv
 mod.num.barn<-gam.8.poisson.num.barn
-ndata.8.num.barn <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                   length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-## add the fitted values by predicting from the model for the new data
+plot(mod.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.barn)
+qq_plot(mod.num.barn, method = 'simulate')
+k.check(mod.num.barn)
+summary(mod.num.barn)
+
+gam.8.poisson.num.barn.unordered<- gam(num.barn ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+
+ndata.8.num.barn<-as_tibble(all_var)
+fam.gam.8.num.barn <- family(mod.num.barn)
+ilink.gam.8.num.barn<- fam.gam.8.num.barn$linkinv
+
+## add the fitted values by predicting from the mod.num.barnel for the new data
 ndata.8.num.barn <- add_column(ndata.8.num.barn, fit = predict(mod.num.barn, newdata = ndata.8.num.barn, type = 'response'))
-predict(mod.num.barn, newdata = ndata.8.num.barn, type = 'response')
 ndata.8.num.barn <- bind_cols(ndata.8.num.barn, setNames(as_tibble(predict(mod.num.barn, ndata.8.num.barn, se.fit = TRUE)[1:2]),
-                                                           c('fit_link','se_link')))
+                                                                 c('fit_link','se_link')))
 
-## create the interval and backtransform
 ndata.8.num.barn <- mutate(ndata.8.num.barn,
-                            fit_resp  = ilink.gam.8.num.barn(fit_link),
-                            right_upr = ilink.gam.8.num.barn(fit_link + (2 * se_link)),
-                            right_lwr = ilink.gam.8.num.barn(fit_link - (2 * se_link)))
-ndata.8.num.barn$botryllid.001.unscaled<-ndata.8.num.barn$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
+                               fit_resp  = ilink.gam.8.num.barn(fit_link),
+                               right_upr = ilink.gam.8.num.barn(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.num.barn(fit_link - (2 * se_link)))
 
-
-# plot 
-plt.num.barn.8 <- ggplot(ndata.8.num.barn, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.num.barn.8 <- ggplot(ndata.8.num.barn, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.barn, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Balanus")~ "abundance"), textstyle("(# of individuals)")))))+  
+  geom_jitter(aes(y = num.barn, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Barnacle abundance"), textstyle("(# individuals)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.barn,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
 plt.num.barn.8
 ggsave("C:Graphs August 2020//num.barn_pred.8.png")
 
-
-# GAM negbin num.white.bryo / gam.16.nb.num.white.bryo ----------------------------------------------------------
-nbinom.16.num.white.bryo <- fitdistr(invasion.exp.data.16_zscores$num.white.bryo, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.white.bryo, "nbinom", size = nbinom.16.num.white.bryo$estimate[[1]], mu = nbinom.16.num.white.bryo$estimate[[2]])
-#getting theta
-
-gam.16.nb.num.white.bryo<- gam(num.white.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
-gam.16.nb.num.white.bryo.1<- gam(num.white.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.num.white.bryo<- gam(num.white.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
-
-AICtab(gam.16.nb.num.white.bryo.1,gam.16.nb.num.white.bryo,gam.16.poisson.num.white.bryo)
-#used estimated theta
-
-plot(gam.16.nb.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.nb.num.white.bryo)
-qq_plot(gam.16.nb.num.white.bryo, method = 'simulate')
-k.check(gam.16.nb.num.white.bryo)
-summary(gam.16.nb.num.white.bryo)
-
-#a few outside the area
-##appraise a bit funnelly
-
-gam.16.nb.num.white.bryo.unordered<- gam(num.white.bryo ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
-
-fam.gam.16.num.white.bryo <- family(gam.16.nb.num.white.bryo)
-fam.gam.16.num.white.bryo
-str(fam.gam.16.num.white.bryo)
-ilink.gam.16.num.white.bryo<- fam.gam.16.num.white.bryo$linkinv
-ilink.gam.16.num.white.bryo
-
-mod.num.white.bryo<-gam.16.nb.num.white.bryo
-ndata.16.num.white.bryo <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-## add the fitted values by predicting from the model for the new data
-ndata.16.num.white.bryo <- add_column(ndata.16.num.white.bryo, fit = predict(mod.num.white.bryo, newdata = ndata.16.num.white.bryo, type = 'response'))
-predict(mod.num.white.bryo, newdata = ndata.16.num.white.bryo, type = 'response')
-ndata.16.num.white.bryo <- bind_cols(ndata.16.num.white.bryo, setNames(as_tibble(predict(mod.num.white.bryo, ndata.16.num.white.bryo, se.fit = TRUE)[1:2]),
-                                                                 c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.16.num.white.bryo <- mutate(ndata.16.num.white.bryo,
-                               fit_resp  = ilink.gam.16.num.white.bryo(fit_link),
-                               right_upr = ilink.gam.16.num.white.bryo(fit_link + (2 * se_link)),
-                               right_lwr = ilink.gam.16.num.white.bryo(fit_link - (2 * se_link)))
-ndata.16.num.white.bryo$botryllid.001.unscaled<-ndata.16.num.white.bryo$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.num.white.bryo.16 <- ggplot(ndata.16.num.white.bryo, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.white.bryo, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Disporella")~ "abundance"), textstyle("(# of colonies)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.num.white.bryo.16
-ggsave("C:Graphs August 2020//num.white.bryo_pred.16.png")
-
-
 # GAM negbin num.white.bryo / gam.8.nb.num.white.bryo ----------------------------------------------------------
-
 nbinom.8.num.white.bryo <- fitdistr(invasion.exp.data.8_zscores$num.white.bryo, "Negative Binomial")
 qqp(invasion.exp.data.8_zscores$num.white.bryo, "nbinom", size = nbinom.8.num.white.bryo$estimate[[1]], mu = nbinom.8.num.white.bryo$estimate[[2]])
-#getting theta
 
-gam.8.nb.num.white.bryo<- gam(num.white.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
-gam.8.nb.num.white.bryo.1<- gam(num.white.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-gam.8.poisson.num.white.bryo<- gam(num.white.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+#negative binomial 
+gam.8.nb.num.white.bryo<- gam(num.white.bryo ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.white.bryo.1<- gam(num.white.bryo ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.white.bryo<- gam(num.white.bryo ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
-AICtab(gam.8.nb.num.white.bryo.1,gam.8.nb.num.white.bryo,gam.8.poisson.num.white.bryo)
-#poisson is better for week 12
+AICtab(gam.8.nb.num.white.bryo, gam.8.nb.num.white.bryo.1, gam.8.poisson.num.white.bryo)
 
-plot(gam.8.poisson.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.poisson.num.white.bryo)
-#not that many points
-qq_plot(gam.8.poisson.num.white.bryo, method = 'simulate')
-k.check(gam.8.poisson.num.white.bryo)
-summary(gam.8.poisson.num.white.bryo)
 
-gam.8.poisson.num.white.bryo.unordered<- gam(num.white.bryo ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
-
-fam.gam.8.num.white.bryo <- family(gam.8.poisson.num.white.bryo)
-ilink.gam.8.num.white.bryo<- fam.gam.8.num.white.bryo$linkinv
 mod.num.white.bryo<-gam.8.poisson.num.white.bryo
-ndata.8.num.white.bryo <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                         length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-## add the fitted values by predicting from the model for the new data
+plot(mod.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.white.bryo)
+qq_plot(mod.num.white.bryo, method = 'simulate')
+k.check(mod.num.white.bryo)
+summary(mod.num.white.bryo)
+
+gam.8.poisson.num.white.bryo.unordered<- gam(num.white.bryo ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+
+ndata.8.num.white.bryo<-as_tibble(all_var)
+fam.gam.8.num.white.bryo <- family(mod.num.white.bryo)
+ilink.gam.8.num.white.bryo<- fam.gam.8.num.white.bryo$linkinv
+
+## add the fitted values by predicting from the mod.num.white.bryoel for the new data
 ndata.8.num.white.bryo <- add_column(ndata.8.num.white.bryo, fit = predict(mod.num.white.bryo, newdata = ndata.8.num.white.bryo, type = 'response'))
-
-predict(mod.num.white.bryo, newdata = ndata.8.num.white.bryo, type = 'response')
 ndata.8.num.white.bryo <- bind_cols(ndata.8.num.white.bryo, setNames(as_tibble(predict(mod.num.white.bryo, ndata.8.num.white.bryo, se.fit = TRUE)[1:2]),
-                                                                       c('fit_link','se_link')))
+                                                         c('fit_link','se_link')))
 
-## create the interval and backtransform
 ndata.8.num.white.bryo <- mutate(ndata.8.num.white.bryo,
-                                  fit_resp  = ilink.gam.8.num.white.bryo(fit_link),
-                                  right_upr = ilink.gam.8.num.white.bryo(fit_link + (2 * se_link)),
-                                  right_lwr = ilink.gam.8.num.white.bryo(fit_link - (2 * se_link)))
-ndata.8.num.white.bryo$botryllid.001.unscaled<-ndata.8.num.white.bryo$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
+                           fit_resp  = ilink.gam.8.num.white.bryo(fit_link),
+                           right_upr = ilink.gam.8.num.white.bryo(fit_link + (2 * se_link)),
+                           right_lwr = ilink.gam.8.num.white.bryo(fit_link - (2 * se_link)))
 
-# plot 
-plt.num.white.bryo.8 <- ggplot(ndata.8.num.white.bryo, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.white.bryo, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Disporella")~ "abundance"), textstyle("(# of colonies)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.8.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
+plt.num.white.bryo.8 <- ggplot(ndata.8.num.white.bryo, aes(x = bot.total, y = fit)) + 
+    geom_line(aes(colour=oCO2.Treatment)) +
+    geom_jitter(aes(y = num.white.bryo, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+    xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Disporella abundance"), textstyle("(# colonies)")))))+  
+    scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+    scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ylim(0,3)+
+    scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+    geom_ribbon(data = ndata.8.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+    theme(legend.position='none')
 plt.num.white.bryo.8
 ggsave("C:Graphs August 2020//num.white.bryo_pred.8.png")
-
-
-# GAM negbin num.red.bryo / gam.16.nb.num.red.bryo --------------------------------------------------------------
-nbinom.16.num.red.bryo <- fitdistr(invasion.exp.data.16_zscores$num.red.bryo, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.red.bryo, "nbinom", size = nbinom.16.num.red.bryo$estimate[[1]], mu = nbinom.16.num.red.bryo$estimate[[2]])
-#getting theta
-
-gam.16.nb.num.red.bryo<- gam(num.red.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
-gam.16.nb.num.red.bryo.1<- gam(num.red.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.num.red.bryo<- gam(num.red.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-
-AICtab(gam.16.nb.num.red.bryo, gam.16.nb.num.red.bryo.1, gam.16.poisson.num.red.bryo)
-
-
-plot(gam.16.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.poisson.num.red.bryo)
-qq_plot(gam.16.poisson.num.red.bryo, method = 'simulate')
-k.check(gam.16.poisson.num.red.bryo)
-summary(gam.16.poisson.num.red.bryo)
-
-gam.16.poisson.num.red.bryo.unordered<- gam(num.red.bryo ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-summary(gam.16.poisson.num.red.bryo.unordered)
-
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-
-fam.gam.16.num.red.bryo <- family(gam.16.poisson.num.red.bryo)
-fam.gam.16.num.red.bryo
-str(fam.gam.16.num.red.bryo)
-ilink.gam.16.num.red.bryo<- fam.gam.16.num.red.bryo$linkinv
-ilink.gam.16.num.red.bryo
-
-mod.num.red.bryo<-gam.16.poisson.num.red.bryo
-ndata.16.num.red.bryo <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                   length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-## add the fitted values by predicting from the model for the new data
-ndata.16.num.red.bryo <- add_column(ndata.16.num.red.bryo, fit = predict(mod.num.red.bryo, newdata = ndata.16.num.red.bryo, type = 'response'))
-
-predict(mod.num.red.bryo, newdata = ndata.16.num.red.bryo, type = 'response')
-ndata.16.num.red.bryo <- bind_cols(ndata.16.num.red.bryo, setNames(as_tibble(predict(mod.num.red.bryo, ndata.16.num.red.bryo, se.fit = TRUE)[1:2]),
-                                                         c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.16.num.red.bryo <- mutate(ndata.16.num.red.bryo,
-                           fit_resp  = ilink.gam.16.num.red.bryo(fit_link),
-                           right_upr = ilink.gam.16.num.red.bryo(fit_link + (2 * se_link)),
-                           right_lwr = ilink.gam.16.num.red.bryo(fit_link - (2 * se_link)))
-ndata.16.num.red.bryo$botryllid.001.unscaled<-ndata.16.num.red.bryo$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-plt.num.red.bryo.16 <- ggplot(ndata.16.num.red.bryo, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.red.bryo, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Schizoporella")~ "abundance"), textstyle("(# of colonies)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.num.red.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.num.red.bryo.16
-ggsave("C:Graphs August 2020//num.red.bryo_pred.16.png")
-
 
 # GAM negbin num.red.bryo / gam.8.nb.num.red.bryo --------------------------------------------------------------
 nbinom.8.num.red.bryo <- fitdistr(invasion.exp.data.8_zscores$num.red.bryo, "Negative Binomial")
 qqp(invasion.exp.data.8_zscores$num.red.bryo, "nbinom", size = nbinom.8.num.red.bryo$estimate[[1]], mu = nbinom.8.num.red.bryo$estimate[[2]])
-#getting theta
-invasion.exp.data.8_zscores$num.red.bryo
 
-
-gam.8.nb.num.red.bryo<- gam(num.red.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
-gam.8.nb.num.red.bryo.1<- gam(num.red.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-gam.8.poisson.num.red.bryo<- gam(num.red.bryo ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
+#negative binomial 
+gam.8.nb.num.red.bryo<- gam(num.red.bryo ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.red.bryo$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.red.bryo.1<- gam(num.red.bryo ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.red.bryo<- gam(num.red.bryo ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
 AICtab(gam.8.nb.num.red.bryo, gam.8.nb.num.red.bryo.1, gam.8.poisson.num.red.bryo)
 
+mod.num.red.bryo<-gam.8.poisson.num.red.bryo
+plot(mod.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.red.bryo)
+qq_plot(mod.num.red.bryo, method = 'simulate')
+k.check(mod.num.red.bryo)
+summary(mod.num.red.bryo)
 
-plot(gam.8.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.poisson.num.red.bryo)
-#does not look good
-qq_plot(gam.8.poisson.num.red.bryo, method = 'simulate')
-k.check(gam.8.poisson.num.red.bryo)
-summary(gam.8.poisson.num.red.bryo)
+gam.8.poisson.num.red.bryo.unordered<- gam(num.red.bryo ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
-gam.8.poisson.num.red.bryo.unordered<- gam(num.red.bryo ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
-
-want <- seq(1, nrow(invasion.exp.data.8_zscores), length.out = 100)
-fam.gam.8.num.red.bryo <- family(gam.8.poisson.num.red.bryo)
+ndata.8.num.red.bryo<-as_tibble(all_var)
+fam.gam.8.num.red.bryo <- family(mod.num.red.bryo)
 ilink.gam.8.num.red.bryo<- fam.gam.8.num.red.bryo$linkinv
 
-
-mod.num.red.bryo<-gam.8.poisson.num.red.bryo
-ndata.8.num.red.bryo <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-## add the fitted values by predicting from the model for the new data
+## add the fitted values by predicting from the mod.num.red.bryoel for the new data
 ndata.8.num.red.bryo <- add_column(ndata.8.num.red.bryo, fit = predict(mod.num.red.bryo, newdata = ndata.8.num.red.bryo, type = 'response'))
-predict(mod.num.red.bryo, newdata = ndata.8.num.red.bryo, type = 'response')
 ndata.8.num.red.bryo <- bind_cols(ndata.8.num.red.bryo, setNames(as_tibble(predict(mod.num.red.bryo, ndata.8.num.red.bryo, se.fit = TRUE)[1:2]),
-                                                                   c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.8.num.red.bryo <- mutate(ndata.8.num.red.bryo,
-                                fit_resp  = ilink.gam.8.num.red.bryo(fit_link),
-                                right_upr = ilink.gam.8.num.red.bryo(fit_link + (2 * se_link)),
-                                right_lwr = ilink.gam.8.num.red.bryo(fit_link - (2 * se_link)))
-ndata.8.num.red.bryo$botryllid.001.unscaled<-ndata.8.num.red.bryo$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
+                                                                     c('fit_link','se_link')))
 
-# plot 
-plt.num.red.bryo.8 <- ggplot(ndata.8.num.red.bryo, aes(x = botryllid.001.unscaled, y = fit)) + 
+ndata.8.num.red.bryo <- mutate(ndata.8.num.red.bryo,
+                                 fit_resp  = ilink.gam.8.num.red.bryo(fit_link),
+                                 right_upr = ilink.gam.8.num.red.bryo(fit_link + (2 * se_link)),
+                                 right_lwr = ilink.gam.8.num.red.bryo(fit_link - (2 * se_link)))
+
+plt.num.red.bryo.8 <- ggplot(ndata.8.num.red.bryo, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.red.bryo, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Schizoporella")~ "abundance"), textstyle("(# of colonies)")))))+  
+  geom_jitter(aes(y = num.red.bryo, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Schizoporella abundance"), textstyle("(# colonies)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ylim(0,2.5)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.red.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
@@ -1021,219 +556,196 @@ plt.num.red.bryo.8
 ggsave("C:Graphs August 2020//num.red.bryo_pred.8.png")
 
 
-# GAM poisson num nudi / gam.16.poisson.num.nudi  ------------------------------------------------------------
-nbinom.16.num.nudi <- fitdistr(invasion.exp.data.16_zscores$num.nudi, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.nudi, "nbinom", size = nbinom.16.num.nudi$estimate[[1]], mu = nbinom.16.num.nudi$estimate[[2]])
-#theta
-
-gam.16.nb.num.nudi.1<- gam(num.nudi ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.nb.num.nudi<- gam(num.nudi ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.nudi$estimate[[1]]), select=TRUE, method="REML")
-gam.16.poisson.num.nudi<- gam(num.nudi ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-AICtab(gam.16.nb.num.nudi, gam.16.nb.num.nudi.1, gam.16.poisson.num.nudi)
-
-appraise(gam.16.poisson.num.nudi)
-qq_plot(gam.16.poisson.num.nudi, method = 'simulate')
-#looks quite good!
-plot(gam.16.poisson.num.nudi, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-k.check(gam.16.poisson.num.nudi)
-summary(gam.16.poisson.num.nudi)
-#resids a bit funny but same in neg bin
-
-gam.16.poisson.num.nudi.unordered<- gam(num.nudi ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-fam.gam.16.num.nudi <- family(gam.16.poisson.num.nudi)
-ilink.gam.16.num.nudi<- fam.gam.16.num.nudi$linkinv
-mod.num.nudi<-gam.16.poisson.num.nudi
-ndata.16.num.nudi <- with(invasion.exp.data.16_zscores, 
-                       data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.num.nudi <- add_column(ndata.16.num.nudi, fit = predict(mod.num.nudi, newdata = ndata.16.num.nudi, type = 'response'))
-predict(mod.num.nudi, newdata = ndata.16.num.nudi, type = 'response')
-ndata.16.num.nudi <- bind_cols(ndata.16.num.nudi, setNames(as_tibble(predict(mod.num.nudi, ndata.16.num.nudi, se.fit = TRUE)[1:2]),
-                                                 c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.16.num.nudi <- mutate(ndata.16.num.nudi,
-                       fit_resp  = ilink.gam.16.num.nudi(fit_link),
-                       right_upr = ilink.gam.16.num.nudi(fit_link + (2 * se_link)),
-                       right_lwr = ilink.gam.16.num.nudi(fit_link - (2 * se_link)))
-ndata.16.num.nudi$botryllid.001.unscaled<-ndata.16.num.nudi$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-plt.num.nudi.16 <- ggplot(ndata.16.num.nudi, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.nudi, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Hermissenda")~ "abundance"), textstyle("(# of individuals)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.num.nudi,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0, "cm"), legend.margin=margin(0, 0.05, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
-plt.num.nudi.16
-ggsave("C:Graphs August 2020//num.nudi_pred.16.png")
-
-
 # GAM poisson num nudi / gam.8.poisson.num.nudi  ------------------------------------------------------------
 nbinom.8.num.nudi <- fitdistr(invasion.exp.data.8_zscores$num.nudi, "Negative Binomial")
 qqp(invasion.exp.data.8_zscores$num.nudi, "nbinom", size = nbinom.8.num.nudi$estimate[[1]], mu = nbinom.8.num.nudi$estimate[[2]])
-#theta
 
-gam.8.nb.num.nudi.1<- gam(num.nudi ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-gam.8.nb.num.nudi<- gam(num.nudi ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.16.num.nudi$estimate[[1]]), select=TRUE, method="REML")
-gam.8.poisson.num.nudi<- gam(num.nudi ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
-AICtab(gam.8.nb.num.nudi, gam.8.nb.num.nudi.1)
+#negative binomial 
+gam.8.nb.num.nudi<- gam(num.nudi ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.nudi$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.nudi.1<- gam(num.nudi ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.nudi<- gam(num.nudi ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
+AICtab(gam.8.nb.num.nudi, gam.8.nb.num.nudi.1, gam.8.poisson.num.nudi)
+#nb is same as poisson
 
-appraise(gam.8.nb.num.nudi.1)
-qq_plot(gam.8.nb.num.nudi.1, method = 'simulate')
-#looks quite good!
-plot(gam.8.nb.num.nudi.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-k.check(gam.8.nb.num.nudi.1)
-summary(gam.8.nb.num.nudi.1)
-#resids a bit funny but same in neg bin
+mod.num.nudi<-gam.8.poisson.num.nudi
+plot(mod.num.nudi, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.nudi)
+qq_plot(mod.num.nudi, method = 'simulate')
+k.check(mod.num.nudi)
+summary(mod.num.nudi)
 
-gam.8.nb.num.nudi.1.unordered<- gam(num.nudi ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-
-want <- seq(1, nrow(invasion.exp.data.8_zscores), length.out = 100)
-fam.gam.8.num.nudi <- family(gam.8.nb.num.nudi.1)
+gam.8.poisson.num.nudi.unordered<- gam(num.nudi ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+ndata.8.num.nudi<-as_tibble(all_var)
+fam.gam.8.num.nudi <- family(mod.num.nudi)
 ilink.gam.8.num.nudi<- fam.gam.8.num.nudi$linkinv
-mod.num.nudi<-gam.8.nb.num.nudi.1
-ndata.8.num.nudi <- with(invasion.exp.data.8_zscores, 
-                          data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                     length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
 
-## add the fitted values by predicting from the model for the new data
+## add the fitted values by predicting from the mod.num.nudiel for the new data
 ndata.8.num.nudi <- add_column(ndata.8.num.nudi, fit = predict(mod.num.nudi, newdata = ndata.8.num.nudi, type = 'response'))
-predict(mod.num.nudi, newdata = ndata.8.num.nudi, type = 'response')
 ndata.8.num.nudi <- bind_cols(ndata.8.num.nudi, setNames(as_tibble(predict(mod.num.nudi, ndata.8.num.nudi, se.fit = TRUE)[1:2]),
-                                                           c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.8.num.nudi <- mutate(ndata.8.num.nudi,
-                            fit_resp  = ilink.gam.8.num.nudi(fit_link),
-                            right_upr = ilink.gam.8.num.nudi(fit_link + (2 * se_link)),
-                            right_lwr = ilink.gam.8.num.nudi(fit_link - (2 * se_link)))
-ndata.8.num.nudi$botryllid.001.unscaled<-ndata.8.num.nudi$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
+                                                                 c('fit_link','se_link')))
 
-# plot 
-plt.num.nudi.8 <- ggplot(ndata.8.num.nudi, aes(x = botryllid.001.unscaled, y = fit)) + 
+ndata.8.num.nudi <- mutate(ndata.8.num.nudi,
+                               fit_resp  = ilink.gam.8.num.nudi(fit_link),
+                               right_upr = ilink.gam.8.num.nudi(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.num.nudi(fit_link - (2 * se_link)))
+
+plt.num.nudi.8 <- ggplot(ndata.8.num.nudi, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.nudi, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Hermissenda")~ "abundance"), textstyle("(# of individuals)")))))+  
+  geom_jitter(aes(y = num.nudi, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Nudibranch abundance"), textstyle("(# nudibranchs)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ylim(0,4)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.nudi,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0, "cm"), legend.margin=margin(0, 0.05, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
+  theme(legend.position='none')
 plt.num.nudi.8
 ggsave("C:Graphs August 2020//num.nudi_pred.8.png")
 
-# GAM nb() serpulids / gam.16.nb.num.serpulid.1 -----------------------------------------------------------
-nbinom.16.num.serpulid <- fitdistr(invasion.exp.data.16_zscores$num.serpulid, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.serpulid, "nbinom", size = nbinom.16.num.serpulid$estimate[[1]], mu = nbinom.16.num.serpulid$estimate[[2]])
-#theta
+# GAM poisson num nudi / gam.8.poisson.num.nudi.eggs  ------------------------------------------------------------
+nbinom.8.num.nudi.egg <- fitdistr(invasion.exp.data.8_zscores$num.nudi.egg, "Negative Binomial")
+qqp(invasion.exp.data.8_zscores$num.nudi.egg, "nbinom", size = nbinom.8.num.nudi.egg$estimate[[1]], mu = nbinom.8.num.nudi.egg$estimate[[2]])
 
-#negative binomial first
-gam.16.nb.num.serpulid<- gam(num.serpulid ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
-gam.16.nb.num.serpulid.1<- gam(num.serpulid ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.num.serpulid<- gam(num.serpulid ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
+#negative binomial 
+gam.8.nb.num.nudi.egg<- gam(num.nudi.egg ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.nudi.egg$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.nudi.egg.1<- gam(num.nudi.egg ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.nudi.egg<- gam(num.nudi.egg ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
-AICtab(gam.16.nb.num.serpulid, gam.16.nb.num.serpulid.1, gam.16.poisson.num.serpulid)
-##gam.16.nb.num.serpulid.1 is best
+AICtab(gam.8.nb.num.nudi.egg, gam.8.nb.num.nudi.egg.1, gam.8.poisson.num.nudi.egg)
+#nb is same as poisson
 
-#appraise(gam.16.nb.num.serpulid.1)
-qq_plot(gam.16.nb.num.serpulid.1, method = 'simulate')
-plot(gam.16.nb.num.serpulid.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-k.check(gam.16.nb.num.serpulid.1)
-summary(gam.16.nb.num.serpulid.1)
+mod.num.nudi.egg<-gam.8.poisson.num.nudi.egg
+plot(mod.num.nudi.egg, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.nudi.egg)
+qq_plot(mod.num.nudi.egg, method = 'simulate')
+k.check(mod.num.nudi.egg)
+summary(mod.num.nudi.egg)
 
-gam.16.nb.num.serpulid.1.unordered<- gam(num.serpulid ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-fam.gam.16.num.serpulid <- family(gam.16.nb.num.serpulid.1)
-fam.gam.16.num.serpulid
-ilink.gam.16.num.serpulid<- fam.gam.16.num.serpulid$linkinv
-ilink.gam.16.num.serpulid
-mod.num.serpulid<-gam.16.nb.num.serpulid.1
-ndata.16.num.serpulid <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                 length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
+gam.8.poisson.num.nudi.egg.unordered<- gam(num.nudi.egg ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
-## add the fitted values by predicting from the model for the new data
-ndata.16.num.serpulid <- add_column(ndata.16.num.serpulid, fit = predict(mod.num.serpulid, newdata = ndata.16.num.serpulid, type = 'response'))
+ndata.8.num.nudi.egg<-as_tibble(all_var)
+fam.gam.8.num.nudi.egg <- family(mod.num.nudi.egg)
+ilink.gam.8.num.nudi.egg<- fam.gam.8.num.nudi.egg$linkinv
 
-predict(mod.num.serpulid, newdata = ndata.16.num.serpulid, type = 'response')
-ndata.16.num.serpulid <- bind_cols(ndata.16.num.serpulid, setNames(as_tibble(predict(mod.num.serpulid, ndata.16.num.serpulid, se.fit = TRUE)[1:2]),
-                                                     c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.16.num.serpulid <- mutate(ndata.16.num.serpulid,
-                         fit_resp  = ilink.gam.16.num.serpulid(fit_link),
-                         right_upr = ilink.gam.16.num.serpulid(fit_link + (2 * se_link)),
-                         right_lwr = ilink.gam.16.num.serpulid(fit_link - (2 * se_link)))
-ndata.16.num.serpulid$botryllid.001.unscaled<-ndata.16.num.serpulid$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
+## add the fitted values by predicting from the mod.num.nudi.eggel for the new data
+ndata.8.num.nudi.egg <- add_column(ndata.8.num.nudi.egg, fit = predict(mod.num.nudi.egg, newdata = ndata.8.num.nudi.egg, type = 'response'))
+ndata.8.num.nudi.egg <- bind_cols(ndata.8.num.nudi.egg, setNames(as_tibble(predict(mod.num.nudi.egg, ndata.8.num.nudi.egg, se.fit = TRUE)[1:2]),
+                                                         c('fit_link','se_link')))
 
-# plot 
-plt.num.serpulid.16 <- ggplot(ndata.16.num.serpulid, aes(x = botryllid.001.unscaled, y = fit)) + 
+ndata.8.num.nudi.egg <- mutate(ndata.8.num.nudi.egg,
+                           fit_resp  = ilink.gam.8.num.nudi.egg(fit_link),
+                           right_upr = ilink.gam.8.num.nudi.egg(fit_link + (2 * se_link)),
+                           right_lwr = ilink.gam.8.num.nudi.egg(fit_link - (2 * se_link)))
+
+plt.num.nudi.egg.8 <- ggplot(ndata.8.num.nudi.egg, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
+  geom_point(aes(y = num.nudi.egg, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Nudibranch abundance"), textstyle("(# eggs)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
   scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  geom_ribbon(data = ndata.8.num.nudi.egg,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.serpulid.16
-ggsave("C:Graphs August 2020//num.serpulid_pred.16.png")
+plt.num.nudi.egg.8
+ggsave("C:Graphs August 2020//num.nudi.egg_pred.8.png")
+
+# GAM poisson num nudi / gam.8.poisson.num.nudi.alls  ------------------------------------------------------------
+invasion.exp.data.8_zscores$num.nudi.all<- invasion.exp.data.8_zscores$num.nudi+invasion.exp.data.8_zscores$num.nudi.egg
+
+nbinom.8.num.nudi.all <- fitdistr(invasion.exp.data.8_zscores$num.nudi.all, "Negative Binomial")
+qqp(invasion.exp.data.8_zscores$num.nudi.all, "nbinom", size = nbinom.8.num.nudi.all$estimate[[1]], mu = nbinom.8.num.nudi.all$estimate[[2]])
+
+#negative binomial 
+gam.8.nb.num.nudi.all<- gam(num.nudi.all ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.nudi.all$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.nudi.all.1<- gam(num.nudi.all ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.nudi.all<- gam(num.nudi.all ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+
+AICtab(gam.8.nb.num.nudi.all, gam.8.nb.num.nudi.all.1, gam.8.poisson.num.nudi.all)
+
+mod.num.nudi.all<-gam.8.poisson.num.nudi.all
+plot(mod.num.nudi.all, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.nudi.all)
+qq_plot(mod.num.nudi.all, method = 'simulate')
+k.check(mod.num.nudi.all)
+summary(mod.num.nudi.all)
+
+gam.8.poisson.num.nudi.all.unordered<- gam(num.nudi.all ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+ndata.8.num.nudi.all<-as_tibble(all_var)
+fam.gam.8.num.nudi.all <- family(mod.num.nudi.all)
+ilink.gam.8.num.nudi.all<- fam.gam.8.num.nudi.all$linkinv
+
+## add the fitted values by predicting from the mod.num.nudi.allel for the new data
+ndata.8.num.nudi.all <- add_column(ndata.8.num.nudi.all, fit = predict(mod.num.nudi.all, newdata = ndata.8.num.nudi.all, type = 'response'))
+ndata.8.num.nudi.all <- bind_cols(ndata.8.num.nudi.all, setNames(as_tibble(predict(mod.num.nudi.all, ndata.8.num.nudi.all, se.fit = TRUE)[1:2]),
+                                                                 c('fit_link','se_link')))
+
+ndata.8.num.nudi.all <- mutate(ndata.8.num.nudi.all,
+                               fit_resp  = ilink.gam.8.num.nudi.all(fit_link),
+                               right_upr = ilink.gam.8.num.nudi.all(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.num.nudi.all(fit_link - (2 * se_link)))
+
+plt.num.nudi.all.8 <- ggplot(ndata.8.num.nudi.all, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = num.nudi.all, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Nudibranch abundance"), textstyle("(# nudibranchs)")))))+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.8.num.nudi.all,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.num.nudi.all.8
+ggsave("C:Graphs August 2020//num.nudi.all_pred.8.png")
+
+
 
 # GAM nb() serpulids / gam.8.nb.num.serpulid.1 -----------------------------------------------------------
 nbinom.8.num.serpulid <- fitdistr(invasion.exp.data.8_zscores$num.serpulid, "Negative Binomial")
 qqp(invasion.exp.data.8_zscores$num.serpulid, "nbinom", size = nbinom.8.num.serpulid$estimate[[1]], mu = nbinom.8.num.serpulid$estimate[[2]])
-#theta
 
-#negative binomial first
-gam.8.nb.num.serpulid<- gam(num.serpulid ~ s(botryllid.001, k=4)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=4),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
-gam.8.nb.num.serpulid.1<- gam(num.serpulid ~ s(botryllid.001, k=4)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=4),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-gam.8.poisson.num.serpulid<- gam(num.serpulid ~ s(botryllid.001, k=4)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=4),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
+#negative binomial 
+gam.8.nb.num.serpulid<- gam(num.serpulid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.serpulid.1<- gam(num.serpulid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.serpulid<- gam(num.serpulid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+
 
 AICtab(gam.8.nb.num.serpulid, gam.8.nb.num.serpulid.1, gam.8.poisson.num.serpulid)
-##gam.8.poisson is best
-
-#appraise(gam.8.nb.num.serpulid.1)
-qq_plot(gam.8.nb.num.serpulid.1, method = 'simulate')
-plot(gam.8.nb.num.serpulid.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-k.check(gam.8.nb.num.serpulid.1)
-summary(gam.8.nb.num.serpulid.1)
-
-gam.8.nb.num.serpulid.1.unordered<- gam(num.serpulid ~ s(botryllid.001, k=4)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=4),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+#nb is same as poisson
 
 
-want <- seq(1, nrow(invasion.exp.data.8_zscores), length.out = 100)
-fam.gam.8.num.serpulid <- family(gam.8.nb.num.serpulid.1)
-fam.gam.8.num.serpulid
+gam.8.nb.num.serpulid.te<- gam(num.serpulid ~ s(bot.total)+ s(min.10.pH) + te(bot.total, min.10.pH),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.serpulid.1<- gam(num.serpulid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.serpulid<- gam(num.serpulid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+
+
+mod.num.serpulid<-gam.8.nb.num.serpulid
+plot(mod.num.serpulid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.serpulid)
+qq_plot(mod.num.serpulid, method = 'simulate')
+k.check(mod.num.serpulid)
+summary(mod.num.serpulid)
+
+gam.8.nb.num.serpulid.unordered<- gam(num.serpulid ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.serpulid$estimate[[1]]), select=TRUE, method="REML")
+
+ndata.8.num.serpulid<-as_tibble(all_var)
+fam.gam.8.num.serpulid <- family(mod.num.serpulid)
 ilink.gam.8.num.serpulid<- fam.gam.8.num.serpulid$linkinv
-ilink.gam.8.num.serpulid
-mod.num.serpulid<-gam.8.nb.num.serpulid.1
-ndata.8.num.serpulid <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
 
-## add the fitted values by predicting from the model for the new data
+## add the fitted values by predicting from the mod.num.serpulidel for the new data
 ndata.8.num.serpulid <- add_column(ndata.8.num.serpulid, fit = predict(mod.num.serpulid, newdata = ndata.8.num.serpulid, type = 'response'))
-
-predict(mod.num.serpulid, newdata = ndata.8.num.serpulid, type = 'response')
 ndata.8.num.serpulid <- bind_cols(ndata.8.num.serpulid, setNames(as_tibble(predict(mod.num.serpulid, ndata.8.num.serpulid, se.fit = TRUE)[1:2]),
-                                                                   c('fit_link','se_link')))
-## create the interval and backtransform
-ndata.8.num.serpulid <- mutate(ndata.8.num.serpulid,
-                                fit_resp  = ilink.gam.8.num.serpulid(fit_link),
-                                right_upr = ilink.gam.8.num.serpulid(fit_link + (2 * se_link)),
-                                right_lwr = ilink.gam.8.num.serpulid(fit_link - (2 * se_link)))
-ndata.8.num.serpulid$botryllid.001.unscaled<-ndata.8.num.serpulid$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
+                                                                 c('fit_link','se_link')))
 
-# plot 
-plt.num.serpulid.8 <- ggplot(ndata.8.num.serpulid, aes(x = botryllid.001.unscaled, y = fit)) + 
+ndata.8.num.serpulid <- mutate(ndata.8.num.serpulid,
+                               fit_resp  = ilink.gam.8.num.serpulid(fit_link),
+                               right_upr = ilink.gam.8.num.serpulid(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.num.serpulid(fit_link - (2 * se_link)))
+
+plt.num.serpulid.8 <- ggplot(ndata.8.num.serpulid, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
+  geom_jitter(aes(y = num.serpulid, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# individuals)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ylim(0,6)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
@@ -1241,121 +753,45 @@ plt.num.serpulid.8
 ggsave("C:Graphs August 2020//num.serpulid_pred.8.png")
 
 
-
 # GAM negbin corella / gam.16.nb.num.corella -------------------------------------------------------------
-
-nbinom.16.num.corella <- fitdistr(invasion.exp.data.16_zscores$num.corella, "Negative Binomial")
-qqp(invasion.exp.data.16_zscores$num.corella, "nbinom", size = nbinom.16.num.corella$estimate[[1]], mu = nbinom.16.num.corella$estimate[[2]])
-#extracting theta
-
-gam.16.nb.num.corella<- gam(num.corella ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.corella$estimate[[1]]), select=TRUE, method="REML")
-gam.16.nb.num.corella.1<- gam(num.corella ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.num.corella<- gam(num.corella ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-
-AICtab(gam.16.nb.num.corella, gam.16.nb.num.corella.1, gam.16.poisson.num.corella)
-
-
-appraise(gam.16.nb.num.corella)
-#looks pretty good - slight pattern
-qq_plot(gam.16.nb.num.corella, method = 'simulate')
-plot(gam.16.nb.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-k.check(gam.16.nb.num.corella)
-summary(gam.16.nb.num.corella)
-
-
-gam.16.nb.num.corella.unordered<- gam(num.corella ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.corella$estimate[[1]]), select=TRUE, method="REML")
-
-want <- seq(1, nrow(invasion.exp.data.16_zscores), length.out = 100)
-fam.gam.16.num.corella <- family(gam.16.nb.num.corella)
-ilink.gam.16.num.corella<- fam.gam.16.num.corella$linkinv
-
-
-mod.num.corella<-gam.16.nb.num.corella
-ndata.16.num.corella <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                      length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.num.corella <- add_column(ndata.16.num.corella, fit = predict(mod.num.corella, newdata = ndata.16.num.corella, type = 'response'))
-
-predict(mod.num.corella, newdata = ndata.16.num.corella, type = 'response')
-ndata.16.num.corella <- bind_cols(ndata.16.num.corella, setNames(as_tibble(predict(mod.num.corella, ndata.16.num.corella, se.fit = TRUE)[1:2]),
-                                                               c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.num.corella <- mutate(ndata.16.num.corella,
-                              fit_resp  = ilink.gam.16.num.corella(fit_link),
-                              right_upr = ilink.gam.16.num.corella(fit_link + (2 * se_link)),
-                              right_lwr = ilink.gam.16.num.corella(fit_link - (2 * se_link)))
-
-
-ndata.16.num.corella$botryllid.001.unscaled<-ndata.16.num.corella$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-par(lheight=0.2) 
-# plot 
-plt.num.corella.16 <- ggplot(ndata.16.num.corella, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.corella, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Corella")~ "abundance"), textstyle("(# of individuals)")))))+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.num.corella,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.num.corella.16
-ggsave("C:Graphs August 2020//num.corella_pred.16.png")
-
-# GAM negbin corella / gam.8.nb.num.corella -------------------------------------------------------------
-
 nbinom.8.num.corella <- fitdistr(invasion.exp.data.8_zscores$num.corella, "Negative Binomial")
 qqp(invasion.exp.data.8_zscores$num.corella, "nbinom", size = nbinom.8.num.corella$estimate[[1]], mu = nbinom.8.num.corella$estimate[[2]])
-#extracting theta
 
-gam.8.nb.num.corella<- gam(num.corella ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.corella$estimate[[1]]), select=TRUE, method="REML")
-gam.8.nb.num.corella.1<- gam(num.corella ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-gam.8.poisson.num.corella<- gam(num.corella ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
+#negative binomial 
+gam.8.nb.num.corella<- gam(num.corella ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = negbin(nbinom.8.num.corella$estimate[[1]]), select=TRUE, method="REML")
+gam.8.nb.num.corella.1<- gam(num.corella ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.corella<- gam(num.corella ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
 AICtab(gam.8.nb.num.corella, gam.8.nb.num.corella.1, gam.8.poisson.num.corella)
-#poisson
+#nb is same as poisson
 
-#appraise(gam.8.poisson.num.corella)
-#looks pretty good - slight pattern
-qq_plot(gam.8.poisson.num.corella, method = 'simulate')
-plot(gam.8.poisson.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-k.check(gam.8.poisson.num.corella)
-summary(gam.8.poisson.num.corella)
-
-gam.8.poisson.num.corella.unordered<- gam(num.corella ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
-
-want <- seq(1, nrow(invasion.exp.data.8_zscores), length.out = 100)
-fam.gam.8.num.corella <- family(gam.8.poisson.num.corella)
-ilink.gam.8.num.corella<- fam.gam.8.num.corella$linkinv
 mod.num.corella<-gam.8.poisson.num.corella
-ndata.8.num.corella <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                      length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
+plot(mod.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.corella)
+qq_plot(mod.num.corella, method = 'simulate')
+k.check(mod.num.corella)
+summary(mod.num.corella)
 
-## add the fitted values by predicting from the model for the new data
+gam.8.poisson.num.corella.unordered<- gam(num.corella ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
+
+ndata.8.num.corella<-as_tibble(all_var)
+fam.gam.8.num.corella <- family(mod.num.corella)
+ilink.gam.8.num.corella<- fam.gam.8.num.corella$linkinv
+
+## add the fitted values by predicting from the mod.num.corellael for the new data
 ndata.8.num.corella <- add_column(ndata.8.num.corella, fit = predict(mod.num.corella, newdata = ndata.8.num.corella, type = 'response'))
-
-predict(mod.num.corella, newdata = ndata.8.num.corella, type = 'response')
 ndata.8.num.corella <- bind_cols(ndata.8.num.corella, setNames(as_tibble(predict(mod.num.corella, ndata.8.num.corella, se.fit = TRUE)[1:2]),
                                                                  c('fit_link','se_link')))
-
-## create the interval and backtransform
 
 ndata.8.num.corella <- mutate(ndata.8.num.corella,
                                fit_resp  = ilink.gam.8.num.corella(fit_link),
                                right_upr = ilink.gam.8.num.corella(fit_link + (2 * se_link)),
                                right_lwr = ilink.gam.8.num.corella(fit_link - (2 * se_link)))
 
-
-ndata.8.num.corella$botryllid.001.unscaled<-ndata.8.num.corella$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-# plot 
-plt.num.corella.8 <- ggplot(ndata.8.num.corella, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.num.corella.8 <- ggplot(ndata.8.num.corella, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.corella, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("Corella")~ "abundance"), textstyle("(# of individuals)")))))+  
+  geom_jitter(aes(y = num.corella, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Corella abundance"), textstyle("(# individuals)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
   scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
@@ -1364,10 +800,8 @@ plt.num.corella.8 <- ggplot(ndata.8.num.corella, aes(x = botryllid.001.unscaled,
 plt.num.corella.8
 ggsave("C:Graphs August 2020//num.corella_pred.8.png")
 
-
-
 # Fig 2 plot generation ---------------------------------------------------
-fig.week.16<-wrap_plots(plt.botryllid.001.16,plt.folliculina.16,plt.membranipora.16,
+fig.week.16<-wrap_plots(plt.folliculina.16,plt.membranipora.16,
           plt.mussel.16,plt.num.barn.16,plt.num.white.bryo.16,plt.num.red.bryo.16,plt.num.nudi.16,plt.num.serpulid.16,
           plt.num.corella.16, ncol=5)+
           plot_annotation(tag_levels = 'A')
@@ -1376,24 +810,24 @@ theme_set(theme_classic(base_size = 5))
 #theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
 fig.week.16
-ggplot2::ggsave(plot=fig.week.16, "C:Graphs August 2020//Fig_wk_16.pdf", width=18, height=8, units="cm")
+ggplot2::ggsave(plot=fig.week.16, "C:Graphs August 2020//Fig_wk_16.pdf", width=16, height=8, units="cm")
 
 
 
-fig.week.8<-wrap_plots(plt.botryllid.001.8,plt.folliculina.8,plt.membranipora.8,
+fig.week.8<-wrap_plots(plt.folliculina.8,plt.membranipora.8,
                         plt.mussel.8,plt.num.barn.8,plt.num.white.bryo.8,plt.num.red.bryo.8,plt.num.nudi.8,plt.num.serpulid.8,
                         plt.num.corella.8, ncol=5)+
                         plot_annotation(tag_levels = 'A')
 
 fig.week.8
 
-ggplot2::ggsave(plot=fig.week.8, "C:Graphs August 2020//Fig_wk_8.pdf", width=18, height=8, units="cm")
+ggplot2::ggsave(plot=fig.week.8, "C:Graphs August 2020//Fig_wk_8.pdf", width=16, height=8, units="cm")
 
 head(invasion.exp.data.8_zscores)
 
 # Pulling model 16 results to a table ----------------------------------------
 
-botryllus.gam.16<-summary(gam.16.beta.botryllid.001)
+botryllus.gam.16<-summary(gam.16.beta.bot.total.001)
 botryllus.eaten.gam.16<-summary(gam.16.beta.bot.eaten)
 folliculina.gam.16<-summary(gam.16.beta.folliculina)
 membranipora.gam.16<-summary(gam.16.beta.membranipora.3)
@@ -1407,7 +841,7 @@ num.serpulid.gam.16<-summary(gam.16.nb.num.serpulid.1)
 corella.gam.16<-summary(gam.16.nb.num.corella)
 
 
-botryllus.gam.16.unordered<-summary(gam.16.beta.botryllid.001.unordered)
+botryllus.gam.16.unordered<-summary(gam.16.beta.bot.total.001.unordered)
 botryllus.eaten.gam.16.unordered<-summary(gam.16.beta.bot.eaten.unordered)
 folliculina.gam.16.unordered<-summary(gam.16.beta.folliculina.unordered)
 membranipora.gam.16.unordered<-summary(gam.16.beta.membranipora.3.unordered)
@@ -1487,13 +921,13 @@ ptable.16 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("Botryllus", 1, 2) %>%
   group_rows("Botryllus eaten", 3, 4) %>% 
-  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Folliculina",5, 8) %>% 
   group_rows("Membranipora", 7, 8) %>% 
   group_rows("Membranipora eaten", 9,10) %>% 
   group_rows("Mussels", 11, 12) %>% 
   group_rows("Barnacles", 13, 14) %>% 
   group_rows("Disporella", 15, 16) %>% 
-  group_rows("Schizoporella", 17, 18) %>% 
+  group_rows("Schizoporella", 17, 16) %>% 
   group_rows("Hermissenda", 19, 20) %>% 
   group_rows("Serpulid", 21, 22) %>% 
   group_rows("Corella", 23, 24) %>% 
@@ -1516,7 +950,7 @@ stable.16<-rbind(botryllus.gam.16.s.table,
 
 
 colnames(stable.16) <- c("Estimated_df", "Reference_df", "Chi_squared", "p_smooth")
-stable.16$Smooth_terms<-rep(c("smooth botryllid.001", "smooth botryllid.001 * CO2.Treatment present"))
+stable.16$Smooth_terms<-rep(c("smooth bot.total.001", "smooth bot.total.001 * CO2.Treatment present"))
 
 stable.16 %>% 
   mutate_if(is.numeric, round, 4) %>% 
@@ -1526,13 +960,13 @@ stable.16 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("Botryllus", 1, 2) %>%
   group_rows("Botryllus eaten", 3, 4) %>% 
-  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Folliculina",5, 8) %>% 
   group_rows("Membranipora", 7, 8) %>% 
   group_rows("Membranipora eaten", 9,10) %>% 
   group_rows("Mussels", 11, 12) %>% 
   group_rows("Barnacles", 13, 14) %>% 
   group_rows("Disporella", 15, 16) %>% 
-  group_rows("Schizoporella", 17, 18) %>% 
+  group_rows("Schizoporella", 17, 16) %>% 
   group_rows("Hermissenda", 19, 20) %>% 
   group_rows("Serpulid", 21, 22) %>% 
   group_rows("Corella", 23, 24) %>% 
@@ -1552,13 +986,13 @@ pstable.16 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("Botryllus", 1, 2) %>%
   group_rows("Botryllus eaten", 3, 4) %>% 
-  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Folliculina",5, 8) %>% 
   group_rows("Membranipora", 7, 8) %>% 
   group_rows("Membranipora eaten", 9,10) %>% 
   group_rows("Mussels", 11, 12) %>% 
   group_rows("Barnacles", 13, 14) %>% 
   group_rows("Disporella", 15, 16) %>% 
-  group_rows("Schizoporella", 17, 18) %>% 
+  group_rows("Schizoporella", 17, 16) %>% 
   group_rows("Hermissenda", 19, 20) %>% 
   group_rows("Serpulid", 21, 22) %>% 
   group_rows("Corella", 23, 24) %>% 
@@ -1568,7 +1002,7 @@ pstable.16 %>%
 
 # Pulling model 8  results to a table ----------------------------------------
 
-botryllus.gam.8<-summary(gam.8.beta.botryllid.001.3)
+botryllus.gam.8<-summary(gam.8.beta.bot.total.001.3)
 botryllus.eaten.gam.8<-summary(gam.8.beta.bot.eaten.3)
 folliculina.gam.8<-summary(gam.8.beta.folliculina)
 membranipora.gam.8<-summary(gam.8.beta.membranipora.3)
@@ -1580,7 +1014,7 @@ num.nudi.gam.8<-summary(gam.8.nb.num.nudi.1)
 num.serpulid.gam.8<-summary(gam.8.poisson.num.serpulid)
 corella.gam.8<-summary(gam.8.poisson.num.corella)
 
-botryllus.gam.8.unordered<-summary(gam.8.beta.botryllid.001.3.unordered)
+botryllus.gam.8.unordered<-summary(gam.8.beta.bot.total.001.3.unordered)
 botryllus.eaten.gam.8.unordered<-summary(gam.8.beta.bot.eaten.3.unordered)
 folliculina.gam.8.unordered<-summary(gam.8.beta.folliculina.unordered)
 membranipora.gam.8.unordered<-summary(gam.8.beta.membranipora.3.unordered)
@@ -1655,13 +1089,13 @@ ptable.8 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("Botryllus", 1, 2) %>%
   group_rows("Botryllus eaten", 3, 4) %>% 
-  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Folliculina",5, 8) %>% 
   group_rows("Membranipora", 7, 8) %>% 
   group_rows("Membranipora eaten", 9,10) %>% 
   group_rows("Mussels", 11, 12) %>% 
   group_rows("Barnacles", 13, 14) %>% 
   group_rows("Disporella", 15, 16) %>% 
-  group_rows("Hermissenda", 17, 18) %>% 
+  group_rows("Hermissenda", 17, 16) %>% 
   group_rows("Serpulid", 19, 20) %>% 
   group_rows("Corella", 21, 22) %>% 
   save_kable(file = "C:Biological data//ptable.8.html", self_contained = T)
@@ -1682,7 +1116,7 @@ stable.8<-rbind(botryllus.gam.8.s.table,
 
 
 colnames(stable.8) <- c("Estimated_df", "Reference_df", "Chi_squared", "p_smooth")
-stable.8$Smooth_terms<-rep(c("smooth botryllid.001", "smooth botryllid.001 * CO2.Treatment present"))
+stable.8$Smooth_terms<-rep(c("smooth bot.total.001", "smooth bot.total.001 * CO2.Treatment present"))
 
 stable.8 %>% 
   mutate_if(is.numeric, round, 4) %>% 
@@ -1692,13 +1126,13 @@ stable.8 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("Botryllus", 1, 2) %>%
   group_rows("Botryllus eaten", 3, 4) %>% 
-  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Folliculina",5, 8) %>% 
   group_rows("Membranipora", 7, 8) %>% 
   group_rows("Membranipora eaten", 9,10) %>% 
   group_rows("Mussels", 11, 12) %>% 
   group_rows("Barnacles", 13, 14) %>% 
   group_rows("Disporella", 15, 16) %>% 
-  group_rows("Hermissenda", 17, 18) %>% 
+  group_rows("Hermissenda", 17, 16) %>% 
   group_rows("Serpulid", 19, 20) %>% 
   group_rows("Corella", 21, 22) %>% 
   save_kable(file = "C:Biological data//stable.8.html", self_contained = T)
@@ -1717,266 +1151,95 @@ pstable.8 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("Botryllus", 1, 2) %>%
   group_rows("Botryllus eaten", 3, 4) %>% 
-  group_rows("Folliculina",5, 6) %>% 
+  group_rows("Folliculina",5, 8) %>% 
   group_rows("Membranipora", 7, 8) %>% 
   group_rows("Membranipora eaten", 9,10) %>% 
   group_rows("Mussels", 11, 12) %>% 
   group_rows("Barnacles", 13, 14) %>% 
   group_rows("Disporella", 15, 16) %>% 
-  group_rows("Hermissenda", 17, 18) %>% 
+  group_rows("Hermissenda", 17, 16) %>% 
   group_rows("Serpulid", 19, 20) %>% 
   group_rows("Corella", 21, 22) %>% 
   save_kable(file = "C:Biological data//pstable.8.html", self_contained = T)
 
 
 
-# num.species.no.bot 16 ----------------------------------------------------------------
-gam.16.nb.num.species.no.bot.1<- gam(num.species.no.bot ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
-gam.16.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-
-AICtab(gam.16.nb.num.species.no.bot.1, gam.16.poisson.num.species.no.bot)
-
-plot(gam.16.poisson.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.poisson.num.species.no.bot)
-#okay but qq plot not the best on ends
-qq_plot(gam.16.poisson.num.species.no.bot, method = 'simulate')
-k.check(gam.16.poisson.num.species.no.bot)
-summary(gam.16.poisson.num.species.no.bot)
-#a few outside the QQ plot on both ends
-#low p value for k - but NS and edf is not super close to k-index
-
-gam.16.poisson.num.species.no.bot.unordered<- gam(num.species.no.bot ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
-fam.gam.16.num.species.no.bot <- family(gam.16.poisson.num.species.no.bot)
-ilink.gam.16.num.species.no.bot<- fam.gam.16.num.species.no.bot$linkinv
-ilink.gam.16.num.species.no.bot
-
-
-mod.num.species.no.bot<-gam.16.poisson.num.species.no.bot
-ndata.16.num.species.no.bot <- with(invasion.exp.data.16_zscores, 
-                       data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                       length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.num.species.no.bot <- add_column(ndata.16.num.species.no.bot, fit = predict(mod.num.species.no.bot, newdata = ndata.16.num.species.no.bot, type = 'response'))
-
-predict(mod.num.species.no.bot, newdata = ndata.16.num.species.no.bot, type = 'response')
-ndata.16.num.species.no.bot <- bind_cols(ndata.16.num.species.no.bot, setNames(as_tibble(predict(mod.num.species.no.bot, ndata.16.num.species.no.bot, se.fit = TRUE)[1:2]),
-                                                                 c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.num.species.no.bot <- mutate(ndata.16.num.species.no.bot,
-                               fit_resp  = ilink.gam.16.num.species.no.bot(fit_link),
-                               right_upr = ilink.gam.16.num.species.no.bot(fit_link + (2 * se_link)),
-                               right_lwr = ilink.gam.16.num.species.no.bot(fit_link - (2 * se_link)))
-
-
-ndata.16.num.species.no.bot$botryllid.001.unscaled<-ndata.16.num.species.no.bot$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.num.species.no.bot.16 <- ggplot(ndata.16.num.species.no.bot, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.species.no.bot, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab("Native species richness")+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.num.species.no.bot,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')+ylim(0,20)
-plt.num.species.no.bot.16
-ggsave("C:Graphs August 2020//native_richness.16.png")
-
-
 # num.species.no.bot 8 ----------------------------------------------------------------
-gam.8.nb.num.species.no.bot.1<- gam(num.species.no.bot ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
-gam.8.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
+gam.8.nb.num.species.no.bot.1<- gam(num.species.no.bot ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = nb(), select=TRUE, method="REML")
+gam.8.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
 
 AICtab(gam.8.nb.num.species.no.bot.1, gam.8.poisson.num.species.no.bot)
 
-plot(gam.8.poisson.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.poisson.num.species.no.bot)
-#okay but qq plot not the best on ends
-qq_plot(gam.8.poisson.num.species.no.bot, method = 'simulate')
-k.check(gam.8.poisson.num.species.no.bot)
-summary(gam.8.poisson.num.species.no.bot)
-#a few outside the QQ plot on both ends
-#low p value for k - but NS and edf is not super close to k-index
-
-gam.8.poisson.num.species.no.bot.unordered<- gam(num.species.no.bot ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson, select=TRUE, method="REML")
-fam.gam.8.num.species.no.bot <- family(gam.8.poisson.num.species.no.bot)
-ilink.gam.8.num.species.no.bot<- fam.gam.8.num.species.no.bot$linkinv
-ilink.gam.8.num.species.no.bot
-
-
 mod.num.species.no.bot<-gam.8.poisson.num.species.no.bot
-ndata.8.num.species.no.bot <- with(invasion.exp.data.8_zscores, 
-                                    data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                               length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
+plot(mod.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.species.no.bot)
+qq_plot(mod.num.species.no.bot, method = 'simulate')
+k.check(mod.num.species.no.bot)
+summary(mod.num.species.no.bot)
 
+gam.8.poisson.num.species.no.bot.unordered<- gam(num.species.no.bot ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = poisson(), select=TRUE, method="REML")
 
-## add the fitted values by predicting from the model for the new data
+ndata.8.num.species.no.bot<-as_tibble(all_var)
+fam.gam.8.num.species.no.bot <- family(mod.num.species.no.bot)
+ilink.gam.8.num.species.no.bot<- fam.gam.8.num.species.no.bot$linkinv
+
+## add the fitted values by predicting from the mod.num.species.no.botel for the new data
 ndata.8.num.species.no.bot <- add_column(ndata.8.num.species.no.bot, fit = predict(mod.num.species.no.bot, newdata = ndata.8.num.species.no.bot, type = 'response'))
-
-predict(mod.num.species.no.bot, newdata = ndata.8.num.species.no.bot, type = 'response')
 ndata.8.num.species.no.bot <- bind_cols(ndata.8.num.species.no.bot, setNames(as_tibble(predict(mod.num.species.no.bot, ndata.8.num.species.no.bot, se.fit = TRUE)[1:2]),
-                                                                               c('fit_link','se_link')))
-
-## create the interval and backtransform
+                                                                 c('fit_link','se_link')))
 
 ndata.8.num.species.no.bot <- mutate(ndata.8.num.species.no.bot,
-                                      fit_resp  = ilink.gam.8.num.species.no.bot(fit_link),
-                                      right_upr = ilink.gam.8.num.species.no.bot(fit_link + (2 * se_link)),
-                                      right_lwr = ilink.gam.8.num.species.no.bot(fit_link - (2 * se_link)))
+                               fit_resp  = ilink.gam.8.num.species.no.bot(fit_link),
+                               right_upr = ilink.gam.8.num.species.no.bot(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.num.species.no.bot(fit_link - (2 * se_link)))
 
-
-ndata.8.num.species.no.bot$botryllid.001.unscaled<-ndata.8.num.species.no.bot$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.num.species.no.bot.8 <- ggplot(ndata.8.num.species.no.bot, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.num.species.no.bot.8 <- ggplot(ndata.8.num.species.no.bot, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = num.species.no.bot, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab("Native species richness")+  
+  geom_jitter(aes(y = num.species.no.bot, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Native species richness")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.species.no.bot,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')+ylim(0,20)
-plt.num.species.no.bot.8
-ggsave("C:Graphs August 2020//native_richness.8.png")
-
-
-# Occupied space 16 ----------------------------------------------------------
-
-gam.16.lm.native.occupied.space<- gam(native.occupied.space ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.gamma.native.occupied.space.1<- gam(native.occupied.space*0.01 ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-gam.16.binomial.native.occupied.space<- gam(formula = cbind(native.occupied.space, 100-native.occupied.space)~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
-
-gam.16.beta.native.occupied.space<- gam(native.occupied.space.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.16.beta.native.occupied.space.1<- gam(native.occupied.space.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.16.beta.native.occupied.space.2<- gam(native.occupied.space.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.16.beta.native.occupied.space.3<- gam(native.occupied.space.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
-
-AICtab(gam.16.lm.native.occupied.space, gam.16.beta.native.occupied.space.3, gam.16.gamma.native.occupied.space.1, gam.16.beta.native.occupied.space, gam.16.beta.native.occupied.space.1, gam.16.beta.native.occupied.space.2, gam.16.binomial.native.occupied.space)
-
-
-plot(gam.16.beta.native.occupied.space.3 , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.native.occupied.space.3 )
-#looks good
-qq_plot(gam.16.beta.native.occupied.space.3 , method = 'simulate')
-k.check(gam.16.beta.native.occupied.space.3 )
-summary(gam.16.beta.native.occupied.space.3 )
-gam.16.beta.native.occupied.space.3.unordered<- gam(native.occupied.space.001~ s(botryllid.001, k=15)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=15), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-summary(gam.16.beta.native.occupied.space.3.unordered)
-
-fam.gam.16.native.occupied.space <- family(gam.16.beta.native.occupied.space.3 )
-fam.gam.16.native.occupied.space
-str(fam.gam.16.native.occupied.space)
-ilink.gam.16.native.occupied.space<- fam.gam.16.native.occupied.space$linkinv
-ilink.gam.16.native.occupied.space
-
-
-mod.native.occupied.space<-gam.16.beta.native.occupied.space.3 
-ndata.16.native.occupied.space <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                 length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.native.occupied.space <- add_column(ndata.16.native.occupied.space, fit = predict(mod.native.occupied.space, newdata = ndata.16.native.occupied.space, type = 'response'))
-
-predict(mod.native.occupied.space, newdata = ndata.16.native.occupied.space, type = 'response')
-ndata.16.native.occupied.space <- bind_cols(ndata.16.native.occupied.space, setNames(as_tibble(predict(mod.native.occupied.space, ndata.16.native.occupied.space, se.fit = TRUE)[1:2]),
-                                                     c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.native.occupied.space <- mutate(ndata.16.native.occupied.space,
-                         fit_resp  = ilink.gam.16.native.occupied.space(fit_link),
-                         right_upr = ilink.gam.16.native.occupied.space(fit_link + (2 * se_link)),
-                         right_lwr = ilink.gam.16.native.occupied.space(fit_link - (2 * se_link)))
-
-
-ndata.16.native.occupied.space$botryllid.001.unscaled<-ndata.16.native.occupied.space$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.native.occupied.space.16 <- ggplot(ndata.16.native.occupied.space, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = native.occupied.space.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab("Proportion of space on tile occupied")+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.native.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
-plt.native.occupied.space.16
-ggsave("C:Graphs August 2020//native.occupied.space_pred.16.png")
-
-
-
+plt.num.species.no.bot.8
+ggsave("C:Graphs August 2020//num.species.no.bot_pred.8.png")
 
 # Occupied space 8 ----------------------------------------------------------
 
-gam.8.lm.native.occupied.space<- gam(native.occupied.space ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
-gam.8.gamma.native.occupied.space.1<- gam(native.occupied.space*0.01 ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = Gamma, select=TRUE, method="REML")
-gam.8.binomial.native.occupied.space<- gam(formula = cbind(native.occupied.space, 100-native.occupied.space)~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+gam.8.binomial.native.occupied.space<- gam(formula = cbind(native.occupied.space, 100-native.occupied.space)~ s(bot.total, k=6)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment, k=6), data = invasion.exp.data.8_zscores, family = binomial, select=TRUE, method="REML")
+gam.8.beta.native.occupied.space<- gam(native.occupied.space.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+#binomial better
 
-gam.8.beta.native.occupied.space<- gam(native.occupied.space.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-gam.8.beta.native.occupied.space.1<- gam(native.occupied.space.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="probit"), select=TRUE, method="REML")
-gam.8.beta.native.occupied.space.2<- gam(native.occupied.space.001~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cloglog"), select=TRUE, method="REML")
-gam.8.beta.native.occupied.space.3<- gam(native.occupied.space.001~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="cauchit"), select=TRUE, method="REML")
+mod.native.occupied.space<-gam.8.binomial.native.occupied.space
+plot(mod.native.occupied.space, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.native.occupied.space)
+qq_plot(mod.native.occupied.space, method = 'simulate')
+k.check(mod.native.occupied.space)
+summary(mod.native.occupied.space)
 
-AICtab(gam.8.lm.native.occupied.space, gam.8.beta.native.occupied.space.3, gam.8.gamma.native.occupied.space.1, gam.8.beta.native.occupied.space, gam.8.beta.native.occupied.space.1, gam.8.beta.native.occupied.space.2, gam.8.binomial.native.occupied.space)
-#beta is best 
+summary(gam.8.binomial.native.occupied.space)
 
-plot(gam.8.beta.native.occupied.space, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.native.occupied.space)
-#looks good
-qq_plot(gam.8.beta.native.occupied.space, method = 'simulate')
-k.check(gam.8.beta.native.occupied.space)
-summary(gam.8.beta.native.occupied.space)
-gam.8.beta.native.occupied.space.unordered<- gam(native.occupied.space.001~ s(botryllid.001, k=15)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=15), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
-summary(gam.8.beta.native.occupied.space.unordered)
-
-fam.gam.8.native.occupied.space <- family(gam.8.beta.native.occupied.space)
-fam.gam.8.native.occupied.space
-str(fam.gam.8.native.occupied.space)
+mod.native.occupied.space.unordered<- gam(native.occupied.space.001~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+ndata.8.native.occupied.space<-as_tibble(all_var)
+fam.gam.8.native.occupied.space <- family(mod.native.occupied.space)
 ilink.gam.8.native.occupied.space<- fam.gam.8.native.occupied.space$linkinv
-ilink.gam.8.native.occupied.space
 
-
-mod.native.occupied.space<-gam.8.beta.native.occupied.space
-ndata.8.native.occupied.space <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                                length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
+## add the fitted values by predicting from the mod.native.occupied.spaceel for the new data
 ndata.8.native.occupied.space <- add_column(ndata.8.native.occupied.space, fit = predict(mod.native.occupied.space, newdata = ndata.8.native.occupied.space, type = 'response'))
-
-predict(mod.native.occupied.space, newdata = ndata.8.native.occupied.space, type = 'response')
 ndata.8.native.occupied.space <- bind_cols(ndata.8.native.occupied.space, setNames(as_tibble(predict(mod.native.occupied.space, ndata.8.native.occupied.space, se.fit = TRUE)[1:2]),
-                                                                                     c('fit_link','se_link')))
-
-## create the interval and backtransform
-
+                                                               c('fit_link','se_link')))
 ndata.8.native.occupied.space <- mutate(ndata.8.native.occupied.space,
-                                         fit_resp  = ilink.gam.8.native.occupied.space(fit_link),
-                                         right_upr = ilink.gam.8.native.occupied.space(fit_link + (2 * se_link)),
-                                         right_lwr = ilink.gam.8.native.occupied.space(fit_link - (2 * se_link)))
+                              fit_resp  = ilink.gam.8.native.occupied.space(fit_link),
+                              right_upr = ilink.gam.8.native.occupied.space(fit_link + (2 * se_link)),
+                              right_lwr = ilink.gam.8.native.occupied.space(fit_link - (2 * se_link)))
 
-
-ndata.8.native.occupied.space$botryllid.001.unscaled<-ndata.8.native.occupied.space$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.native.occupied.space.8 <- ggplot(ndata.8.native.occupied.space, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.native.occupied.space.8 <- ggplot(ndata.8.native.occupied.space, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y = native.occupied.space.001, shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab("Proportion of space on tile occupied")+  
+  geom_jitter(aes(y = native.occupied.space.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("native.occupied.space")~ "abundance"), textstyle("(proportion cover)")))))+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.native.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
@@ -1984,257 +1247,366 @@ plt.native.occupied.space.8
 ggsave("C:Graphs August 2020//native.occupied.space_pred.8.png")
 
 
-# CAP1 - 16 --------------------------------------------------------------------
-#negative values so can't do gamma
-gam.16.lm.CAP1<- gam(CAP1 ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.loglink.CAP1.1<- gam(CAP1 ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
 
-
-AICtab( gam.16.loglink.CAP1.1, gam.16.lm.CAP1)
-#gam.16.lm.CAP1
-
-plot(gam.16.lm.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.lm.CAP1)
-#look good
-qq_plot(gam.16.lm.CAP1, method = 'simulate')
-k.check(gam.16.lm.CAP1)
-summary(gam.16.lm.CAP1)
-gam.16.lm.CAP1.unordered<- gam(CAP1 ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-summary(gam.16.lm.CAP1.unordered)
-
-fam.gam.16.CAP1 <- family(gam.16.lm.CAP1)
-fam.gam.16.CAP1
-str(fam.gam.16.CAP1)
-ilink.gam.16.CAP1<- fam.gam.16.CAP1$linkinv
-ilink.gam.16.CAP1
-
-
-mod.CAP1<-gam.16.lm.CAP1
-ndata.16.CAP1 <- with(invasion.exp.data.16_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                              length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.CAP1 <- add_column(ndata.16.CAP1, fit = predict(mod.CAP1, newdata = ndata.16.CAP1, type = 'response'))
-
-predict(mod.CAP1, newdata = ndata.16.CAP1, type = 'response')
-ndata.16.CAP1 <- bind_cols(ndata.16.CAP1, setNames(as_tibble(predict(mod.CAP1, ndata.16.CAP1, se.fit = TRUE)[1:2]),
-                                                                               c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.CAP1 <- mutate(ndata.16.CAP1,
-                                      fit_resp  = ilink.gam.16.CAP1(fit_link),
-                                      right_upr = ilink.gam.16.CAP1(fit_link + (2 * se_link)),
-                                      right_lwr = ilink.gam.16.CAP1(fit_link - (2 * se_link)))
-
-
-ndata.16.CAP1$botryllid.001.unscaled<-ndata.16.CAP1$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.CAP1.16 <- ggplot(ndata.16.CAP1, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y =(CAP1), shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab("Partial-dbRDA axis 1\n(36% of constrained variation)")+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.CAP1,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0.1, "cm"), legend.margin=margin(0, 0, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
-plt.CAP1.16
-ggsave("C:Graphs August 2020//CAP1_pred.16.png")
 
 # CAP1 - 8 --------------------------------------------------------------------
 #negative values so can't do gamma
-gam.8.lm.CAP1<- gam(CAP1 ~ s(botryllid.001)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
-
-AICtab( gam.8.loglink.CAP1.1, gam.8.lm.CAP1)
-#gam.8.lm.CAP1
-
-plot(gam.8.lm.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.lm.CAP1)
-#look good
-qq_plot(gam.8.lm.CAP1, method = 'simulate')
-k.check(gam.8.lm.CAP1)
-summary(gam.8.lm.CAP1)
-gam.8.lm.CAP1.unordered<- gam(CAP1 ~ s(botryllid.001)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
-summary(gam.8.lm.CAP1.unordered)
-
-fam.gam.8.CAP1 <- family(gam.8.lm.CAP1)
-fam.gam.8.CAP1
-str(fam.gam.8.CAP1)
-ilink.gam.8.CAP1<- fam.gam.8.CAP1$linkinv
-ilink.gam.8.CAP1
-
+gam.8.lm.CAP1<- gam(CAP1 ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
 
 mod.CAP1<-gam.8.lm.CAP1
-ndata.8.CAP1 <- with(invasion.exp.data.8_zscores, data_frame(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                               length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
+plot(mod.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.CAP1)
+qq_plot(mod.CAP1, method = 'simulate')
+k.check(mod.CAP1)
+summary(mod.CAP1)
+
+gam.8.lm.CAP1.unordered<- gam(CAP1 ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
 
 
-## add the fitted values by predicting from the model for the new data
+ndata.8.CAP1<-as_tibble(all_var)
+fam.gam.8.CAP1 <- family(mod.CAP1)
+ilink.gam.8.CAP1<- fam.gam.8.CAP1$linkinv
+
+## add the fitted values by predicting from the mod.CAP1el for the new data
 ndata.8.CAP1 <- add_column(ndata.8.CAP1, fit = predict(mod.CAP1, newdata = ndata.8.CAP1, type = 'response'))
-
-predict(mod.CAP1, newdata = ndata.8.CAP1, type = 'response')
 ndata.8.CAP1 <- bind_cols(ndata.8.CAP1, setNames(as_tibble(predict(mod.CAP1, ndata.8.CAP1, se.fit = TRUE)[1:2]),
-                                                   c('fit_link','se_link')))
-
-## create the interval and backtransform
-
+                                                                                   c('fit_link','se_link')))
 ndata.8.CAP1 <- mutate(ndata.8.CAP1,
-                        fit_resp  = ilink.gam.8.CAP1(fit_link),
-                        right_upr = ilink.gam.8.CAP1(fit_link + (2 * se_link)),
-                        right_lwr = ilink.gam.8.CAP1(fit_link - (2 * se_link)))
+                                        fit_resp  = ilink.gam.8.CAP1(fit_link),
+                                        right_upr = ilink.gam.8.CAP1(fit_link + (2 * se_link)),
+                                        right_lwr = ilink.gam.8.CAP1(fit_link - (2 * se_link)))
 
-
-ndata.8.CAP1$botryllid.001.unscaled<-ndata.8.CAP1$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.CAP1.8 <- ggplot(ndata.8.CAP1, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.CAP1.8 <- ggplot(ndata.8.CAP1, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y =(CAP1), shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab("Partial-dbRDA axis 1\n(36% of constrained variation)")+  
+  geom_jitter(aes(y = CAP1, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab("Partial-dbRDA axis 1\n(67% of constrained variation)")+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.CAP1,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0.1, "cm"), legend.margin=margin(0, 0, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
+  theme(legend.position='none')
 plt.CAP1.8
 ggsave("C:Graphs August 2020//CAP1_pred.8.png")
 
 
 
-# Distances 16 ---------------------------------------------------------------
-
-gam.16.lm.distances<- gam(distcentroid ~ s(botryllid.001, k=11)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.loglink.distances.1<- gam(distcentroid~ s(botryllid.001, k=11)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-gam.16.gamma.distances<- gam(distcentroid~ s(botryllid.001, k=11)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
-
-AICtab(gam.16.loglink.distances.1,  gam.16.lm.distances, gam.16.gamma.distances)
-#gam.16.lm.distances although both are equal
-
-
-plot(gam.16.lm.distances, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.lm.distances)
-#looks good
-qq_plot(gam.16.lm.distances, method = 'simulate')
-k.check(gam.16.lm.distances)
-#good
-summary(gam.16.lm.distances)
-
-gam.16.lm.distances.unordered<- gam(distcentroid~ s(botryllid.001, k=11)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-summary(gam.16.lm.distances.unordered)
-
-fam.gam.16.distances <- family(gam.16.lm.distances)
-fam.gam.16.distances
-str(fam.gam.16.distances)
-ilink.gam.16.distances<- fam.gam.16.distances$linkinv
-ilink.gam.16.distances
-
-
-mod.distances<-gam.16.lm.distances
-ndata.16.distances <- with(invasion.exp.data.16_zscores, tibble(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                             length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
-
-
-## add the fitted values by predicting from the model for the new data
-ndata.16.distances <- add_column(ndata.16.distances, fit = predict(mod.distances, newdata = ndata.16.distances, type = 'response'))
-
-predict(mod.distances, newdata = ndata.16.distances, type = 'response')
-ndata.16.distances <- bind_cols(ndata.16.distances, setNames(as_tibble(predict(mod.distances, ndata.16.distances, se.fit = TRUE)[1:2]),
-                                             c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.16.distances <- mutate(ndata.16.distances,
-                     fit_resp  = ilink.gam.16.distances(fit_link),
-                     right_upr = ilink.gam.16.distances(fit_link + (2 * se_link)),
-                     right_lwr = ilink.gam.16.distances(fit_link - (2 * se_link)))
-
-
-ndata.16.distances$botryllid.001.unscaled<-ndata.16.distances$botryllid.001 * attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.16_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.distances.16 <- ggplot(ndata.16.distances, aes(x = botryllid.001.unscaled, y = fit)) + 
-  geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y =(distcentroid), shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Ascidian abundance")) + ylab("Heterogeneity of multivariate dispersions\n(distance to multivariate centroid)")+  
-  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
-  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.16.distances,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
-  theme(legend.position='none')
-plt.distances.16
-ggsave("C:Graphs August 2020//distances_pred.16.png")
 
 # Distances 8 ---------------------------------------------------------------
 
 #k check was significant so increased k from 10 to 11
 
-gam.8.lm.distances<- gam(distcentroid ~ s(botryllid.001, k=11)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
-gam.8.loglink.distances.1<- gam(distcentroid~ s(botryllid.001, k=11)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.8_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
-gam.8.gamma.distances<- gam(distcentroid~ s(botryllid.001, k=11)+ oCO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.8_zscores, family = Gamma, select=TRUE, method="REML")
+gam.8.lm.distances<- gam(distcentroid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
+gam.8.loglink.distances.1<- gam(distcentroid~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
+gam.8.gamma.distances<- gam(distcentroid~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = Gamma, select=TRUE, method="REML")
 
 AICtab(gam.8.loglink.distances.1,  gam.8.lm.distances, gam.8.gamma.distances)
+
 #gam.8.lm.distances although both are equal
+mod.distcentroid<- gam.8.lm.distances
+plot(mod.distcentroid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.distcentroid)
+qq_plot(mod.distcentroid, method = 'simulate')
+k.check(mod.distcentroid)
+summary(mod.distcentroid)
 
 
-plot(gam.8.lm.distances, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.lm.distances)
-#looks good
-qq_plot(gam.8.lm.distances, method = 'simulate')
-k.check(gam.8.lm.distances)
-#good
 summary(gam.8.lm.distances)
 
-gam.8.lm.distances.unordered<- gam(distcentroid~ s(botryllid.001, k=11)+ CO2.Treatment + s(botryllid.001, by=oCO2.Treatment, k=11),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
-summary(gam.8.lm.distances.unordered)
-
-fam.gam.8.distances <- family(gam.8.lm.distances)
-fam.gam.8.distances
-str(fam.gam.8.distances)
-ilink.gam.8.distances<- fam.gam.8.distances$linkinv
-ilink.gam.8.distances
+gam.8.lm.distances.unordered<- gam(distcentroid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
 
 
-mod.distances<-gam.8.lm.distances
-ndata.8.distances <- with(invasion.exp.data.8_zscores, tibble(botryllid.001 = seq(min(botryllid.001), max(botryllid.001),
-                                                                                length = 100),  oCO2.Treatment = oCO2.Treatment[want],  CO2.Treatment= CO2.Treatment[want]))
+ndata.8.distcentroid<-as_tibble(all_var)
+fam.gam.8.distcentroid <- family(mod.distcentroid)
+ilink.gam.8.distcentroid<- fam.gam.8.distcentroid$linkinv
 
+## add the fitted values by predicting from the mod.distcentroidel for the new data
+ndata.8.distcentroid <- add_column(ndata.8.distcentroid, fit = predict(mod.distcentroid, newdata = ndata.8.distcentroid, type = 'response'))
+ndata.8.distcentroid <- bind_cols(ndata.8.distcentroid, setNames(as_tibble(predict(mod.distcentroid, ndata.8.distcentroid, se.fit = TRUE)[1:2]),
+                                                 c('fit_link','se_link')))
+ndata.8.distcentroid <- mutate(ndata.8.distcentroid,
+                       fit_resp  = ilink.gam.8.distcentroid(fit_link),
+                       right_upr = ilink.gam.8.distcentroid(fit_link + (2 * se_link)),
+                       right_lwr = ilink.gam.8.distcentroid(fit_link - (2 * se_link)))
 
-## add the fitted values by predicting from the model for the new data
-ndata.8.distances <- add_column(ndata.8.distances, fit = predict(mod.distances, newdata = ndata.8.distances, type = 'response'))
-
-predict(mod.distances, newdata = ndata.8.distances, type = 'response')
-ndata.8.distances <- bind_cols(ndata.8.distances, setNames(as_tibble(predict(mod.distances, ndata.8.distances, se.fit = TRUE)[1:2]),
-                                                             c('fit_link','se_link')))
-
-## create the interval and backtransform
-
-ndata.8.distances <- mutate(ndata.8.distances,
-                             fit_resp  = ilink.gam.8.distances(fit_link),
-                             right_upr = ilink.gam.8.distances(fit_link + (2 * se_link)),
-                             right_lwr = ilink.gam.8.distances(fit_link - (2 * se_link)))
-
-
-ndata.8.distances$botryllid.001.unscaled<-ndata.8.distances$botryllid.001 * attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:scale') + attr(invasion.exp.data.8_zscores$botryllid.001, 'scaled:center')
-
-
-# plot 
-plt.distances.8 <- ggplot(ndata.8.distances, aes(x = botryllid.001.unscaled, y = fit)) + 
+plt.distcentroid.8 <- ggplot(ndata.8.distcentroid, aes(x = bot.total, y = fit)) + 
   geom_line(aes(colour=oCO2.Treatment)) +
-  geom_point(aes(y =(distcentroid), shape=CO2.Treatment, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores)+
+  geom_jitter(aes(y = distcentroid, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
   xlab(expression("Ascidian abundance")) + ylab("Heterogeneity of multivariate dispersions\n(distance to multivariate centroid)")+  
   scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
-  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
-  geom_ribbon(data = ndata.8.distances,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  geom_ribbon(data = ndata.8.distcentroid,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
   theme(legend.position='none')
-plt.distances.8
-ggsave("C:Graphs August 2020//distances_pred.8.png")
+plt.distcentroid.8
+ggsave("C:Graphs August 2020//distcentroid_pred.8.png")
+
+
+# Evenness ----------------------------------------------------------------
+
+
+gam.8.lm.evenness<- gam(evenness ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
+gam.8.loglink.evenness.1<- gam(evenness~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.8_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
+
+AICtab(gam.8.loglink.evenness.1,  gam.8.lm.evenness)
+
+mod.evenness<- gam.8.lm.evenness
+plot(mod.evenness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.evenness)
+qq_plot(mod.evenness, method = 'simulate')
+k.check(mod.evenness)
+summary(mod.evenness)
+
+mod.evenness.unordered<- gam(evenness.001~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.8_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+ndata.8.evenness<-as_tibble(all_var)
+fam.gam.8.evenness <- family(mod.evenness)
+ilink.gam.8.evenness<- fam.gam.8.evenness$linkinv
+
+## add the fitted values by predicting from the mod.evennessel for the new data
+ndata.8.evenness <- add_column(ndata.8.evenness, fit = predict(mod.evenness, newdata = ndata.8.evenness, type = 'response'))
+ndata.8.evenness <- bind_cols(ndata.8.evenness, setNames(as_tibble(predict(mod.evenness, ndata.8.evenness, se.fit = TRUE)[1:2]),
+                                                                 c('fit_link','se_link')))
+ndata.8.evenness <- mutate(ndata.8.evenness,
+                               fit_resp  = ilink.gam.8.evenness(fit_link),
+                               right_upr = ilink.gam.8.evenness(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.8.evenness(fit_link - (2 * se_link)))
+
+plt.evenness.8 <- ggplot(ndata.8.evenness, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = evenness, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.8_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab("Native species evenness")+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.8.evenness,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.evenness.8
+ggsave("C:Graphs August 2020//evenness_pred.8.png")
+
+
+
+###### week 16
+# num.species.no.bot 16 ----------------------------------------------------------------
+gam.16.nb.num.species.no.bot.1<- gam(num.species.no.bot ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = nb(), select=TRUE, method="REML")
+gam.16.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
+
+AICtab(gam.16.nb.num.species.no.bot.1, gam.16.poisson.num.species.no.bot)
+
+mod.num.species.no.bot<-gam.16.poisson.num.species.no.bot
+plot(mod.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.num.species.no.bot)
+qq_plot(mod.num.species.no.bot, method = 'simulate')
+k.check(mod.num.species.no.bot)
+summary(mod.num.species.no.bot)
+
+gam.16.poisson.num.species.no.bot.unordered<- gam(num.species.no.bot ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
+
+ndata.16.num.species.no.bot<-as_tibble(all_var)
+fam.gam.16.num.species.no.bot <- family(mod.num.species.no.bot)
+ilink.gam.16.num.species.no.bot<- fam.gam.16.num.species.no.bot$linkinv
+
+## add the fitted values by predicting from the mod.num.species.no.botel for the new data
+ndata.16.num.species.no.bot <- add_column(ndata.16.num.species.no.bot, fit = predict(mod.num.species.no.bot, newdata = ndata.16.num.species.no.bot, type = 'response'))
+ndata.16.num.species.no.bot <- bind_cols(ndata.16.num.species.no.bot, setNames(as_tibble(predict(mod.num.species.no.bot, ndata.16.num.species.no.bot, se.fit = TRUE)[1:2]),
+                                                                             c('fit_link','se_link')))
+
+ndata.16.num.species.no.bot <- mutate(ndata.16.num.species.no.bot,
+                                     fit_resp  = ilink.gam.16.num.species.no.bot(fit_link),
+                                     right_upr = ilink.gam.16.num.species.no.bot(fit_link + (2 * se_link)),
+                                     right_lwr = ilink.gam.16.num.species.no.bot(fit_link - (2 * se_link)))
+
+plt.num.species.no.bot.16 <- ggplot(ndata.16.num.species.no.bot, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = num.species.no.bot, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle("Native species richness")))))+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.16.num.species.no.bot,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.num.species.no.bot.16
+ggsave("C:Graphs August 2020//num.species.no.bot_pred.16.png")
+
+# Occupied space 16 ----------------------------------------------------------
+
+gam.16.binomial.native.occupied.space<- gam(formula = cbind(native.occupied.space, 100-native.occupied.space)~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = binomial, select=TRUE, method="REML")
+gam.16.beta.native.occupied.space<- gam(native.occupied.space.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+#binomial better
+
+mod.native.occupied.space<-gam.16.beta.native.occupied.space
+plot(mod.native.occupied.space, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.native.occupied.space)
+qq_plot(mod.native.occupied.space, method = 'simulate')
+k.check(mod.native.occupied.space)
+summary(mod.native.occupied.space)
+
+summary(gam.16.binomial.native.occupied.space)
+
+mod.native.occupied.space.unordered<- gam(native.occupied.space.001~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+ndata.16.native.occupied.space<-as_tibble(all_var)
+fam.gam.16.native.occupied.space <- family(mod.native.occupied.space)
+ilink.gam.16.native.occupied.space<- fam.gam.16.native.occupied.space$linkinv
+
+## add the fitted values by predicting from the mod.native.occupied.spaceel for the new data
+ndata.16.native.occupied.space <- add_column(ndata.16.native.occupied.space, fit = predict(mod.native.occupied.space, newdata = ndata.16.native.occupied.space, type = 'response'))
+ndata.16.native.occupied.space <- bind_cols(ndata.16.native.occupied.space, setNames(as_tibble(predict(mod.native.occupied.space, ndata.16.native.occupied.space, se.fit = TRUE)[1:2]),
+                                                                                   c('fit_link','se_link')))
+ndata.16.native.occupied.space <- mutate(ndata.16.native.occupied.space,
+                                        fit_resp  = ilink.gam.16.native.occupied.space(fit_link),
+                                        right_upr = ilink.gam.16.native.occupied.space(fit_link + (2 * se_link)),
+                                        right_lwr = ilink.gam.16.native.occupied.space(fit_link - (2 * se_link)))
+
+plt.native.occupied.space.16 <- ggplot(ndata.16.native.occupied.space, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = native.occupied.space.001, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab(expression(atop(NA,atop(textstyle(italic("native.occupied.space")~ "abundance"), textstyle("(proportion cover)")))))+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.16.native.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.native.occupied.space.16
+ggsave("C:Graphs August 2020//native.occupied.space_pred.16.png")
+
+plt.native.occupied.space.16
+plt.native.occupied.space.8
+
+
+
+# CAP1 - 16 --------------------------------------------------------------------
+#negative values so can't do gamma
+gam.16.lm.CAP1<- gam(CAP1 ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+
+mod.CAP1<-gam.16.lm.CAP1
+plot(mod.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.CAP1)
+qq_plot(mod.CAP1, method = 'simulate')
+k.check(mod.CAP1)
+summary(mod.CAP1)
+
+gam.16.lm.CAP1.unordered<- gam(CAP1 ~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+
+
+ndata.16.CAP1<-as_tibble(all_var)
+fam.gam.16.CAP1 <- family(mod.CAP1)
+ilink.gam.16.CAP1<- fam.gam.16.CAP1$linkinv
+
+## add the fitted values by predicting from the mod.CAP1el for the new data
+ndata.16.CAP1 <- add_column(ndata.16.CAP1, fit = predict(mod.CAP1, newdata = ndata.16.CAP1, type = 'response'))
+ndata.16.CAP1 <- bind_cols(ndata.16.CAP1, setNames(as_tibble(predict(mod.CAP1, ndata.16.CAP1, se.fit = TRUE)[1:2]),
+                                                 c('fit_link','se_link')))
+ndata.16.CAP1 <- mutate(ndata.16.CAP1,
+                       fit_resp  = ilink.gam.16.CAP1(fit_link),
+                       right_upr = ilink.gam.16.CAP1(fit_link + (2 * se_link)),
+                       right_lwr = ilink.gam.16.CAP1(fit_link - (2 * se_link)))
+
+plt.CAP1.16 <- ggplot(ndata.16.CAP1, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = CAP1, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab("Partial-dbRDA axis 1\n(67% of constrained variation)")+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.16.CAP1,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.CAP1.16
+ggsave("C:Graphs August 2020//CAP1_pred.16.png")
+
+
+
+
+# Distances 16 ---------------------------------------------------------------
+
+#k check was significant so increased k from 10 to 11
+
+gam.16.lm.distances<- gam(distcentroid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+gam.16.loglink.distances.1<- gam(distcentroid~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
+gam.16.gamma.distances<- gam(distcentroid~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = Gamma, select=TRUE, method="REML")
+
+AICtab(gam.16.loglink.distances.1,  gam.16.lm.distances, gam.16.gamma.distances)
+
+#gam.16.lm.distances although both are equal
+mod.distcentroid<- gam.16.lm.distances
+plot(mod.distcentroid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.distcentroid)
+qq_plot(mod.distcentroid, method = 'simulate')
+k.check(mod.distcentroid)
+summary(mod.distcentroid)
+
+
+summary(gam.16.lm.distances)
+
+gam.16.lm.distances.unordered<- gam(distcentroid ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+
+
+ndata.16.distcentroid<-as_tibble(all_var)
+fam.gam.16.distcentroid <- family(mod.distcentroid)
+ilink.gam.16.distcentroid<- fam.gam.16.distcentroid$linkinv
+
+## add the fitted values by predicting from the mod.distcentroidel for the new data
+ndata.16.distcentroid <- add_column(ndata.16.distcentroid, fit = predict(mod.distcentroid, newdata = ndata.16.distcentroid, type = 'response'))
+ndata.16.distcentroid <- bind_cols(ndata.16.distcentroid, setNames(as_tibble(predict(mod.distcentroid, ndata.16.distcentroid, se.fit = TRUE)[1:2]),
+                                                                 c('fit_link','se_link')))
+ndata.16.distcentroid <- mutate(ndata.16.distcentroid,
+                               fit_resp  = ilink.gam.16.distcentroid(fit_link),
+                               right_upr = ilink.gam.16.distcentroid(fit_link + (2 * se_link)),
+                               right_lwr = ilink.gam.16.distcentroid(fit_link - (2 * se_link)))
+
+plt.distcentroid.16 <- ggplot(ndata.16.distcentroid, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = distcentroid, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab("Heterogeneity of multivariate dispersions\n(distance to multivariate centroid)")+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.16.distcentroid,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.distcentroid.16
+ggsave("C:Graphs August 2020//distcentroid_pred.16.png")
+
+
+# Evenness ----------------------------------------------------------------
+
+
+gam.16.lm.evenness<- gam(evenness ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+gam.16.loglink.evenness.1<- gam(evenness~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.Treatment),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
+
+AICtab(gam.16.loglink.evenness.1,  gam.16.lm.evenness)
+
+mod.evenness<- gam.16.lm.evenness
+plot(mod.evenness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+appraise(mod.evenness)
+qq_plot(mod.evenness, method = 'simulate')
+k.check(mod.evenness)
+summary(mod.evenness)
+
+mod.evenness.unordered<- gam(evenness.001~ s(bot.total)+ CO2.Treatment + s(bot.total, by=oCO2.Treatment), data = invasion.exp.data.16_zscores, family = betar(link="logit"), select=TRUE, method="REML")
+ndata.16.evenness<-as_tibble(all_var)
+fam.gam.16.evenness <- family(mod.evenness)
+ilink.gam.16.evenness<- fam.gam.16.evenness$linkinv
+
+## add the fitted values by predicting from the mod.evennessel for the new data
+ndata.16.evenness <- add_column(ndata.16.evenness, fit = predict(mod.evenness, newdata = ndata.16.evenness, type = 'response'))
+ndata.16.evenness <- bind_cols(ndata.16.evenness, setNames(as_tibble(predict(mod.evenness, ndata.16.evenness, se.fit = TRUE)[1:2]),
+                                                         c('fit_link','se_link')))
+ndata.16.evenness <- mutate(ndata.16.evenness,
+                           fit_resp  = ilink.gam.16.evenness(fit_link),
+                           right_upr = ilink.gam.16.evenness(fit_link + (2 * se_link)),
+                           right_lwr = ilink.gam.16.evenness(fit_link - (2 * se_link)))
+
+plt.evenness.16 <- ggplot(ndata.16.evenness, aes(x = bot.total, y = fit)) + 
+  geom_line(aes(colour=oCO2.Treatment)) +
+  geom_jitter(aes(y = evenness, shape=Invasives, colour=oCO2.Treatment), data = invasion.exp.data.16_zscores, width=0.05, height=0.01)+
+  xlab(expression("Ascidian abundance")) + ylab("Native species evenness")+  
+  scale_color_manual(values=colorset_CO2.Treatment, guide = guide_legend(title="CO2.Treatment", title.position = "top"))+
+  scale_fill_manual(values=colorset_CO2.Treatment, guide = FALSE)+ 
+  scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH CO2.Treatment", title.position = "top"))+
+  geom_ribbon(data = ndata.16.evenness,aes(ymin = right_lwr, ymax = right_upr, fill=oCO2.Treatment), alpha = 0.10)+
+  theme(legend.position='none')
+plt.evenness.16
+ggsave("C:Graphs August 2020//evenness_pred.16.png")
+
+
+
 
 
 
@@ -2255,7 +1627,7 @@ ggplot2::ggsave(plot=fig.community.week.16, "C:Graphs August 2020//Fig.community
 #### community fig week 8
 fig.community.week.8<-wrap_plots(plt.native.occupied.space.8,
                                   plt.num.species.no.bot.8,
-                                  plt.CAP1.8, plt.distances.8, ncol=2)+
+                                  plt.CAP1.8, plt.distcentroid.8, ncol=2)+
   plot_annotation(tag_levels = 'a')
 
 fig.community.week.8
@@ -2313,7 +1685,7 @@ ptable.community.t.16 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("num.species.no.bot, poisson (z)", 1,2) %>% 
   group_rows("Occupied space, beta (z)", 3,4) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,8) %>% 
   group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
   save_kable(file = "C:Biological Data//ptable.community.t.16.html", self_contained = T)
 
@@ -2331,7 +1703,7 @@ stable.community.f.16<-rbind(num.species.no.bot.gam.16.s.table,
 
 
 colnames(stable.community.f.16) <- c("Estimated_df", "Reference_df", "F", "p_smooth")
-stable.community.f.16$Smooth_terms<-rep(c("smooth botryllid.001", "smooth botryllid.001 * CO2.Treatment Present"))
+stable.community.f.16$Smooth_terms<-rep(c("smooth bot.total.001", "smooth bot.total.001 * CO2.Treatment Present"))
 
 stable.community.f.16 %>% 
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth) %>% 
@@ -2339,7 +1711,7 @@ stable.community.f.16 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
   group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,8) %>% 
   group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
   save_kable(file = "C:Biological Data//stable.community.f.16.html", self_contained = T)
 
@@ -2357,7 +1729,7 @@ pstable.community.16 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
   group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,8) %>% 
   group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
   save_kable(file = "C:Biological Data//pstable.community.16.html ", self_contained = T)
 
@@ -2409,7 +1781,7 @@ ptable.community.t.8 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("num.species.no.bot, poisson (z)", 1,2) %>% 
   group_rows("Occupied space, beta (z)", 3,4) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,8) %>% 
   group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
   save_kable(file = "C:Biological Data//ptable.community.t.8.html", self_contained = T)
 
@@ -2427,7 +1799,7 @@ stable.community.f.8<-rbind(num.species.no.bot.gam.8.s.table,
 
 
 colnames(stable.community.f.8) <- c("Estimated_df", "Reference_df", "F", "p_smooth")
-stable.community.f.8$Smooth_terms<-rep(c("smooth botryllid.001", "smooth botryllid.001 * CO2.Treatment Present"))
+stable.community.f.8$Smooth_terms<-rep(c("smooth bot.total.001", "smooth bot.total.001 * CO2.Treatment Present"))
 
 stable.community.f.8 %>% 
   dplyr::select(Smooth_terms, Estimated_df, Reference_df, F, p_smooth) %>% 
@@ -2435,7 +1807,7 @@ stable.community.f.8 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
   group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,8) %>% 
   group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
   save_kable(file = "C:Biological Data//stable.community.f.8.html", self_contained = T)
 
@@ -2453,6 +1825,10 @@ pstable.community.8 %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
   group_rows("num.species.no.bot, poisson (Chi-square)", 1,2) %>% 
   group_rows("Occupied space, beta (Chi-square)", 3,4) %>% 
-  group_rows("Partial dbRDA (1st axis), normal",5,6) %>% 
+  group_rows("Partial dbRDA (1st axis), normal",5,8) %>% 
   group_rows("Heterogeneity of dispersions, normal", 7,8) %>% 
   save_kable(file = "C:Biological Data//pstable.community.8.html ", self_contained = T)
+
+
+
+
