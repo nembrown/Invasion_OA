@@ -8,20 +8,39 @@ library(fitdistrplus)
 
 ## read in data from both mesocosms and tiles
   
-  
-invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_without_pres.csv",stringsAsFactors = FALSE, na.strings = c("NA","") )
-head(invasion.exp.data)
-invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
-invasion.exp.data$nudi.cover<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.hatched
 
-invasion.exp.data$disporella<-invasion.exp.data$white.bryo+invasion.exp.data$fan.bryo+invasion.exp.data$erect.bryo
+invasion.exp.data<-read.csv("C:Biological data/allweeks_cover_counts_with_pres.csv",stringsAsFactors = FALSE, na.strings = c("NA","") )
+head(invasion.exp.data)
+#ordered and unordered factors
+invasion.exp.data$oTreatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=TRUE)
+invasion.exp.data$Treatment<-factor(invasion.exp.data$Treatment, levels=c("AIRAbsent",  "CO2Absent", "CO2Present", "AIRPresent"), ordered=FALSE)
+
+invasion.exp.data$oInvasives<-factor(invasion.exp.data$Invasives, levels=c("Absent", "Present"), ordered=TRUE)
+invasion.exp.data$Invasives<-factor(invasion.exp.data$Invasives, levels=c("Absent", "Present"), ordered=FALSE)
+
+invasion.exp.data$oCO2.Treatment<-factor(invasion.exp.data$CO2.Treatment, levels=c("AIR", "CO2"), ordered=TRUE)
+invasion.exp.data$CO2.Treatment<-factor(invasion.exp.data$CO2.Treatment, levels=c("AIR", "CO2"), ordered=FALSE)
+
+#New variables
+# invasion.exp.data$num.nudi<-invasion.exp.data$nudibranch+invasion.exp.data$nudi.eggs+invasion.exp.data$nudi.hatched
+
+invasion.exp.data$bot.total<-invasion.exp.data$botryllid + invasion.exp.data$bot.eaten
+invasion.exp.data$mem.total<-invasion.exp.data$membranipora + invasion.exp.data$mem.eaten + invasion.exp.data$mem.dead
+invasion.exp.data$corella.total<-invasion.exp.data$corella + invasion.exp.data$dead.corella
+
+invasion.exp.data$prop.mem.dead<-invasion.exp.data$mem.dead/invasion.exp.data$membranipora
+invasion.exp.data$prop.mem.eaten<-invasion.exp.data$mem.eaten/invasion.exp.data$membranipora
+
 
 invasion.exp.data$hydroid.001<-(0.01*(invasion.exp.data$hydroid))+0.01
 invasion.exp.data$botryllid.001<-(0.01*(invasion.exp.data$botryllid))+0.01
+invasion.exp.data$bot.eaten.001<-(0.01*(invasion.exp.data$bot.eaten))+0.01
+invasion.exp.data$mem.eaten.001<-(0.01*(invasion.exp.data$mem.eaten))+0.01
+invasion.exp.data$mem.total.001<-(0.01*(invasion.exp.data$mem.total))+0.01
+
 invasion.exp.data$membranipora.001<-(0.01*(invasion.exp.data$membranipora))+0.01
 invasion.exp.data$mussel.001<-(0.01*(invasion.exp.data$mussel))+0.01
-invasion.exp.data$didemnum<-invasion.exp.data$white.bryo
-invasion.exp.data$num.red.bryo<-invasion.exp.data$red.bryo
+invasion.exp.data$didemnum<-invasion.exp.data$white.bryo+invasion.exp.data$fan.bryo
 invasion.exp.data$folliculina<-invasion.exp.data$protozoa
 invasion.exp.data$folliculina.001<-(0.01*(invasion.exp.data$folliculina))+0.01
 invasion.exp.data$didemnum.001<-(0.01*(invasion.exp.data$didemnum))+0.01
@@ -29,25 +48,31 @@ invasion.exp.data$occupied.space<-(100 - invasion.exp.data$bare)
 invasion.exp.data$occupied.space.001<-(0.01*(invasion.exp.data$occupied.space))+0.01
 invasion.exp.data$native.occupied.space<-(100 - invasion.exp.data$botryllid  -invasion.exp.data$bot.eaten -  invasion.exp.data$bare)
 invasion.exp.data$native.occupied.space.001<-(0.01*(invasion.exp.data$native.occupied.space))+0.01
+
+
+
+head(invasion.exp.data)
+#splitting into mid and end
 invasion.exp.data.16<-invasion.exp.data %>% filter(Week==16)
 invasion.exp.data.8<-invasion.exp.data %>% filter(Week==8)
-  
+
+
  #other bryo = cribrillina 
     
 #Select data to be used: 
 # some cover and some counts: 
 
-#counts
+#counts & cover
 native_sp_names<-c("Tile.ID", 
-                          "num.nudi" ,
-                          "mussel" ,"hydroid","membranipora", "mem.eaten", "folliculina",
+                          "num.nudi.all" ,
+                          "mussel" ,"hydroid","mem.total", "folliculina",
                           "num.corella" ,
                           "num.red.bryo" ,
                           "num.white.bryo" ,
                           "num.serpulid" ,
                           "num.barn" ,
                           "other.bryo" ,
-                          "clam")
+                          "clam", "oyster", "bubble snail", "bubble eggs", "slime", "chiton", "yellow.sponge")
                           
 
 invasion.exp.data.8.tile.selected<-invasion.exp.data.8[,colnames(invasion.exp.data.8) %in% native_sp_names]
@@ -59,11 +84,12 @@ species.rec_cover.8 <-invasion.exp.data.8.tile.selected
 
 just.species.rec_cover.8<- species.rec_cover.8[,-1]
 head(just.species.rec_cover.8)
+#richness can be from count data - it's just pres/abs of given species
+invasion.exp.data.8$num.species.no.bot <- specnumber(just.species.rec_cover.8)
 
 
 
 ##### making a newdataframe for % cover only - to be used for evenness and shannon diversity
-
 names_cover_food_exp_tile<-c("Tile.ID",
                              "disporella",
                              "mussel" ,"hydroid","membranipora","mem.dead", "mem.eaten", "folliculina",
@@ -72,7 +98,7 @@ names_cover_food_exp_tile<-c("Tile.ID",
                              "serpulid" ,
                              "barn" ,
                              "other.bryo" ,
-                             "clam", "oyster", "disporella", "nudi.cover", "nudi eggs", "bubble snail", "bubble eggs", "slime", "chiton")
+                             "clam", "oyster", "disporella", "nudi.cover", "nudi eggs", "bubble snail", "bubble eggs", "slime", "chiton", "yellow.sponge")
 
 
 
@@ -80,20 +106,18 @@ species.cover <- invasion.exp.data.8[,colnames(invasion.exp.data.8) %in% names_c
 head(species.cover)
 just.species.cover<-species.cover[,-1]
 
-species.cover$richness<-specnumber(just.species.cover)
 species.cover$shannon.diversity<-diversity(just.species.cover, index="shannon")
 species.cover$evenness<-species.cover$shannon.diversity/(log(invasion.exp.data.8$num.species.no.bot))
 
 #evenness has to be created from just cover data
 invasion.exp.data.8$evenness<-species.cover$evenness
 
-#richness can be from count data - it's just pres/abs of given species
-invasion.exp.data.8$richness <- specnumber(just.species.rec_cover.8)
+
 
 head(  invasion.exp.data.8)
 # MDS ---------------------------------------------------------------------
 
-compiled.data.8 <- invasion.exp.data.8 %>% dplyr::select(Mesocosm, Tile.ID, Invasives, CO2.Treatment, Treatment, pH, av.pH.all, pH.uptowk, min.10.pH, Week)
+compiled.data.8 <- invasion.exp.data.8 %>% dplyr::select(Mesocosm, Tile.ID, Invasives, CO2.Treatment, Treatment, pH, av.pH.all, pH.uptowk, min.10.pH, Week, bot.total)
 head(compiled.data.8)
 
 row.names(compiled.data.8)<-compiled.data.8$Tile.ID
@@ -139,14 +163,17 @@ head(compiled.data.8_zscores)
 standardized.species.rec_cover.8<-decostand(just.species.rec_cover.8, method="total", MARGIN=2)
 head(standardized.species.rec_cover.8)
 
-model.meso.bray<-capscale(standardized.species.rec_cover.8 ~ min.10.pH*Invasives,compiled.data.8_zscores , distance="bray")
+# model.meso.bray<-capscale(standardized.species.rec_cover.8 ~ min.10.pH*Invasives,compiled.data.8_zscores , distance="bray")
+# capscale_plot(model.meso.bray, colorby=compiled.data.8$Treatment)
+
+
+model.meso.bray<-capscale(standardized.species.rec_cover.8 ~ bot.total*CO2.Treatment,compiled.data.8_zscores , distance="bray")
 capscale_plot(model.meso.bray, colorby=compiled.data.8$Treatment)
 
-model.meso.bray.sf<-ordisurf(model.meso.bray ~ min.10.pH, data=compiled.data.8_zscores, method = "REML", select = TRUE)
-summary(model.meso.bray.sf)
-
-adonis(standardized.species.rec_cover.8 ~ min.10.pH*Invasives, method="bray", permutations = 9999, data=compiled.data.8_zscores)
+adonis(standardized.species.rec_cover.8 ~ bot.total*CO2.Treatment, method="bray", permutations = 9999, data=compiled.data.8_zscores)
 summary(model.meso.bray)
+
+
 
 model.meso.bray.scores<- as.data.frame(scores(model.meso.bray)$sites)
 head(model.meso.bray.scores)
@@ -195,7 +222,7 @@ bd.overall.bray.distances$Tile.ID<-species.rec_cover.8$Tile.ID
 bd.overall.bray.distances.2<-merge(bd.overall.bray.distances, compiled.data.8, by="Tile.ID")
 head(bd.overall.bray.distances.2)
 
-plot.overall.distcentroid.12.hydrogen<- ggplot(bd.overall.bray.distances.2, aes(x=min.10.pH, y=distcentroid, colour=Invasives)) + geom_point(size=5,aes(colour=factor(Invasives), shape=CO2.Treatment)) + guides(fill=FALSE) + scale_fill_manual(values=colorset_invasives)+ geom_smooth(aes(fill=Invasives), method="lm") +scale_shape_manual(values=c(19,17))
+plot.overall.distcentroid.12.hydrogen<- ggplot(bd.overall.bray.distances.2, aes(x=bot.total, y=distcentroid, colour=CO2.Treatment)) + geom_point(size=5,aes(colour=factor(CO2.Treatment), shape=CO2.Treatment)) + guides(fill=FALSE) + scale_fill_manual(values=colorset_invasives)+ geom_smooth(aes(fill=CO2.Treatment), method="lm") +scale_shape_manual(values=c(19,17))
 plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme_bw() +  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Distance to centroid")  + theme(text = element_text(size=16), axis.text = element_text(size=16))+theme(axis.title.y = element_text(angle=90))#+ylim(0,0.75)
 plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme(legend.text = element_text(colour="black", size = 16))+ theme(legend.title = element_text(colour="black", size=16))
 plot.overall.distcentroid.12.hydrogen
@@ -210,6 +237,34 @@ write.csv(invasion.exp.data.8.community,"C:Biological data/invasion.exp.data.8.c
 
 
 ############## Week 16
+#read in packages
+library(vegan)
+library(ggplot2)
+library(betapart)
+library(bipartite)
+library(car)
+library(fitdistrplus)
+
+## read in data from both mesocosms and tiles
+
+#other bryo = cribrillina 
+
+#Select data to be used: 
+# some cover and some counts: 
+
+#counts & cover
+native_sp_names<-c("Tile.ID", 
+                   "num.nudi.all" ,
+                   "mussel" ,"hydroid","mem.total", "folliculina",
+                   "num.corella" ,
+                   "num.red.bryo" ,
+                   "num.white.bryo" ,
+                   "num.serpulid" ,
+                   "num.barn" ,
+                   "other.bryo" ,
+                   "clam", "oyster", "bubble snail", "bubble eggs", "slime", "chiton", "yellow.sponge")
+
+
 invasion.exp.data.16.tile.selected<-invasion.exp.data.16[,colnames(invasion.exp.data.16) %in% native_sp_names]
 head(invasion.exp.data.16.tile.selected)
 
@@ -219,20 +274,21 @@ species.rec_cover.16 <-invasion.exp.data.16.tile.selected
 
 just.species.rec_cover.16<- species.rec_cover.16[,-1]
 head(just.species.rec_cover.16)
+#richness can be from count data - it's just pres/abs of given species
+invasion.exp.data.16$num.species.no.bot <- specnumber(just.species.rec_cover.16)
 
 
 
 ##### making a newdataframe for % cover only - to be used for evenness and shannon diversity
-
 names_cover_food_exp_tile<-c("Tile.ID",
-                             "num.nudi" ,"disporella",
-                             "mussel" ,"hydroid","membranipora", "mem.eaten", "folliculina",
+                             "disporella",
+                             "mussel" ,"hydroid","membranipora","mem.dead", "mem.eaten", "folliculina",
                              "corella" ,"dead.corella",
                              "red.bryo" ,
-                             "nserpulid" ,
+                             "serpulid" ,
                              "barn" ,
                              "other.bryo" ,
-                             "clam" )
+                             "clam", "oyster", "disporella", "nudi.cover", "nudi eggs", "bubble snail", "bubble eggs", "slime", "chiton", "yellow.sponge")
 
 
 
@@ -240,20 +296,18 @@ species.cover <- invasion.exp.data.16[,colnames(invasion.exp.data.16) %in% names
 head(species.cover)
 just.species.cover<-species.cover[,-1]
 
-species.cover$richness<-specnumber(just.species.cover)
 species.cover$shannon.diversity<-diversity(just.species.cover, index="shannon")
 species.cover$evenness<-species.cover$shannon.diversity/(log(invasion.exp.data.16$num.species.no.bot))
 
 #evenness has to be created from just cover data
 invasion.exp.data.16$evenness<-species.cover$evenness
 
-#richness can be from count data - it's just pres/abs of given species
-invasion.exp.data.16$richness <- specnumber(just.species.rec_cover.16)
+
 
 head(  invasion.exp.data.16)
 # MDS ---------------------------------------------------------------------
 
-compiled.data.16 <- invasion.exp.data.16 %>% dplyr::select(Mesocosm, Tile.ID, Invasives, CO2.Treatment, Treatment, pH, av.pH.all, pH.uptowk, min.10.pH, Week)
+compiled.data.16 <- invasion.exp.data.16 %>% dplyr::select(Mesocosm, Tile.ID, Invasives, CO2.Treatment, Treatment, pH, av.pH.all, pH.uptowk, min.10.pH, Week, bot.total)
 head(compiled.data.16)
 
 row.names(compiled.data.16)<-compiled.data.16$Tile.ID
@@ -299,25 +353,28 @@ head(compiled.data.16_zscores)
 standardized.species.rec_cover.16<-decostand(just.species.rec_cover.16, method="total", MARGIN=2)
 head(standardized.species.rec_cover.16)
 
-model.meso.bray<-capscale(standardized.species.rec_cover.16 ~ min.10.pH*Invasives,compiled.data.16_zscores , distance="bray")
-capscale_plot(model.meso.bray, colorby=compiled.data.16$Treatment)
+# model.meso.bray<-capscale(standardized.species.rec_cover.16 ~ min.10.pH*Invasives,compiled.data.16_zscores , distance="bray")
+# capscale_plot(model.meso.bray, colorby=compiled.data.16$Treatment)
 
-model.meso.bray.sf<-ordisurf(model.meso.bray ~ min.10.pH, data=compiled.data.16_zscores, method = "REML", select = TRUE)
-summary(model.meso.bray.sf)
 
-adonis(standardized.species.rec_cover.16 ~ min.10.pH*Invasives, method="bray", permutations = 9999, data=compiled.data.16_zscores)
-summary(model.meso.bray)
+model.meso.bray.16<-capscale(standardized.species.rec_cover.16 ~ bot.total*CO2.Treatment,compiled.data.16_zscores , distance="bray")
+capscale_plot(model.meso.bray.16, colorby=compiled.data.16$Treatment)
 
-model.meso.bray.scores<- as.data.frame(scores(model.meso.bray)$sites)
-head(model.meso.bray.scores)
-model.meso.bray.scores$Tile.ID<-species.rec_cover.16$Tile.ID
+adonis(standardized.species.rec_cover.16 ~ bot.total*CO2.Treatment, method="bray", permutations = 9999, data=compiled.data.16_zscores)
+summary(model.meso.bray.16)
 
-model.meso.bray.scores.CAP<-merge(model.meso.bray.scores, compiled.data.16, by="Tile.ID")
-head(model.meso.bray.scores.CAP)
 
-write.csv(model.meso.bray.scores,"C:Biological data//model.meso.bray.scores.csv", row.names=FALSE)
 
-invasion.exp.data.16.community<-model.meso.bray.scores[,1:3]
+model.meso.bray.scores.16<- as.data.frame(scores(model.meso.bray.16)$sites)
+head(model.meso.bray.scores.16)
+model.meso.bray.scores.16$Tile.ID<-species.rec_cover.16$Tile.ID
+
+model.meso.bray.scores.CAP.16<-merge(model.meso.bray.scores.16, compiled.data.16, by="Tile.ID")
+head(model.meso.bray.scores.CAP.16)
+
+write.csv(model.meso.bray.scores.16,"C:Biological data//model.meso.bray.scores.16.csv", row.names=FALSE)
+
+invasion.exp.data.16.community<-model.meso.bray.scores.16[,1:3]
 
 head(invasion.exp.data.16.community)
 
@@ -355,7 +412,7 @@ bd.overall.bray.distances$Tile.ID<-species.rec_cover.16$Tile.ID
 bd.overall.bray.distances.2<-merge(bd.overall.bray.distances, compiled.data.16, by="Tile.ID")
 head(bd.overall.bray.distances.2)
 
-plot.overall.distcentroid.12.hydrogen<- ggplot(bd.overall.bray.distances.2, aes(x=min.10.pH, y=distcentroid, colour=Invasives)) + geom_point(size=5,aes(colour=factor(Invasives), shape=CO2.Treatment)) + guides(fill=FALSE) + scale_fill_manual(values=colorset_invasives)+ geom_smooth(aes(fill=Invasives), method="lm") +scale_shape_manual(values=c(19,17))
+plot.overall.distcentroid.12.hydrogen<- ggplot(bd.overall.bray.distances.2, aes(x=bot.total, y=distcentroid, colour=CO2.Treatment)) + geom_point(size=5,aes(colour=factor(CO2.Treatment), shape=CO2.Treatment)) + guides(fill=FALSE) + scale_fill_manual(values=colorset_invasives)+ geom_smooth(aes(fill=CO2.Treatment), method="lm") +scale_shape_manual(values=c(19,17))
 plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme_bw() +  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Distance to centroid")  + theme(text = element_text(size=16), axis.text = element_text(size=16))+theme(axis.title.y = element_text(angle=90))#+ylim(0,0.75)
 plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme(legend.text = element_text(colour="black", size = 16))+ theme(legend.title = element_text(colour="black", size=16))
 plot.overall.distcentroid.12.hydrogen
@@ -365,4 +422,3 @@ invasion.exp.data.16.community<-merge(bd.overall.bray.distances,invasion.exp.dat
 head(invasion.exp.data.16.community)
 
 write.csv(invasion.exp.data.16.community,"C:Biological data/invasion.exp.data.16.community.csv", row.names=FALSE)
-
