@@ -160,7 +160,7 @@ gam.8.beta.folliculina<- gam(folliculina.001~ s(bot.total)+ oCO2.Treatment + s(b
 
 mod.folliculina<-gam.8.beta.folliculina
 plot(mod.folliculina, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.folliculina)
+#appraise(mod.folliculina)
 qq_plot(mod.folliculina, method = 'simulate')
 k.check(mod.folliculina)
 summary(mod.folliculina)
@@ -212,7 +212,7 @@ summary(gam.8.beta.membranipora)
 
 mod.membranipora<-gam.8.binomial.membranipora
 plot(mod.membranipora, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.membranipora)
+#appraise(mod.membranipora)
 qq_plot(mod.membranipora, method = 'simulate')
 k.check(mod.membranipora)
 summary(mod.membranipora)
@@ -255,7 +255,7 @@ summary(gam.8.beta.mem.total)
 
 mod.mem.total<-gam.8.binomial.mem.total
 plot(mod.mem.total, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.mem.total)
+#appraise(mod.mem.total)
 qq_plot(mod.mem.total, method = 'simulate')
 k.check(mod.mem.total)
 summary(mod.mem.total)
@@ -297,7 +297,7 @@ gam.8.beta.prop.mem.eaten<- gam(prop.mem.eaten.001~ s(bot.total)+ oCO2.Treatment
 
 mod.prop.mem.eaten<-gam.8.binomial.prop.mem.eaten
 plot(mod.prop.mem.eaten, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.prop.mem.eaten)
+#appraise(mod.prop.mem.eaten)
 qq_plot(mod.prop.mem.eaten, method = 'simulate')
 k.check(mod.prop.mem.eaten)
 summary(mod.prop.mem.eaten)
@@ -338,7 +338,7 @@ gam.16.beta.prop.mem.eaten<- gam(prop.mem.eaten.001~ s(bot.total)+ oCO2.Treatmen
 
 mod.prop.mem.eaten<-gam.16.beta.prop.mem.eaten
 plot(mod.prop.mem.eaten, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.prop.mem.eaten)
+#appraise(mod.prop.mem.eaten)
 qq_plot(mod.prop.mem.eaten, method = 'simulate')
 k.check(mod.prop.mem.eaten)
 summary(mod.prop.mem.eaten)
@@ -381,7 +381,7 @@ gam.8.beta.mussel<- gam(mussel.001~ s(bot.total)+ oCO2.Treatment + s(bot.total, 
 
 mod.mussel<-gam.8.binomial.mussel
 plot(mod.mussel, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.mussel)
+#appraise(mod.mussel)
 qq_plot(mod.mussel, method = 'simulate')
 k.check(mod.mussel)
 summary(mod.mussel)
@@ -429,7 +429,7 @@ AICtab(gam.8.nb.num.barn, gam.8.nb.num.barn.1, gam.8.poisson.num.barn)
 
 mod.num.barn<-gam.8.poisson.num.barn
 plot(mod.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.barn)
+#appraise(mod.num.barn)
 qq_plot(mod.num.barn, method = 'simulate')
 k.check(mod.num.barn)
 summary(mod.num.barn)
@@ -476,7 +476,7 @@ AICtab(gam.8.nb.num.white.bryo, gam.8.nb.num.white.bryo.1, gam.8.poisson.num.whi
 
 mod.num.white.bryo<-gam.8.poisson.num.white.bryo
 plot(mod.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.white.bryo)
+#appraise(mod.num.white.bryo)
 qq_plot(mod.num.white.bryo, method = 'simulate')
 k.check(mod.num.white.bryo)
 summary(mod.num.white.bryo)
@@ -522,7 +522,7 @@ AICtab(gam.8.nb.num.red.bryo, gam.8.nb.num.red.bryo.1, gam.8.poisson.num.red.bry
 
 mod.num.red.bryo<-gam.8.poisson.num.red.bryo
 plot(mod.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.red.bryo)
+#appraise(mod.num.red.bryo)
 qq_plot(mod.num.red.bryo, method = 'simulate')
 k.check(mod.num.red.bryo)
 summary(mod.num.red.bryo)
@@ -570,7 +570,7 @@ AICtab(gam.8.nb.num.nudi, gam.8.nb.num.nudi.1, gam.8.poisson.num.nudi)
 
 mod.num.nudi<-gam.8.poisson.num.nudi
 plot(mod.num.nudi, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.nudi)
+#appraise(mod.num.nudi)
 qq_plot(mod.num.nudi, method = 'simulate')
 k.check(mod.num.nudi)
 summary(mod.num.nudi)
@@ -616,7 +616,7 @@ AICtab(gam.8.nb.num.nudi.egg, gam.8.nb.num.nudi.egg.1, gam.8.poisson.num.nudi.eg
 
 mod.num.nudi.egg<-gam.8.poisson.num.nudi.egg
 plot(mod.num.nudi.egg, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.nudi.egg)
+#appraise(mod.num.nudi.egg)
 qq_plot(mod.num.nudi.egg, method = 'simulate')
 k.check(mod.num.nudi.egg)
 summary(mod.num.nudi.egg)
@@ -664,7 +664,7 @@ AICtab(gam.8.nb.num.nudi.all, gam.8.nb.num.nudi.all.1, gam.8.poisson.num.nudi.al
 
 mod.num.nudi.all<-gam.8.poisson.num.nudi.all
 plot(mod.num.nudi.all, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.nudi.all)
+#appraise(mod.num.nudi.all)
 qq_plot(mod.num.nudi.all, method = 'simulate')
 k.check(mod.num.nudi.all)
 summary(mod.num.nudi.all)
@@ -719,7 +719,7 @@ gam.8.poisson.num.serpulid<- gam(num.serpulid ~ s(bot.total)+ oCO2.Treatment + s
 
 mod.num.serpulid<-gam.8.nb.num.serpulid
 plot(mod.num.serpulid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.serpulid)
+#appraise(mod.num.serpulid)
 qq_plot(mod.num.serpulid, method = 'simulate')
 k.check(mod.num.serpulid)
 summary(mod.num.serpulid)
@@ -767,7 +767,7 @@ AICtab(gam.8.nb.num.corella, gam.8.nb.num.corella.1, gam.8.poisson.num.corella)
 
 mod.num.corella<-gam.8.poisson.num.corella
 plot(mod.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.corella)
+#appraise(mod.num.corella)
 qq_plot(mod.num.corella, method = 'simulate')
 k.check(mod.num.corella)
 summary(mod.num.corella)
@@ -810,7 +810,7 @@ theme_set(theme_classic(base_size = 5))
 #theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
 fig.week.16
-ggplot2::ggsave(plot=fig.week.16, "C:Graphs August 2020//Fig_wk_16.pdf", width=16, height=8, units="cm")
+ggplot2::ggsave(plot=fig.week.16, "C:Graphs August 2020//Fig_wk_16.pdf", width=16, height=6, units="cm")
 
 
 
@@ -821,7 +821,7 @@ fig.week.8<-wrap_plots(plt.folliculina.8,plt.membranipora.8,
 
 fig.week.8
 
-ggplot2::ggsave(plot=fig.week.8, "C:Graphs August 2020//Fig_wk_8.pdf", width=16, height=8, units="cm")
+ggplot2::ggsave(plot=fig.week.8, "C:Graphs August 2020//Fig_wk_8.pdf", width=16, height=6, units="cm")
 
 head(invasion.exp.data.8_zscores)
 
@@ -1172,7 +1172,7 @@ AICtab(gam.8.nb.num.species.no.bot.1, gam.8.poisson.num.species.no.bot)
 
 mod.num.species.no.bot<-gam.8.poisson.num.species.no.bot
 plot(mod.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.species.no.bot)
+#appraise(mod.num.species.no.bot)
 qq_plot(mod.num.species.no.bot, method = 'simulate')
 k.check(mod.num.species.no.bot)
 summary(mod.num.species.no.bot)
@@ -1213,7 +1213,7 @@ gam.8.beta.native.occupied.space<- gam(native.occupied.space.001~ s(bot.total)+ 
 
 mod.native.occupied.space<-gam.8.binomial.native.occupied.space
 plot(mod.native.occupied.space, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.native.occupied.space)
+#appraise(mod.native.occupied.space)
 qq_plot(mod.native.occupied.space, method = 'simulate')
 k.check(mod.native.occupied.space)
 summary(mod.native.occupied.space)
@@ -1255,7 +1255,7 @@ gam.8.lm.CAP1<- gam(CAP1 ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.T
 
 mod.CAP1<-gam.8.lm.CAP1
 plot(mod.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.CAP1)
+#appraise(mod.CAP1)
 qq_plot(mod.CAP1, method = 'simulate')
 k.check(mod.CAP1)
 summary(mod.CAP1)
@@ -1304,7 +1304,7 @@ AICtab(gam.8.loglink.distances.1,  gam.8.lm.distances, gam.8.gamma.distances)
 #gam.8.lm.distances although both are equal
 mod.distcentroid<- gam.8.lm.distances
 plot(mod.distcentroid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.distcentroid)
+#appraise(mod.distcentroid)
 qq_plot(mod.distcentroid, method = 'simulate')
 k.check(mod.distcentroid)
 summary(mod.distcentroid)
@@ -1351,7 +1351,7 @@ AICtab(gam.8.loglink.evenness.1,  gam.8.lm.evenness)
 
 mod.evenness<- gam.8.lm.evenness
 plot(mod.evenness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.evenness)
+#appraise(mod.evenness)
 qq_plot(mod.evenness, method = 'simulate')
 k.check(mod.evenness)
 summary(mod.evenness)
@@ -1393,7 +1393,7 @@ AICtab(gam.16.nb.num.species.no.bot.1, gam.16.poisson.num.species.no.bot)
 
 mod.num.species.no.bot<-gam.16.poisson.num.species.no.bot
 plot(mod.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.num.species.no.bot)
+#appraise(mod.num.species.no.bot)
 qq_plot(mod.num.species.no.bot, method = 'simulate')
 k.check(mod.num.species.no.bot)
 summary(mod.num.species.no.bot)
@@ -1434,7 +1434,7 @@ gam.16.beta.native.occupied.space<- gam(native.occupied.space.001~ s(bot.total)+
 
 mod.native.occupied.space<-gam.16.beta.native.occupied.space
 plot(mod.native.occupied.space, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.native.occupied.space)
+#appraise(mod.native.occupied.space)
 qq_plot(mod.native.occupied.space, method = 'simulate')
 k.check(mod.native.occupied.space)
 summary(mod.native.occupied.space)
@@ -1478,7 +1478,7 @@ gam.16.lm.CAP1<- gam(CAP1 ~ s(bot.total)+ oCO2.Treatment + s(bot.total, by=oCO2.
 
 mod.CAP1<-gam.16.lm.CAP1
 plot(mod.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.CAP1)
+#appraise(mod.CAP1)
 qq_plot(mod.CAP1, method = 'simulate')
 k.check(mod.CAP1)
 summary(mod.CAP1)
@@ -1527,7 +1527,7 @@ AICtab(gam.16.loglink.distances.1,  gam.16.lm.distances, gam.16.gamma.distances)
 #gam.16.lm.distances although both are equal
 mod.distcentroid<- gam.16.lm.distances
 plot(mod.distcentroid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.distcentroid)
+#appraise(mod.distcentroid)
 qq_plot(mod.distcentroid, method = 'simulate')
 k.check(mod.distcentroid)
 summary(mod.distcentroid)
@@ -1574,7 +1574,7 @@ AICtab(gam.16.loglink.evenness.1,  gam.16.lm.evenness)
 
 mod.evenness<- gam.16.lm.evenness
 plot(mod.evenness, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(mod.evenness)
+#appraise(mod.evenness)
 qq_plot(mod.evenness, method = 'simulate')
 k.check(mod.evenness)
 summary(mod.evenness)
@@ -1623,7 +1623,7 @@ fig.community.week.16
 ggplot2::ggsave(plot=fig.community.week.16, "C:Graphs August 2020//Fig.community.week16.pdf", width=3, height=3, units="in")
 
 
-
+colorset_CO2.Treatment = c("CO2"="#A20228" ,"AIR"="#818392")
 #### community fig week 8
 fig.community.week.8<-wrap_plots(plt.native.occupied.space.8,
                                   plt.num.species.no.bot.8,
@@ -1632,7 +1632,7 @@ fig.community.week.8<-wrap_plots(plt.native.occupied.space.8,
 
 fig.community.week.8
 
-ggplot2::ggsave(plot=fig.community.week.8, "C:Graphs August 2020//Fig.community.week8.pdf", width=3, height=3, units="in")
+ggplot2::ggsave(plot=fig.community.week.8, "C:Graphs August 2020//Fig.community.week8.pdf", width=4, height=3, units="in")
 
 
 
