@@ -102,15 +102,15 @@ names_cover_food_exp_tile<-c("Tile.ID",
 
 
 
-species.cover <- invasion.exp.data.8[,colnames(invasion.exp.data.8) %in% names_cover_food_exp_tile]
-head(species.cover)
-just.species.cover<-species.cover[,-1]
+species.cover.8 <- invasion.exp.data.8[,colnames(invasion.exp.data.8) %in% names_cover_food_exp_tile]
+head(species.cover.8)
+just.species.cover.8<-species.cover[,-1]
 
-species.cover$shannon.diversity<-diversity(just.species.cover, index="shannon")
-species.cover$evenness<-species.cover$shannon.diversity/(log(invasion.exp.data.8$num.species.no.bot))
+species.cover.8$shannon.diversity<-diversity(just.species.cover.8, index="shannon")
+species.cover.8$evenness<-species.cover.8$shannon.diversity/(log(invasion.exp.data.8$num.species.no.bot))
 
 #evenness has to be created from just cover data
-invasion.exp.data.8$evenness<-species.cover$evenness
+invasion.exp.data.8$evenness<-species.cover.8$evenness
 
 
 
@@ -126,17 +126,10 @@ head(compiled.data.8)
 compiled.data.8$Treatment<-as.factor(compiled.data.8$Treatment) 
 
 #Combinging species and environment
-all.data.rec_cover<-merge(species.rec_cover.8,compiled.data.8)
-head(all.data.rec_cover)
-
-colorset_invasives = c("Present"="#A20226" ,"Absent"="#818392")
-theme_set(theme_classic(base_size = 6))
-theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
-
-colorset_treatment<-c("AIRPresent"="#A20226" ,"AIRAbsent"="#818392", "CO2.TreatmentPresent"="#A20226" ,"CO2.TreatmentAbsent"="#818392")
+all.data.rec_cover.8<-merge(species.rec_cover.8,compiled.data.8)
+head(all.data.rec_cover.8)
 
 ###CONSTRAINED Ordination
-
 capscale_plot<- function(m, colorby){
   colorby<-factor(colorby) #Convert to factor (just in case it isn't already)
   cols <- colorset_treatment#vector of colors needed
@@ -163,89 +156,53 @@ head(compiled.data.8_zscores)
 standardized.species.rec_cover.8<-decostand(just.species.rec_cover.8, method="total", MARGIN=2)
 head(standardized.species.rec_cover.8)
 
-# model.meso.bray<-capscale(standardized.species.rec_cover.8 ~ min.10.pH*Invasives,compiled.data.8_zscores , distance="bray")
-# capscale_plot(model.meso.bray, colorby=compiled.data.8$Treatment)
 
+summary(model.meso.bray.inv.8)
+model.meso.bray.inv.8<-capscale(standardized.species.rec_cover.8 ~ min.10.pH*Invasives,compiled.data.8_zscores , distance="bray")
+capscale_plot(model.meso.bray.inv.8, colorby=compiled.data.8$Treatment)
+model.meso.bray.scores.8.inv<- as.data.frame(scores(model.meso.bray.inv.8)$sites)
+model.meso.bray.scores.8.inv$Tile.ID<-species.rec_cover.8$Tile.ID
+model.meso.bray.scores.CAP.inv.8<-merge(model.meso.bray.scores.8.inv, compiled.data.8, by="Tile.ID")
+invasion.exp.data.8.community.inv<-model.meso.bray.scores.8.inv[,1:3]
 
-model.meso.bray<-capscale(standardized.species.rec_cover.8 ~ bot.total*CO2.Treatment,compiled.data.8_zscores , distance="bray")
-capscale_plot(model.meso.bray, colorby=compiled.data.8$Treatment)
+model.meso.bray.8<-capscale(standardized.species.rec_cover.8 ~ bot.total*CO2.Treatment,compiled.data.8_zscores , distance="bray")
+capscale_plot(model.meso.bray.8, colorby=compiled.data.8$Treatment)
+model.meso.bray.scores.8<- as.data.frame(scores(model.meso.bray.8)$sites)
+model.meso.bray.scores.8$Tile.ID<-species.rec_cover.8$Tile.ID
+model.meso.bray.scores.CAP.inv.8<-merge(model.meso.bray.scores.8, compiled.data.8, by="Tile.ID")
+invasion.exp.data.8.community<-model.meso.bray.scores.8[,1:3]
 
-adonis(standardized.species.rec_cover.8 ~ bot.total*CO2.Treatment, method="bray", permutations = 9999, data=compiled.data.8_zscores)
-summary(model.meso.bray)
-
-
-
-model.meso.bray.scores<- as.data.frame(scores(model.meso.bray)$sites)
-head(model.meso.bray.scores)
-model.meso.bray.scores$Tile.ID<-species.rec_cover.8$Tile.ID
-
-model.meso.bray.scores.CAP<-merge(model.meso.bray.scores, compiled.data.8, by="Tile.ID")
-head(model.meso.bray.scores.CAP)
-
-write.csv(model.meso.bray.scores,"C:Biological data//model.meso.bray.scores.csv", row.names=FALSE)
-
-invasion.exp.data.8.community<-model.meso.bray.scores[,1:3]
-
-head(invasion.exp.data.8.community)
 
 # betadispersion partitioned ----------------------------------------------
 
 
-dist.part.bray<-bray.part(standardized.species.rec_cover.8)
+dist.part.bray.8<-bray.part(standardized.species.rec_cover.8)
 #returns a distance matrix, pairwise between site values of each component of beta diversitity 
-bd.bray<-betadisper(dist.part.bray[[3]],compiled.data.8_zscores$Treatment, type="centroid" )
-bd.nestedness.bray<-betadisper(dist.part.bray[[2]],compiled.data.8_zscores$Treatment, type="centroid")
-bd.turnover.bray<-betadisper(dist.part.bray[[1]],compiled.data.8_zscores$Treatment, type="centroid")
+bd.bray.8<-betadisper(dist.part.bray.8[[3]],compiled.data.8_zscores$Treatment, type="centroid" )
+bd.nestedness.bray.8<-betadisper(dist.part.bray.8[[2]],compiled.data.8_zscores$Treatment, type="centroid")
+bd.turnover.bray.8<-betadisper(dist.part.bray.8[[1]],compiled.data.8_zscores$Treatment, type="centroid")
 
-head(bd.bray)
-plot(bd.bray, hull=FALSE, ellipse = TRUE)
-anova(bd.bray)
-boxplot(bd.bray)
-permutest(bd.bray)
-
-plot(bd.nestedness.bray)
-anova(bd.nestedness.bray)
-boxplot(bd.nestedness.bray)
-
-plot(bd.turnover.bray)
-anova(bd.turnover.bray)
-boxplot(bd.turnover.bray)
-
-
-bd.overall.bray.distances<- as.data.frame(bd.bray$distances)
-head(bd.overall.bray.distances)
-bd.overall.bray.distances$distcentroid<-bd.overall.bray.distances$`bd.bray$distances`
-bd.overall.bray.distances$Tile.ID<-species.rec_cover.8$Tile.ID
+bd.overall.bray.distances.8<- as.data.frame(bd.bray.8$distances)
+bd.overall.bray.distances.8$distcentroid<-bd.overall.bray.distances.8$`bd.bray.8$distances`
+bd.overall.bray.distances.8$Tile.ID<-species.rec_cover.8$Tile.ID
 
 
 
-bd.overall.bray.distances.2<-merge(bd.overall.bray.distances, compiled.data.8, by="Tile.ID")
-head(bd.overall.bray.distances.2)
+bd.overall.bray.distances.2.8<-merge(bd.overall.bray.distances.8, compiled.data.8, by="Tile.ID")
+head(bd.overall.bray.distances.2.8)
 
-plot.overall.distcentroid.12.hydrogen<- ggplot(bd.overall.bray.distances.2, aes(x=bot.total, y=distcentroid, colour=CO2.Treatment)) + geom_point(size=5,aes(colour=factor(CO2.Treatment), shape=CO2.Treatment)) + guides(fill=FALSE) + scale_fill_manual(values=colorset_invasives)+ geom_smooth(aes(fill=CO2.Treatment), method="lm") +scale_shape_manual(values=c(19,17))
-plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme_bw() +  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Distance to centroid")  + theme(text = element_text(size=16), axis.text = element_text(size=16))+theme(axis.title.y = element_text(angle=90))#+ylim(0,0.75)
-plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme(legend.text = element_text(colour="black", size = 16))+ theme(legend.title = element_text(colour="black", size=16))
-plot.overall.distcentroid.12.hydrogen
-write.csv(bd.overall.bray.distances.2,"C:Data//Tile.ID inventory data/bd.overall.bray.distances.2.csv",row.names=FALSE )
-
-invasion.exp.data.8.community<-merge(bd.overall.bray.distances,invasion.exp.data.8.community, by="Tile.ID")
+invasion.exp.data.8.community<-merge(bd.overall.bray.distances.8,invasion.exp.data.8.community, by="Tile.ID")
 head(invasion.exp.data.8.community)
 
+invasion.exp.data.8.community.inv$CAP1.inv<-invasion.exp.data.8.community.inv$CAP1
+
+invasion.exp.data.8.community<-merge(invasion.exp.data.8.community, invasion.exp.data.8.community.inv[,3:4])
 write.csv(invasion.exp.data.8.community,"C:Biological data/invasion.exp.data.8.community.csv", row.names=FALSE)
 
 
+# Week 16 -----------------------------------------------------------------
 
 
-############## Week 16
-#read in packages
-library(vegan)
-library(ggplot2)
-library(betapart)
-library(bipartite)
-library(car)
-library(fitdistrplus)
-
-## read in data from both mesocosms and tiles
 
 #other bryo = cribrillina 
 
@@ -292,15 +249,15 @@ names_cover_food_exp_tile<-c("Tile.ID",
 
 
 
-species.cover <- invasion.exp.data.16[,colnames(invasion.exp.data.16) %in% names_cover_food_exp_tile]
-head(species.cover)
-just.species.cover<-species.cover[,-1]
+species.cover.16 <- invasion.exp.data.16[,colnames(invasion.exp.data.16) %in% names_cover_food_exp_tile]
+head(species.cover.16)
+just.species.cover.16<-species.cover[,-1]
 
-species.cover$shannon.diversity<-diversity(just.species.cover, index="shannon")
-species.cover$evenness<-species.cover$shannon.diversity/(log(invasion.exp.data.16$num.species.no.bot))
+species.cover.16$shannon.diversity<-diversity(just.species.cover.16, index="shannon")
+species.cover.16$evenness<-species.cover.16$shannon.diversity/(log(invasion.exp.data.16$num.species.no.bot))
 
 #evenness has to be created from just cover data
-invasion.exp.data.16$evenness<-species.cover$evenness
+invasion.exp.data.16$evenness<-species.cover.16$evenness
 
 
 
@@ -316,17 +273,10 @@ head(compiled.data.16)
 compiled.data.16$Treatment<-as.factor(compiled.data.16$Treatment) 
 
 #Combinging species and environment
-all.data.rec_cover<-merge(species.rec_cover.16,compiled.data.16)
-head(all.data.rec_cover)
-
-colorset_invasives = c("Present"="#A20226" ,"Absent"="#16116392")
-theme_set(theme_classic(base_size = 6))
-theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
-
-colorset_treatment<-c("AIRPresent"="#A20226" ,"AIRAbsent"="#16116392", "CO2.TreatmentPresent"="#A20226" ,"CO2.TreatmentAbsent"="#16116392")
+all.data.rec_cover.16<-merge(species.rec_cover.16,compiled.data.16)
+head(all.data.rec_cover.16)
 
 ###CONSTRAINED Ordination
-
 capscale_plot<- function(m, colorby){
   colorby<-factor(colorby) #Convert to factor (just in case it isn't already)
   cols <- colorset_treatment#vector of colors needed
@@ -353,72 +303,45 @@ head(compiled.data.16_zscores)
 standardized.species.rec_cover.16<-decostand(just.species.rec_cover.16, method="total", MARGIN=2)
 head(standardized.species.rec_cover.16)
 
-# model.meso.bray<-capscale(standardized.species.rec_cover.16 ~ min.10.pH*Invasives,compiled.data.16_zscores , distance="bray")
-# capscale_plot(model.meso.bray, colorby=compiled.data.16$Treatment)
-
+model.meso.bray.inv.16<-capscale(standardized.species.rec_cover.16 ~ min.10.pH*Invasives,compiled.data.16_zscores , distance="bray")
+capscale_plot(model.meso.bray.inv.16, colorby=compiled.data.16$Treatment)
+adonis(standardized.species.rec_cover.16 ~ min.10.pH*Invasives,compiled.data.16_zscores , distance="bray")
+model.meso.bray.scores.16.inv<- as.data.frame(scores(model.meso.bray.inv.16)$sites)
+model.meso.bray.scores.16.inv$Tile.ID<-species.rec_cover.16$Tile.ID
+invasion.exp.data.16.community.inv<-model.meso.bray.scores.16.inv[,1:3]
 
 model.meso.bray.16<-capscale(standardized.species.rec_cover.16 ~ bot.total*CO2.Treatment,compiled.data.16_zscores , distance="bray")
 capscale_plot(model.meso.bray.16, colorby=compiled.data.16$Treatment)
-
-adonis(standardized.species.rec_cover.16 ~ bot.total*CO2.Treatment, method="bray", permutations = 9999, data=compiled.data.16_zscores)
-summary(model.meso.bray.16)
-
-
-
 model.meso.bray.scores.16<- as.data.frame(scores(model.meso.bray.16)$sites)
-head(model.meso.bray.scores.16)
 model.meso.bray.scores.16$Tile.ID<-species.rec_cover.16$Tile.ID
-
-model.meso.bray.scores.CAP.16<-merge(model.meso.bray.scores.16, compiled.data.16, by="Tile.ID")
-head(model.meso.bray.scores.CAP.16)
-
-write.csv(model.meso.bray.scores.16,"C:Biological data//model.meso.bray.scores.16.csv", row.names=FALSE)
-
 invasion.exp.data.16.community<-model.meso.bray.scores.16[,1:3]
 
-head(invasion.exp.data.16.community)
+summary(model.meso.bray.inv.16)
 
 # betadispersion partitioned ----------------------------------------------
 
 
-dist.part.bray<-bray.part(standardized.species.rec_cover.16)
+dist.part.bray.16<-bray.part(standardized.species.rec_cover.16)
 #returns a distance matrix, pairwise between site values of each component of beta diversitity 
-bd.bray<-betadisper(dist.part.bray[[3]],compiled.data.16_zscores$Treatment, type="centroid" )
-bd.nestedness.bray<-betadisper(dist.part.bray[[2]],compiled.data.16_zscores$Treatment, type="centroid")
-bd.turnover.bray<-betadisper(dist.part.bray[[1]],compiled.data.16_zscores$Treatment, type="centroid")
+bd.bray.16<-betadisper(dist.part.bray.16[[3]],compiled.data.16_zscores$Treatment, type="centroid" )
+bd.nestedness.bray.16<-betadisper(dist.part.bray.16[[2]],compiled.data.16_zscores$Treatment, type="centroid")
+bd.turnover.bray.16<-betadisper(dist.part.bray.16[[1]],compiled.data.16_zscores$Treatment, type="centroid")
 
-head(bd.bray)
-plot(bd.bray, hull=FALSE, ellipse = TRUE)
-anova(bd.bray)
-boxplot(bd.bray)
-permutest(bd.bray)
-
-plot(bd.nestedness.bray)
-anova(bd.nestedness.bray)
-boxplot(bd.nestedness.bray)
-
-plot(bd.turnover.bray)
-anova(bd.turnover.bray)
-boxplot(bd.turnover.bray)
-
-
-bd.overall.bray.distances<- as.data.frame(bd.bray$distances)
-head(bd.overall.bray.distances)
-bd.overall.bray.distances$distcentroid<-bd.overall.bray.distances$`bd.bray$distances`
-bd.overall.bray.distances$Tile.ID<-species.rec_cover.16$Tile.ID
+bd.overall.bray.distances.16<- as.data.frame(bd.bray.16$distances)
+bd.overall.bray.distances.16$distcentroid<-bd.overall.bray.distances.16$`bd.bray.16$distances`
+bd.overall.bray.distances.16$Tile.ID<-species.rec_cover.16$Tile.ID
 
 
 
-bd.overall.bray.distances.2<-merge(bd.overall.bray.distances, compiled.data.16, by="Tile.ID")
-head(bd.overall.bray.distances.2)
+bd.overall.bray.distances.2.16<-merge(bd.overall.bray.distances.16, compiled.data.16, by="Tile.ID")
+head(bd.overall.bray.distances.2.16)
 
-plot.overall.distcentroid.12.hydrogen<- ggplot(bd.overall.bray.distances.2, aes(x=bot.total, y=distcentroid, colour=CO2.Treatment)) + geom_point(size=5,aes(colour=factor(CO2.Treatment), shape=CO2.Treatment)) + guides(fill=FALSE) + scale_fill_manual(values=colorset_invasives)+ geom_smooth(aes(fill=CO2.Treatment), method="lm") +scale_shape_manual(values=c(19,17))
-plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme_bw() +  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Distance to centroid")  + theme(text = element_text(size=16), axis.text = element_text(size=16))+theme(axis.title.y = element_text(angle=90))#+ylim(0,0.75)
-plot.overall.distcentroid.12.hydrogen<- plot.overall.distcentroid.12.hydrogen + theme(legend.text = element_text(colour="black", size = 16))+ theme(legend.title = element_text(colour="black", size=16))
-plot.overall.distcentroid.12.hydrogen
-write.csv(bd.overall.bray.distances.2,"C:Data//Tile.ID inventory data/bd.overall.bray.distances.2.csv",row.names=FALSE )
-
-invasion.exp.data.16.community<-merge(bd.overall.bray.distances,invasion.exp.data.16.community, by="Tile.ID")
+invasion.exp.data.16.community<-merge(bd.overall.bray.distances.16,invasion.exp.data.16.community, by="Tile.ID")
 head(invasion.exp.data.16.community)
 
+
+invasion.exp.data.16.community.inv$CAP1.inv<-invasion.exp.data.16.community.inv$CAP1
+
+invasion.exp.data.16.community<-merge(invasion.exp.data.16.community, invasion.exp.data.16.community.inv[,3:4])
 write.csv(invasion.exp.data.16.community,"C:Biological data/invasion.exp.data.16.community.csv", row.names=FALSE)
+
