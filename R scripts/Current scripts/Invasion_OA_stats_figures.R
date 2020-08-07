@@ -130,7 +130,7 @@ invasion.exp.data.8_zscores$min.10.pH.unscaled <-invasion.exp.data.8_zscores$min
 
 # Plotting settings -------------------------------------------------------
 
-colorset_invasives = c("Present"="#A20226" ,"Absent"="#818392")
+colorset_invasives = c("Present"="#0276FD" ,"Absent"="#818392")
 theme_set(theme_classic(base_size = 6))
 theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
@@ -151,7 +151,7 @@ AICtab(gam.16.beta.botryllid, gam.16.beta.botryllid.1, gam.16.beta.botryllid.2, 
 
 
 plot(gam.16.beta.botryllid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.beta.botryllid)
+##appraise(gam.16.beta.botryllid)
 qq_plot(gam.16.beta.botryllid, method = 'simulate')
 k.check(gam.16.beta.botryllid)
 summary(gam.16.beta.botryllid)
@@ -192,7 +192,7 @@ ndata.16.botryllid$min.10.pH.unscaled<-ndata.16.botryllid$min.10.pH * attr(invas
 
 # plot 
 
-plt.botryllid.16 <- ggplot(ndata.16.botryllid, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.botryllid.16 <- ggplot(ndata.16.botryllid, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = botryllid.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Botryllus")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -201,7 +201,7 @@ plt.botryllid.16 <- ggplot(ndata.16.botryllid, aes(x = min.10.pH.unscaled, y = f
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.16.botryllid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.botryllid.16
+plt.inv.botryllid.16
 ggsave("C:Graphs August 2020//botryllid_pred.16.png")
 
 
@@ -221,7 +221,7 @@ AICtab(gam.8.beta.botryllid, gam.8.beta.botryllid.1, gam.8.beta.botryllid.2, gam
 #.3 is best
 
 plot(gam.8.beta.botryllid, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.botryllid)
+#appraise(gam.8.beta.botryllid)
 qq_plot(gam.8.beta.botryllid, method = 'simulate')
 k.check(gam.8.beta.botryllid)
 summary(gam.8.beta.botryllid)
@@ -262,7 +262,7 @@ ndata.8.botryllid$min.10.pH.unscaled<-ndata.8.botryllid$min.10.pH * attr(invasio
 
 # plot 
 
-plt.botryllid.8 <- ggplot(ndata.8.botryllid, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.botryllid.8 <- ggplot(ndata.8.botryllid, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = botryllid.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Botryllus")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -271,7 +271,7 @@ plt.botryllid.8 <- ggplot(ndata.8.botryllid, aes(x = min.10.pH.unscaled, y = fit
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.botryllid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.botryllid.8
+plt.inv.botryllid.8
 ggsave("C:Graphs August 2020//botryllid_pred.8.png")
 
 
@@ -295,7 +295,7 @@ AICtab(gam.16.beta.botryllid, gam.16.beta.botryllid.1, gam.16.beta.botryllid.2, 
 #cauchit is the best
 
 plot(gam.16.beta.botryllid.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.beta.botryllid.3)
+##appraise(gam.16.beta.botryllid.3)
 qq_plot(gam.16.beta.botryllid.3, method = 'simulate')
 k.check(gam.16.beta.botryllid.3)
 summary(gam.16.beta.botryllid.3)
@@ -336,7 +336,7 @@ ndata.16.botryllid$min.10.pH.unscaled<-ndata.16.botryllid$min.10.pH * attr(invas
 
 # plot 
 
-plt.botryllid <- ggplot(ndata.16.botryllid, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.botryllid <- ggplot(ndata.16.botryllid, aes(x = min.10.pH.unscaled, y = fit)) + 
   
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = botryllid.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
@@ -346,7 +346,7 @@ plt.botryllid <- ggplot(ndata.16.botryllid, aes(x = min.10.pH.unscaled, y = fit)
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.16.botryllid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.botryllid
+plt.inv.botryllid
 ggsave("C:Graphs August 2020//botryllid_pred.png")
 
 
@@ -367,7 +367,7 @@ AICtab(gam.16.beta.bot.eaten, gam.16.beta.bot.eaten.1, gam.16.beta.bot.eaten.2, 
 
 
 plot(gam.16.beta.bot.eaten, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.bot.eaten)
+#appraise(gam.16.beta.bot.eaten)
 qq_plot(gam.16.beta.bot.eaten, method = 'simulate')
 k.check(gam.16.beta.bot.eaten)
 summary(gam.16.beta.bot.eaten)
@@ -408,7 +408,7 @@ ndata.16.bot.eaten$min.10.pH.unscaled<-ndata.16.bot.eaten$min.10.pH * attr(invas
 
 # plot 
 
-plt.bot.eaten.16 <- ggplot(ndata.16.bot.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.bot.eaten.16 <- ggplot(ndata.16.bot.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = bot.eaten.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Botryllus")~ "proportion eaten")))))+  
@@ -417,7 +417,7 @@ plt.bot.eaten.16 <- ggplot(ndata.16.bot.eaten, aes(x = min.10.pH.unscaled, y = f
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.16.bot.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.bot.eaten.16
+plt.inv.bot.eaten.16
 ggsave("C:Graphs August 2020//bot.eaten_pred.16.png")
 
 
@@ -437,7 +437,7 @@ AICtab(gam.8.beta.bot.eaten, gam.8.beta.bot.eaten.1, gam.8.beta.bot.eaten.2, gam
 #.3 is best
 
 plot(gam.8.beta.bot.eaten.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.bot.eaten.3)
+#appraise(gam.8.beta.bot.eaten.3)
 qq_plot(gam.8.beta.bot.eaten.3, method = 'simulate')
 k.check(gam.8.beta.bot.eaten.3)
 summary(gam.8.beta.bot.eaten.3)
@@ -478,7 +478,7 @@ ndata.8.bot.eaten$min.10.pH.unscaled<-ndata.8.bot.eaten$min.10.pH * attr(invasio
 
 # plot 
 
-plt.bot.eaten.8 <- ggplot(ndata.8.bot.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.bot.eaten.8 <- ggplot(ndata.8.bot.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = bot.eaten.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Botryllus")~ "proportion eaten")))))+  
@@ -487,7 +487,7 @@ plt.bot.eaten.8 <- ggplot(ndata.8.bot.eaten, aes(x = min.10.pH.unscaled, y = fit
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Treatment", title.position = "top"))+
   geom_ribbon(data = ndata.8.bot.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.bot.eaten.8
+plt.inv.bot.eaten.8
 ggsave("C:Graphs August 2020//bot.eaten_pred.8.png")
 
 
@@ -505,7 +505,7 @@ AICtab(gam.16.beta.folliculina, gam.16.beta.folliculina.1, gam.16.beta.folliculi
 
 
 plot(gam.16.beta.folliculina, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.folliculina)
+#appraise(gam.16.beta.folliculina)
 qq_plot(gam.16.beta.folliculina, method = 'simulate')
 k.check(gam.16.beta.folliculina)
 summary(gam.16.beta.folliculina)
@@ -544,7 +544,7 @@ ndata.16.folliculina$min.10.pH.unscaled<-ndata.16.folliculina$min.10.pH * attr(i
 
 # plot 
 
-plt.folliculina.16 <- ggplot(ndata.16.folliculina, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.folliculina.16 <- ggplot(ndata.16.folliculina, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = folliculina.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Folliculina")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -553,7 +553,7 @@ plt.folliculina.16 <- ggplot(ndata.16.folliculina, aes(x = min.10.pH.unscaled, y
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.folliculina,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.folliculina.16
+plt.inv.folliculina.16
 ggsave("C:Graphs av.pH//folliculina_pred.16.png")
 
 # GAM beta folliculina / gam.8.beta.folliculina -----------------------------------------------------------
@@ -570,7 +570,7 @@ AICtab(gam.8.beta.folliculina, gam.8.beta.folliculina.1, gam.8.beta.folliculina.
 
 
 plot(gam.8.beta.folliculina, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.beta.folliculina)
+##appraise(gam.8.beta.folliculina)
 qq_plot(gam.8.beta.folliculina, method = 'simulate')
 k.check(gam.8.beta.folliculina)
 summary(gam.8.beta.folliculina)
@@ -609,7 +609,7 @@ ndata.8.folliculina$min.10.pH.unscaled<-ndata.8.folliculina$min.10.pH * attr(inv
 
 # plot 
 
-plt.folliculina.8 <- ggplot(ndata.8.folliculina, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.folliculina.8 <- ggplot(ndata.8.folliculina, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = folliculina.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Folliculina")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -618,7 +618,7 @@ plt.folliculina.8 <- ggplot(ndata.8.folliculina, aes(x = min.10.pH.unscaled, y =
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.folliculina,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.folliculina.8
+plt.inv.folliculina.8
 ggsave("C:Graphs August 2020//folliculina_pred.8.png")
 
 
@@ -639,7 +639,7 @@ AICtab( gam.16.beta.membranipora, gam.16.beta.membranipora.1, gam.16.beta.membra
 
 
 plot(gam.16.beta.membranipora.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.membranipora.3)
+#appraise(gam.16.beta.membranipora.3)
 qq_plot(gam.16.beta.membranipora.3, method = 'simulate')
 k.check(gam.16.beta.membranipora.3)
 summary(gam.16.beta.membranipora.3)
@@ -677,7 +677,7 @@ ndata.16.membranipora$min.10.pH.unscaled<-ndata.16.membranipora$min.10.pH * attr
 
 # plot 
 
-plt.membranipora.16 <- ggplot(ndata.16.membranipora, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.membranipora.16 <- ggplot(ndata.16.membranipora, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = membranipora.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Membranipora")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -686,7 +686,7 @@ plt.membranipora.16 <- ggplot(ndata.16.membranipora, aes(x = min.10.pH.unscaled,
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.membranipora,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.membranipora.16
+plt.inv.membranipora.16
 ggsave("C:Graphs August 2020//membranipora_pred.16.png")
 
 # GAM beta membranipora / gam.8.beta.membranipora --------------------------------------------------------
@@ -706,7 +706,7 @@ AICtab( gam.8.beta.membranipora, gam.8.beta.membranipora.1, gam.8.beta.membranip
 
 
 plot(gam.8.beta.membranipora.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.beta.membranipora.3)
+##appraise(gam.8.beta.membranipora.3)
 qq_plot(gam.8.beta.membranipora.3, method = 'simulate')
 k.check(gam.8.beta.membranipora.3)
 summary(gam.8.beta.membranipora.3)
@@ -744,7 +744,7 @@ ndata.8.membranipora$min.10.pH.unscaled<-ndata.8.membranipora$min.10.pH * attr(i
 
 # plot 
 
-plt.membranipora.8 <- ggplot(ndata.8.membranipora, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.membranipora.8 <- ggplot(ndata.8.membranipora, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = membranipora.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Membranipora")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -753,7 +753,7 @@ plt.membranipora.8 <- ggplot(ndata.8.membranipora, aes(x = min.10.pH.unscaled, y
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.membranipora,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.membranipora.8
+plt.inv.membranipora.8
 ggsave("C:Graphs August 2020//membranipora_pred.8.png")
 
 
@@ -774,7 +774,7 @@ AICtab( gam.16.beta.mem.eaten, gam.16.beta.mem.eaten.1, gam.16.beta.mem.eaten.2,
 
 
 plot(gam.16.beta.mem.eaten.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.mem.eaten.3)
+#appraise(gam.16.beta.mem.eaten.3)
 #not great
 qq_plot(gam.16.beta.mem.eaten.3, method = 'simulate')
 k.check(gam.16.beta.mem.eaten.3)
@@ -813,7 +813,7 @@ ndata.16.mem.eaten$min.10.pH.unscaled<-ndata.16.mem.eaten$min.10.pH * attr(invas
 
 # plot 
 
-plt.mem.eaten.16 <- ggplot(ndata.16.mem.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.mem.eaten.16 <- ggplot(ndata.16.mem.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = mem.eaten.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("mem.eaten")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -822,7 +822,7 @@ plt.mem.eaten.16 <- ggplot(ndata.16.mem.eaten, aes(x = min.10.pH.unscaled, y = f
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.mem.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.mem.eaten.16
+plt.inv.mem.eaten.16
 ggsave("C:Graphs August 2020//mem.eaten_pred.16.png")
 
 # GAM beta mem.eaten / gam.8.beta.mem.eaten --------------------------------------------------------
@@ -842,7 +842,7 @@ AICtab( gam.8.beta.mem.eaten, gam.8.beta.mem.eaten.1, gam.8.beta.mem.eaten.2, ga
 
 
 plot(gam.8.beta.mem.eaten.3, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.mem.eaten.3)
+#appraise(gam.8.beta.mem.eaten.3)
 qq_plot(gam.8.beta.mem.eaten.3, method = 'simulate')
 k.check(gam.8.beta.mem.eaten.3)
 summary(gam.8.beta.mem.eaten.3)
@@ -880,7 +880,7 @@ ndata.8.mem.eaten$min.10.pH.unscaled<-ndata.8.mem.eaten$min.10.pH * attr(invasio
 
 # plot 
 
-plt.mem.eaten.8 <- ggplot(ndata.8.mem.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.mem.eaten.8 <- ggplot(ndata.8.mem.eaten, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = mem.eaten.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("mem.eaten")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -889,7 +889,7 @@ plt.mem.eaten.8 <- ggplot(ndata.8.mem.eaten, aes(x = min.10.pH.unscaled, y = fit
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.mem.eaten,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.mem.eaten.8
+plt.inv.mem.eaten.8
 ggsave("C:Graphs August 2020//mem.eaten_pred.8.png")
 
  
@@ -910,7 +910,7 @@ AICtab( gam.16.beta.mussel, gam.16.beta.mussel.1, gam.16.beta.mussel.2, gam.16.b
 
 
 plot(gam.16.beta.mussel, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.beta.mussel)
+##appraise(gam.16.beta.mussel)
 qq_plot(gam.16.beta.mussel, method = 'simulate')
 k.check(gam.16.beta.mussel)
 summary(gam.16.beta.mussel)
@@ -948,7 +948,7 @@ ndata.16.mussel$min.10.pH.unscaled<-ndata.16.mussel$min.10.pH * attr(invasion.ex
 
 # plot 
 
-plt.mussel.16 <- ggplot(ndata.16.mussel, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.mussel.16 <- ggplot(ndata.16.mussel, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = mussel.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("mussel")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -957,7 +957,7 @@ plt.mussel.16 <- ggplot(ndata.16.mussel, aes(x = min.10.pH.unscaled, y = fit)) +
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.mussel,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.mussel.16
+plt.inv.mussel.16
 ggsave("C:Graphs August 2020//mussel_pred.16.png")
 
 # GAM beta mussel / gam.8.beta.mussel --------------------------------------------------------
@@ -977,7 +977,7 @@ AICtab( gam.8.beta.mussel, gam.8.beta.mussel.1, gam.8.beta.mussel.2, gam.8.binom
 
 
 plot(gam.8.beta.mussel, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.mussel)
+#appraise(gam.8.beta.mussel)
 qq_plot(gam.8.beta.mussel, method = 'simulate')
 k.check(gam.8.beta.mussel)
 summary(gam.8.beta.mussel)
@@ -1015,7 +1015,7 @@ ndata.8.mussel$min.10.pH.unscaled<-ndata.8.mussel$min.10.pH * attr(invasion.exp.
 
 # plot 
 
-plt.mussel.8 <- ggplot(ndata.8.mussel, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.mussel.8 <- ggplot(ndata.8.mussel, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = mussel.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("mussel")~ "abundance"), textstyle("(proportion cover)")))))+  
@@ -1024,7 +1024,7 @@ plt.mussel.8 <- ggplot(ndata.8.mussel, aes(x = min.10.pH.unscaled, y = fit)) +
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.mussel,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.mussel.8
+plt.inv.mussel.8
 ggsave("C:Graphs August 2020//mussel_pred.8.png")
 
 
@@ -1040,7 +1040,7 @@ gam.16.poisson.num.barn<- gam(num.barn ~ s(min.10.pH)+ oInvasives + s(min.10.pH,
 AICtab(gam.16.nb.num.barn, gam.16.nb.num.barn.1, gam.16.poisson.num.barn)
 
 plot(gam.16.poisson.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.poisson.num.barn)
+##appraise(gam.16.poisson.num.barn)
 qq_plot(gam.16.poisson.num.barn, method = 'simulate')
 #looks really good
 k.check(gam.16.poisson.num.barn)
@@ -1048,7 +1048,7 @@ summary(gam.16.poisson.num.barn)
 
 
 #a few outside the area
-##appraise a bit funnelly
+###appraise a bit funnelly
 
 gam.16.poisson.num.barn.unordered<- gam(num.barn ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson(), select=TRUE, method="REML")
 fam.gam.16.num.barn <- family(gam.16.poisson.num.barn)
@@ -1075,7 +1075,7 @@ ndata.16.num.barn <- mutate(ndata.16.num.barn,
 ndata.16.num.barn$min.10.pH.unscaled<-ndata.16.num.barn$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.barn.16 <- ggplot(ndata.16.num.barn, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.barn.16 <- ggplot(ndata.16.num.barn, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.barn, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Balanus")~ "abundance"), textstyle("(# of individuals)")))))+  
@@ -1084,7 +1084,7 @@ plt.num.barn.16 <- ggplot(ndata.16.num.barn, aes(x = min.10.pH.unscaled, y = fit
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.barn,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.barn.16
+plt.inv.num.barn.16
 ggsave("C:Graphs August 2020//num.barn_pred.16.png")
 
 # GAM negbin barnacles / gam.8.nb.num.barn -----------------------------------------------------------
@@ -1100,7 +1100,7 @@ AICtab(gam.8.nb.num.barn, gam.8.nb.num.barn.1, gam.8.poisson.num.barn)
 #poisson is better
 
 plot(gam.8.poisson.num.barn, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.poisson.num.barn)
+##appraise(gam.8.poisson.num.barn)
 qq_plot(gam.8.poisson.num.barn, method = 'simulate')
 k.check(gam.8.poisson.num.barn)
 summary(gam.8.poisson.num.barn)
@@ -1126,7 +1126,7 @@ ndata.8.num.barn$min.10.pH.unscaled<-ndata.8.num.barn$min.10.pH * attr(invasion.
 
 
 # plot 
-plt.num.barn.8 <- ggplot(ndata.8.num.barn, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.barn.8 <- ggplot(ndata.8.num.barn, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.barn, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Balanus")~ "abundance"), textstyle("(# of individuals)")))))+  
@@ -1135,7 +1135,7 @@ plt.num.barn.8 <- ggplot(ndata.8.num.barn, aes(x = min.10.pH.unscaled, y = fit))
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.barn,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.barn.8
+plt.inv.num.barn.8
 ggsave("C:Graphs August 2020//num.barn_pred.8.png")
 
 
@@ -1152,13 +1152,13 @@ AICtab(gam.16.nb.num.white.bryo.1,gam.16.nb.num.white.bryo,gam.16.poisson.num.wh
 #used estimated theta
 
 plot(gam.16.nb.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.16.nb.num.white.bryo)
+##appraise(gam.16.nb.num.white.bryo)
 qq_plot(gam.16.nb.num.white.bryo, method = 'simulate')
 k.check(gam.16.nb.num.white.bryo)
 summary(gam.16.nb.num.white.bryo)
 
 #a few outside the area
-##appraise a bit funnelly
+###appraise a bit funnelly
 
 gam.16.nb.num.white.bryo.unordered<- gam(num.white.bryo ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = negbin(nbinom.16.num.white.bryo$estimate[[1]]), select=TRUE, method="REML")
 
@@ -1185,7 +1185,7 @@ ndata.16.num.white.bryo$min.10.pH.unscaled<-ndata.16.num.white.bryo$min.10.pH * 
 
 
 # plot 
-plt.num.white.bryo.16 <- ggplot(ndata.16.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.white.bryo.16 <- ggplot(ndata.16.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.white.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Disporella")~ "abundance"), textstyle("(# of colonies)")))))+  
@@ -1194,7 +1194,7 @@ plt.num.white.bryo.16 <- ggplot(ndata.16.num.white.bryo, aes(x = min.10.pH.unsca
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.white.bryo.16
+plt.inv.num.white.bryo.16
 ggsave("C:Graphs August 2020//num.white.bryo_pred.16.png")
 
 
@@ -1212,7 +1212,7 @@ AICtab(gam.8.nb.num.white.bryo.1,gam.8.nb.num.white.bryo,gam.8.poisson.num.white
 #poisson is better for week 12
 
 plot(gam.8.poisson.num.white.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.poisson.num.white.bryo)
+##appraise(gam.8.poisson.num.white.bryo)
 #not that many points
 qq_plot(gam.8.poisson.num.white.bryo, method = 'simulate')
 k.check(gam.8.poisson.num.white.bryo)
@@ -1240,7 +1240,7 @@ ndata.8.num.white.bryo <- mutate(ndata.8.num.white.bryo,
 ndata.8.num.white.bryo$min.10.pH.unscaled<-ndata.8.num.white.bryo$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.white.bryo.8 <- ggplot(ndata.8.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.white.bryo.8 <- ggplot(ndata.8.num.white.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.white.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Disporella")~ "abundance"), textstyle("(# of colonies)")))))+  
@@ -1249,7 +1249,7 @@ plt.num.white.bryo.8 <- ggplot(ndata.8.num.white.bryo, aes(x = min.10.pH.unscale
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.white.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.white.bryo.8
+plt.inv.num.white.bryo.8
 ggsave("C:Graphs August 2020//num.white.bryo_pred.8.png")
 
 
@@ -1266,7 +1266,7 @@ AICtab(gam.16.nb.num.red.bryo, gam.16.nb.num.red.bryo.1, gam.16.poisson.num.red.
 
 
 plot(gam.16.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.poisson.num.red.bryo)
+#appraise(gam.16.poisson.num.red.bryo)
 qq_plot(gam.16.poisson.num.red.bryo, method = 'simulate')
 k.check(gam.16.poisson.num.red.bryo)
 summary(gam.16.poisson.num.red.bryo)
@@ -1299,7 +1299,7 @@ ndata.16.num.red.bryo <- mutate(ndata.16.num.red.bryo,
 ndata.16.num.red.bryo$min.10.pH.unscaled<-ndata.16.num.red.bryo$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.red.bryo.16 <- ggplot(ndata.16.num.red.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.red.bryo.16 <- ggplot(ndata.16.num.red.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.red.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Schizoporella")~ "abundance"), textstyle("(# of colonies)")))))+  
@@ -1308,7 +1308,7 @@ plt.num.red.bryo.16 <- ggplot(ndata.16.num.red.bryo, aes(x = min.10.pH.unscaled,
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.red.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.red.bryo.16
+plt.inv.num.red.bryo.16
 ggsave("C:Graphs August 2020//num.red.bryo_pred.16.png")
 
 
@@ -1327,7 +1327,7 @@ AICtab(gam.8.nb.num.red.bryo, gam.8.nb.num.red.bryo.1, gam.8.poisson.num.red.bry
 
 
 plot(gam.8.poisson.num.red.bryo, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-#appraise(gam.8.poisson.num.red.bryo)
+##appraise(gam.8.poisson.num.red.bryo)
 #does not look good
 qq_plot(gam.8.poisson.num.red.bryo, method = 'simulate')
 k.check(gam.8.poisson.num.red.bryo)
@@ -1357,7 +1357,7 @@ ndata.8.num.red.bryo <- mutate(ndata.8.num.red.bryo,
 ndata.8.num.red.bryo$min.10.pH.unscaled<-ndata.8.num.red.bryo$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.red.bryo.8 <- ggplot(ndata.8.num.red.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.red.bryo.8 <- ggplot(ndata.8.num.red.bryo, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.red.bryo, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Schizoporella")~ "abundance"), textstyle("(# of colonies)")))))+  
@@ -1366,7 +1366,7 @@ plt.num.red.bryo.8 <- ggplot(ndata.8.num.red.bryo, aes(x = min.10.pH.unscaled, y
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.red.bryo,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.red.bryo.8
+plt.inv.num.red.bryo.8
 ggsave("C:Graphs August 2020//num.red.bryo_pred.8.png")
 
 
@@ -1380,7 +1380,7 @@ gam.16.nb.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=o
 gam.16.poisson.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = poisson, select=TRUE, method="REML")
 AICtab(gam.16.nb.num.nudi, gam.16.nb.num.nudi.1, gam.16.poisson.num.nudi)
 
-appraise(gam.16.poisson.num.nudi)
+#appraise(gam.16.poisson.num.nudi)
 qq_plot(gam.16.poisson.num.nudi, method = 'simulate')
 #looks quite good!
 plot(gam.16.poisson.num.nudi, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1410,7 +1410,7 @@ ndata.16.num.nudi <- mutate(ndata.16.num.nudi,
 ndata.16.num.nudi$min.10.pH.unscaled<-ndata.16.num.nudi$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.nudi.16 <- ggplot(ndata.16.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.nudi.16 <- ggplot(ndata.16.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.nudi, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Hermissenda")~ "abundance"), textstyle("(# of individuals)")))))+  
@@ -1419,7 +1419,7 @@ plt.num.nudi.16 <- ggplot(ndata.16.num.nudi, aes(x = min.10.pH.unscaled, y = fit
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.nudi,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0, "cm"), legend.margin=margin(0, 0.05, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
-plt.num.nudi.16
+plt.inv.num.nudi.16
 ggsave("C:Graphs August 2020//num.nudi_pred.16.png")
 
 
@@ -1434,7 +1434,7 @@ gam.8.poisson.num.nudi<- gam(num.nudi ~ s(min.10.pH)+ oInvasives + s(min.10.pH, 
 AICtab(gam.8.nb.num.nudi, gam.8.nb.num.nudi.1)
 
 
-appraise(gam.8.nb.num.nudi.1)
+#appraise(gam.8.nb.num.nudi.1)
 qq_plot(gam.8.nb.num.nudi.1, method = 'simulate')
 #looks quite good!
 plot(gam.8.nb.num.nudi.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1465,7 +1465,7 @@ ndata.8.num.nudi <- mutate(ndata.8.num.nudi,
 ndata.8.num.nudi$min.10.pH.unscaled<-ndata.8.num.nudi$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.nudi.8 <- ggplot(ndata.8.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.nudi.8 <- ggplot(ndata.8.num.nudi, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.nudi, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Hermissenda")~ "abundance"), textstyle("(# of individuals)")))))+  
@@ -1474,7 +1474,7 @@ plt.num.nudi.8 <- ggplot(ndata.8.num.nudi, aes(x = min.10.pH.unscaled, y = fit))
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.nudi,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0, "cm"), legend.margin=margin(0, 0.05, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
-plt.num.nudi.8
+plt.inv.num.nudi.8
 ggsave("C:Graphs August 2020//num.nudi_pred.8.png")
 
 # GAM nb() serpulids / gam.16.nb.num.serpulid.1 -----------------------------------------------------------
@@ -1490,7 +1490,7 @@ gam.16.poisson.num.serpulid<- gam(num.serpulid ~ s(min.10.pH)+ oInvasives + s(mi
 AICtab(gam.16.nb.num.serpulid, gam.16.nb.num.serpulid.1, gam.16.poisson.num.serpulid)
 ##gam.16.nb.num.serpulid.1 is best
 
-#appraise(gam.16.nb.num.serpulid.1)
+##appraise(gam.16.nb.num.serpulid.1)
 qq_plot(gam.16.nb.num.serpulid.1, method = 'simulate')
 plot(gam.16.nb.num.serpulid.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 k.check(gam.16.nb.num.serpulid.1)
@@ -1520,7 +1520,7 @@ ndata.16.num.serpulid <- mutate(ndata.16.num.serpulid,
 ndata.16.num.serpulid$min.10.pH.unscaled<-ndata.16.num.serpulid$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.serpulid.16 <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.serpulid.16 <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
@@ -1529,7 +1529,7 @@ plt.num.serpulid.16 <- ggplot(ndata.16.num.serpulid, aes(x = min.10.pH.unscaled,
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.serpulid.16
+plt.inv.num.serpulid.16
 ggsave("C:Graphs August 2020//num.serpulid_pred.16.png")
 
 # GAM nb() serpulids / gam.8.nb.num.serpulid.1 -----------------------------------------------------------
@@ -1545,7 +1545,7 @@ gam.8.poisson.num.serpulid<- gam(num.serpulid ~ s(min.10.pH, k=4)+ oInvasives + 
 AICtab(gam.8.nb.num.serpulid, gam.8.nb.num.serpulid.1, gam.8.poisson.num.serpulid)
 ##gam.8.poisson is best
 
-#appraise(gam.8.nb.num.serpulid.1)
+##appraise(gam.8.nb.num.serpulid.1)
 qq_plot(gam.8.nb.num.serpulid.1, method = 'simulate')
 plot(gam.8.nb.num.serpulid.1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
 k.check(gam.8.nb.num.serpulid.1)
@@ -1577,7 +1577,7 @@ ndata.8.num.serpulid <- mutate(ndata.8.num.serpulid,
 ndata.8.num.serpulid$min.10.pH.unscaled<-ndata.8.num.serpulid$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.serpulid.8 <- ggplot(ndata.8.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.serpulid.8 <- ggplot(ndata.8.num.serpulid, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.serpulid, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle("Serpulid abundance"), textstyle("(# of individuals)")))))+  
@@ -1586,7 +1586,7 @@ plt.num.serpulid.8 <- ggplot(ndata.8.num.serpulid, aes(x = min.10.pH.unscaled, y
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.serpulid,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.serpulid.8
+plt.inv.num.serpulid.8
 ggsave("C:Graphs August 2020//num.serpulid_pred.8.png")
 
 
@@ -1604,7 +1604,7 @@ gam.16.poisson.num.corella<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.
 AICtab(gam.16.nb.num.corella, gam.16.nb.num.corella.1, gam.16.poisson.num.corella)
 
 
-appraise(gam.16.nb.num.corella)
+#appraise(gam.16.nb.num.corella)
 #looks pretty good - slight pattern
 qq_plot(gam.16.nb.num.corella, method = 'simulate')
 plot(gam.16.nb.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1642,7 +1642,7 @@ ndata.16.num.corella$min.10.pH.unscaled<-ndata.16.num.corella$min.10.pH * attr(i
 
 par(lheight=0.2) 
 # plot 
-plt.num.corella.16 <- ggplot(ndata.16.num.corella, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.corella.16 <- ggplot(ndata.16.num.corella, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.corella, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Corella")~ "abundance"), textstyle("(# of individuals)")))))+  
@@ -1651,7 +1651,7 @@ plt.num.corella.16 <- ggplot(ndata.16.num.corella, aes(x = min.10.pH.unscaled, y
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.corella,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.corella.16
+plt.inv.num.corella.16
 ggsave("C:Graphs August 2020//num.corella_pred.16.png")
 
 # GAM negbin corella / gam.8.nb.num.corella -------------------------------------------------------------
@@ -1667,7 +1667,7 @@ gam.8.poisson.num.corella<- gam(num.corella ~ s(min.10.pH)+ oInvasives + s(min.1
 AICtab(gam.8.nb.num.corella, gam.8.nb.num.corella.1, gam.8.poisson.num.corella)
 #poisson
 
-#appraise(gam.8.poisson.num.corella)
+##appraise(gam.8.poisson.num.corella)
 #looks pretty good - slight pattern
 qq_plot(gam.8.poisson.num.corella, method = 'simulate')
 plot(gam.8.poisson.num.corella, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
@@ -1701,7 +1701,7 @@ ndata.8.num.corella <- mutate(ndata.8.num.corella,
 ndata.8.num.corella$min.10.pH.unscaled<-ndata.8.num.corella$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 # plot 
-plt.num.corella.8 <- ggplot(ndata.8.num.corella, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.corella.8 <- ggplot(ndata.8.num.corella, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.corella, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab(expression(atop(NA,atop(textstyle(italic("Corella")~ "abundance"), textstyle("(# of individuals)")))))+  
@@ -1710,33 +1710,33 @@ plt.num.corella.8 <- ggplot(ndata.8.num.corella, aes(x = min.10.pH.unscaled, y =
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.corella,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.num.corella.8
+plt.inv.num.corella.8
 ggsave("C:Graphs August 2020//num.corella_pred.8.png")
 
 
 
 # Fig 2 plot generation ---------------------------------------------------
-fig.week.16<-wrap_plots(plt.botryllid.16,plt.folliculina.16,plt.membranipora.16,
-          plt.mussel.16,plt.num.barn.16,plt.num.white.bryo.16,plt.num.red.bryo.16,plt.num.nudi.16,plt.num.serpulid.16,
-          plt.num.corella.16, ncol=5)+
+fig.week.16<-wrap_plots(plt.inv.botryllid.16,plt.inv.folliculina.16,plt.inv.membranipora.16,
+          plt.inv.mussel.16,plt.inv.num.barn.16,plt.inv.num.white.bryo.16,plt.inv.num.red.bryo.16,plt.inv.num.nudi.16,plt.inv.num.serpulid.16,
+          plt.inv.num.corella.16, ncol=5)+
           plot_annotation(tag_levels = 'A')
 
 theme_set(theme_classic(base_size = 5))
 #theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
 
 fig.week.16
-ggplot2::ggsave(plot=fig.week.16, "C:Graphs August 2020//Fig_wk_16.pdf", width=18, height=8, units="cm")
+ggplot2::ggsave(plot=fig.week.16, "C:Graphs August 2020//Fig_Invasion_pres_wk_16.pdf", width=18, height=8, units="cm")
 
 
 
-fig.week.8<-wrap_plots(plt.botryllid.8,plt.folliculina.8,plt.membranipora.8,
-                        plt.mussel.8,plt.num.barn.8,plt.num.white.bryo.8,plt.num.red.bryo.8,plt.num.nudi.8,plt.num.serpulid.8,
-                        plt.num.corella.8, ncol=5)+
+fig.week.8<-wrap_plots(plt.inv.botryllid.8,plt.inv.folliculina.8,plt.inv.membranipora.8,
+                        plt.inv.mussel.8,plt.inv.num.barn.8,plt.inv.num.white.bryo.8,plt.inv.num.red.bryo.8,plt.inv.num.nudi.8,plt.inv.num.serpulid.8,
+                        plt.inv.num.corella.8, ncol=5)+
                         plot_annotation(tag_levels = 'A')
 
 fig.week.8
 
-ggplot2::ggsave(plot=fig.week.8, "C:Graphs August 2020//Fig_wk_8.pdf", width=18, height=8, units="cm")
+ggplot2::ggsave(plot=fig.week.8, "C:Graphs August 2020//Fig_Invasion_pres_wk_8.pdf", width=18, height=8, units="cm")
 
 head(invasion.exp.data.8_zscores)
 
@@ -2086,7 +2086,7 @@ gam.16.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(min.10.pH)+ oInva
 AICtab(gam.16.nb.num.species.no.bot.1, gam.16.poisson.num.species.no.bot)
 
 plot(gam.16.poisson.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.poisson.num.species.no.bot)
+#appraise(gam.16.poisson.num.species.no.bot)
 #okay but qq plot not the best on ends
 qq_plot(gam.16.poisson.num.species.no.bot, method = 'simulate')
 k.check(gam.16.poisson.num.species.no.bot)
@@ -2125,7 +2125,7 @@ ndata.16.num.species.no.bot$min.10.pH.unscaled<-ndata.16.num.species.no.bot$min.
 
 
 # plot 
-plt.num.species.no.bot.16 <- ggplot(ndata.16.num.species.no.bot, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.species.no.bot.16 <- ggplot(ndata.16.num.species.no.bot, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.species.no.bot, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Native species richness")+  
@@ -2134,7 +2134,7 @@ plt.num.species.no.bot.16 <- ggplot(ndata.16.num.species.no.bot, aes(x = min.10.
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.num.species.no.bot,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')+ylim(0,20)
-plt.num.species.no.bot.16
+plt.inv.num.species.no.bot.16
 ggsave("C:Graphs August 2020//native_richness.16.png")
 
 
@@ -2145,7 +2145,7 @@ gam.8.poisson.num.species.no.bot<- gam(num.species.no.bot ~ s(min.10.pH)+ oInvas
 AICtab(gam.8.nb.num.species.no.bot.1, gam.8.poisson.num.species.no.bot)
 
 plot(gam.8.poisson.num.species.no.bot, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.poisson.num.species.no.bot)
+#appraise(gam.8.poisson.num.species.no.bot)
 #okay but qq plot not the best on ends
 qq_plot(gam.8.poisson.num.species.no.bot, method = 'simulate')
 k.check(gam.8.poisson.num.species.no.bot)
@@ -2184,7 +2184,7 @@ ndata.8.num.species.no.bot$min.10.pH.unscaled<-ndata.8.num.species.no.bot$min.10
 
 
 # plot 
-plt.num.species.no.bot.8 <- ggplot(ndata.8.num.species.no.bot, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.num.species.no.bot.8 <- ggplot(ndata.8.num.species.no.bot, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = num.species.no.bot, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Native species richness")+  
@@ -2193,7 +2193,7 @@ plt.num.species.no.bot.8 <- ggplot(ndata.8.num.species.no.bot, aes(x = min.10.pH
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.num.species.no.bot,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')+ylim(0,20)
-plt.num.species.no.bot.8
+plt.inv.num.species.no.bot.8
 ggsave("C:Graphs August 2020//native_richness.8.png")
 
 
@@ -2212,7 +2212,7 @@ AICtab(gam.16.lm.native.occupied.space, gam.16.beta.native.occupied.space.3, gam
 
 
 plot(gam.16.beta.native.occupied.space.3 , shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.beta.native.occupied.space.3 )
+#appraise(gam.16.beta.native.occupied.space.3 )
 #looks good
 qq_plot(gam.16.beta.native.occupied.space.3 , method = 'simulate')
 k.check(gam.16.beta.native.occupied.space.3 )
@@ -2251,7 +2251,7 @@ ndata.16.native.occupied.space$min.10.pH.unscaled<-ndata.16.native.occupied.spac
 
 
 # plot 
-plt.native.occupied.space.16 <- ggplot(ndata.16.native.occupied.space, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.native.occupied.space.16 <- ggplot(ndata.16.native.occupied.space, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = native.occupied.space.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Proportion of space on tile occupied")+  
@@ -2260,7 +2260,7 @@ plt.native.occupied.space.16 <- ggplot(ndata.16.native.occupied.space, aes(x = m
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.native.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.native.occupied.space.16
+plt.inv.native.occupied.space.16
 ggsave("C:Graphs August 2020//native.occupied.space_pred.16.png")
 
 
@@ -2281,7 +2281,7 @@ AICtab(gam.8.lm.native.occupied.space, gam.8.beta.native.occupied.space.3, gam.8
 #beta is best 
 
 plot(gam.8.beta.native.occupied.space, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.beta.native.occupied.space)
+#appraise(gam.8.beta.native.occupied.space)
 #looks good
 qq_plot(gam.8.beta.native.occupied.space, method = 'simulate')
 k.check(gam.8.beta.native.occupied.space)
@@ -2320,7 +2320,7 @@ ndata.8.native.occupied.space$min.10.pH.unscaled<-ndata.8.native.occupied.space$
 
 
 # plot 
-plt.native.occupied.space.8 <- ggplot(ndata.8.native.occupied.space, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.native.occupied.space.8 <- ggplot(ndata.8.native.occupied.space, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y = native.occupied.space.001, shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Proportion of space on tile occupied")+  
@@ -2329,129 +2329,129 @@ plt.native.occupied.space.8 <- ggplot(ndata.8.native.occupied.space, aes(x = min
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.native.occupied.space,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.native.occupied.space.8
+plt.inv.native.occupied.space.8
 ggsave("C:Graphs August 2020//native.occupied.space_pred.8.png")
 
 
 # CAP1 - 16 --------------------------------------------------------------------
 #negative values so can't do gamma
-gam.16.lm.CAP1<- gam(CAP1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-gam.16.loglink.CAP1.1<- gam(CAP1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
+gam.16.lm.CAP1.inv<- gam(CAP1.inv ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+gam.16.loglink.CAP1.inv.1<- gam(CAP1.inv ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, family = gaussian(link="log"), select=TRUE, method="REML")
 
 
-AICtab( gam.16.loglink.CAP1.1, gam.16.lm.CAP1)
-#gam.16.lm.CAP1
+AICtab( gam.16.loglink.CAP1.inv.1, gam.16.lm.CAP1.inv)
+#gam.16.lm.CAP1.inv
 
-plot(gam.16.lm.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.lm.CAP1)
+plot(gam.16.lm.CAP1.inv, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+#appraise(gam.16.lm.CAP1.inv)
 #look good
-qq_plot(gam.16.lm.CAP1, method = 'simulate')
-k.check(gam.16.lm.CAP1)
-summary(gam.16.lm.CAP1)
-gam.16.lm.CAP1.unordered<- gam(CAP1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
-summary(gam.16.lm.CAP1.unordered)
+qq_plot(gam.16.lm.CAP1.inv, method = 'simulate')
+k.check(gam.16.lm.CAP1.inv)
+summary(gam.16.lm.CAP1.inv)
+gam.16.lm.CAP1.inv.unordered<- gam(CAP1.inv ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.16_zscores, select=TRUE, method="REML")
+summary(gam.16.lm.CAP1.inv.unordered)
 
-fam.gam.16.CAP1 <- family(gam.16.lm.CAP1)
-fam.gam.16.CAP1
-str(fam.gam.16.CAP1)
-ilink.gam.16.CAP1<- fam.gam.16.CAP1$linkinv
-ilink.gam.16.CAP1
+fam.gam.16.CAP1.inv <- family(gam.16.lm.CAP1.inv)
+fam.gam.16.CAP1.inv
+str(fam.gam.16.CAP1.inv)
+ilink.gam.16.CAP1.inv<- fam.gam.16.CAP1.inv$linkinv
+ilink.gam.16.CAP1.inv
 
 
-mod.CAP1<-gam.16.lm.CAP1
-ndata.16.CAP1 <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+mod.CAP1.inv<-gam.16.lm.CAP1.inv
+ndata.16.CAP1.inv <- with(invasion.exp.data.16_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                               length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
 
 ## add the fitted values by predicting from the model for the new data
-ndata.16.CAP1 <- add_column(ndata.16.CAP1, fit = predict(mod.CAP1, newdata = ndata.16.CAP1, type = 'response'))
+ndata.16.CAP1.inv <- add_column(ndata.16.CAP1.inv, fit = predict(mod.CAP1.inv, newdata = ndata.16.CAP1.inv, type = 'response'))
 
-predict(mod.CAP1, newdata = ndata.16.CAP1, type = 'response')
-ndata.16.CAP1 <- bind_cols(ndata.16.CAP1, setNames(as_tibble(predict(mod.CAP1, ndata.16.CAP1, se.fit = TRUE)[1:2]),
+predict(mod.CAP1.inv, newdata = ndata.16.CAP1.inv, type = 'response')
+ndata.16.CAP1.inv <- bind_cols(ndata.16.CAP1.inv, setNames(as_tibble(predict(mod.CAP1.inv, ndata.16.CAP1.inv, se.fit = TRUE)[1:2]),
                                                                                c('fit_link','se_link')))
 
 ## create the interval and backtransform
 
-ndata.16.CAP1 <- mutate(ndata.16.CAP1,
-                                      fit_resp  = ilink.gam.16.CAP1(fit_link),
-                                      right_upr = ilink.gam.16.CAP1(fit_link + (2 * se_link)),
-                                      right_lwr = ilink.gam.16.CAP1(fit_link - (2 * se_link)))
+ndata.16.CAP1.inv <- mutate(ndata.16.CAP1.inv,
+                                      fit_resp  = ilink.gam.16.CAP1.inv(fit_link),
+                                      right_upr = ilink.gam.16.CAP1.inv(fit_link + (2 * se_link)),
+                                      right_lwr = ilink.gam.16.CAP1.inv(fit_link - (2 * se_link)))
 
 
-ndata.16.CAP1$min.10.pH.unscaled<-ndata.16.CAP1$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
+ndata.16.CAP1.inv$min.10.pH.unscaled<-ndata.16.CAP1.inv$min.10.pH * attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.16_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.CAP1.16 <- ggplot(ndata.16.CAP1, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.CAP1.inv.16 <- ggplot(ndata.16.CAP1.inv, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y =(CAP1), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Partial-dbRDA axis 1\n(36% of constrained variation)")+  
+  geom_point(aes(y =(CAP1.inv), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Partial-dbRDA axis 1\n(58% of constrained variation)")+  
   scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
   scale_fill_manual(values=colorset_invasives, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.16.CAP1,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  geom_ribbon(data = ndata.16.CAP1.inv,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0.1, "cm"), legend.margin=margin(0, 0, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
-plt.CAP1.16
-ggsave("C:Graphs August 2020//CAP1_pred.16.png")
+plt.inv.CAP1.inv.16
+ggsave("C:Graphs August 2020//CAP1.inv_pred.16.png")
 
-# CAP1 - 8 --------------------------------------------------------------------
+# CAP1.inv - 8 --------------------------------------------------------------------
 #negative values so can't do gamma
-gam.8.lm.CAP1<- gam(CAP1 ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
+gam.8.lm.CAP1.inv<- gam(CAP1.inv ~ s(min.10.pH)+ oInvasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
 
-AICtab( gam.8.loglink.CAP1.1, gam.8.lm.CAP1)
-#gam.8.lm.CAP1
+AICtab( gam.8.loglink.CAP1.inv.1, gam.8.lm.CAP1.inv)
+#gam.8.lm.CAP1.inv
 
-plot(gam.8.lm.CAP1, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.lm.CAP1)
+plot(gam.8.lm.CAP1.inv, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
+#appraise(gam.8.lm.CAP1.inv)
 #look good
-qq_plot(gam.8.lm.CAP1, method = 'simulate')
-k.check(gam.8.lm.CAP1)
-summary(gam.8.lm.CAP1)
-gam.8.lm.CAP1.unordered<- gam(CAP1 ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
-summary(gam.8.lm.CAP1.unordered)
+qq_plot(gam.8.lm.CAP1.inv, method = 'simulate')
+k.check(gam.8.lm.CAP1.inv)
+summary(gam.8.lm.CAP1.inv)
+gam.8.lm.CAP1.inv.unordered<- gam(CAP1.inv ~ s(min.10.pH)+ Invasives + s(min.10.pH, by=oInvasives),data = invasion.exp.data.8_zscores, select=TRUE, method="REML")
+summary(gam.8.lm.CAP1.inv.unordered)
 
-fam.gam.8.CAP1 <- family(gam.8.lm.CAP1)
-fam.gam.8.CAP1
-str(fam.gam.8.CAP1)
-ilink.gam.8.CAP1<- fam.gam.8.CAP1$linkinv
-ilink.gam.8.CAP1
+fam.gam.8.CAP1.inv <- family(gam.8.lm.CAP1.inv)
+fam.gam.8.CAP1.inv
+str(fam.gam.8.CAP1.inv)
+ilink.gam.8.CAP1.inv<- fam.gam.8.CAP1.inv$linkinv
+ilink.gam.8.CAP1.inv
 
 
-mod.CAP1<-gam.8.lm.CAP1
-ndata.8.CAP1 <- with(invasion.exp.data.8_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
+mod.CAP1.inv<-gam.8.lm.CAP1.inv
+ndata.8.CAP1.inv <- with(invasion.exp.data.8_zscores, data_frame(min.10.pH = seq(min(min.10.pH), max(min.10.pH),
                                                                                length = 100),  oInvasives = oInvasives[want],  CO2.Treatment= CO2.Treatment[want]))
 
 
 ## add the fitted values by predicting from the model for the new data
-ndata.8.CAP1 <- add_column(ndata.8.CAP1, fit = predict(mod.CAP1, newdata = ndata.8.CAP1, type = 'response'))
+ndata.8.CAP1.inv <- add_column(ndata.8.CAP1.inv, fit = predict(mod.CAP1.inv, newdata = ndata.8.CAP1.inv, type = 'response'))
 
-predict(mod.CAP1, newdata = ndata.8.CAP1, type = 'response')
-ndata.8.CAP1 <- bind_cols(ndata.8.CAP1, setNames(as_tibble(predict(mod.CAP1, ndata.8.CAP1, se.fit = TRUE)[1:2]),
+predict(mod.CAP1.inv, newdata = ndata.8.CAP1.inv, type = 'response')
+ndata.8.CAP1.inv <- bind_cols(ndata.8.CAP1.inv, setNames(as_tibble(predict(mod.CAP1.inv, ndata.8.CAP1.inv, se.fit = TRUE)[1:2]),
                                                    c('fit_link','se_link')))
 
 ## create the interval and backtransform
 
-ndata.8.CAP1 <- mutate(ndata.8.CAP1,
-                        fit_resp  = ilink.gam.8.CAP1(fit_link),
-                        right_upr = ilink.gam.8.CAP1(fit_link + (2 * se_link)),
-                        right_lwr = ilink.gam.8.CAP1(fit_link - (2 * se_link)))
+ndata.8.CAP1.inv <- mutate(ndata.8.CAP1.inv,
+                        fit_resp  = ilink.gam.8.CAP1.inv(fit_link),
+                        right_upr = ilink.gam.8.CAP1.inv(fit_link + (2 * se_link)),
+                        right_lwr = ilink.gam.8.CAP1.inv(fit_link - (2 * se_link)))
 
 
-ndata.8.CAP1$min.10.pH.unscaled<-ndata.8.CAP1$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
+ndata.8.CAP1.inv$min.10.pH.unscaled<-ndata.8.CAP1.inv$min.10.pH * attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:scale') + attr(invasion.exp.data.8_zscores$min.10.pH, 'scaled:center')
 
 
 # plot 
-plt.CAP1.8 <- ggplot(ndata.8.CAP1, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.CAP1.inv.8 <- ggplot(ndata.8.CAP1.inv, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
-  geom_point(aes(y =(CAP1), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
-  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Partial-dbRDA axis 1\n(36% of constrained variation)")+  
+  geom_point(aes(y =(CAP1.inv), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
+  xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Partial-dbRDA axis 1\n(61% of constrained variation)")+  
   scale_color_manual(values=colorset_invasives, guide = guide_legend(title="Invasives", title.position = "top"))+
   scale_fill_manual(values=colorset_invasives, guide = FALSE)+
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
-  geom_ribbon(data = ndata.8.CAP1,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
+  geom_ribbon(data = ndata.8.CAP1.inv,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='bottom', legend.box='horizontal', legend.spacing=unit(0.1, "cm"), legend.margin=margin(0, 0, 0, 0, "cm"), legend.key.size = unit(0, "cm"), legend.text = element_text(size=3), legend.title = element_text(size=4))
-plt.CAP1.8
-ggsave("C:Graphs August 2020//CAP1_pred.8.png")
+plt.inv.CAP1.inv.8
+ggsave("C:Graphs August 2020//CAP1.inv_pred.8.png")
 
 
 
@@ -2466,7 +2466,7 @@ AICtab(gam.16.loglink.distances.1,  gam.16.lm.distances, gam.16.gamma.distances)
 
 
 plot(gam.16.lm.distances, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.16.lm.distances)
+#appraise(gam.16.lm.distances)
 #looks good
 qq_plot(gam.16.lm.distances, method = 'simulate')
 k.check(gam.16.lm.distances)
@@ -2507,7 +2507,7 @@ ndata.16.distances$min.10.pH.unscaled<-ndata.16.distances$min.10.pH * attr(invas
 
 
 # plot 
-plt.distances.16 <- ggplot(ndata.16.distances, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.distances.16 <- ggplot(ndata.16.distances, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y =(distcentroid), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.16_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Heterogeneity of multivariate dispersions\n(distance to multivariate centroid)")+  
@@ -2516,7 +2516,7 @@ plt.distances.16 <- ggplot(ndata.16.distances, aes(x = min.10.pH.unscaled, y = f
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.16.distances,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.distances.16
+plt.inv.distances.16
 ggsave("C:Graphs August 2020//distances_pred.16.png")
 
 # Distances 8 ---------------------------------------------------------------
@@ -2532,7 +2532,7 @@ AICtab(gam.8.loglink.distances.1,  gam.8.lm.distances, gam.8.gamma.distances)
 
 
 plot(gam.8.lm.distances, shade = TRUE, pages = 1, scale = 0, seWithMean = TRUE)
-appraise(gam.8.lm.distances)
+#appraise(gam.8.lm.distances)
 #looks good
 qq_plot(gam.8.lm.distances, method = 'simulate')
 k.check(gam.8.lm.distances)
@@ -2573,7 +2573,7 @@ ndata.8.distances$min.10.pH.unscaled<-ndata.8.distances$min.10.pH * attr(invasio
 
 
 # plot 
-plt.distances.8 <- ggplot(ndata.8.distances, aes(x = min.10.pH.unscaled, y = fit)) + 
+plt.inv.distances.8 <- ggplot(ndata.8.distances, aes(x = min.10.pH.unscaled, y = fit)) + 
   geom_line(aes(colour=oInvasives)) +
   geom_point(aes(y =(distcentroid), shape=CO2.Treatment, colour=oInvasives), data = invasion.exp.data.8_zscores)+
   xlab(expression("Minimum" ~"10"^"th"~"percentile pH")) + ylab("Heterogeneity of multivariate dispersions\n(distance to multivariate centroid)")+  
@@ -2582,7 +2582,7 @@ plt.distances.8 <- ggplot(ndata.8.distances, aes(x = min.10.pH.unscaled, y = fit
   scale_shape_manual(values=c(19,17), labels=c("Ambient", "Low pH"), guide = guide_legend(title="pH Invasives", title.position = "top"))+
   geom_ribbon(data = ndata.8.distances,aes(ymin = right_lwr, ymax = right_upr, fill=oInvasives), alpha = 0.10)+
   theme(legend.position='none')
-plt.distances.8
+plt.inv.distances.8
 ggsave("C:Graphs August 2020//distances_pred.8.png")
 
 
@@ -2590,26 +2590,26 @@ ggsave("C:Graphs August 2020//distances_pred.8.png")
 # Community plotting ------------------------------------------------------
 
 #### community fig week 16
-fig.community.week.16<-wrap_plots(plt.native.occupied.space.16,
-                            plt.num.species.no.bot.16,
-                            plt.CAP1.16, plt.distances.16, ncol=2)+
+fig.community.week.16<-wrap_plots(plt.inv.native.occupied.space.16,
+                            plt.inv.num.species.no.bot.16,
+                            plt.inv.CAP1.inv.16, plt.inv.distances.16, ncol=2)+
                             plot_annotation(tag_levels = 'a')
 
 fig.community.week.16
 
-ggplot2::ggsave(plot=fig.community.week.16, "C:Graphs August 2020//Fig.community.week16.pdf", width=3, height=3, units="in")
+ggplot2::ggsave(plot=fig.community.week.16, "C:Graphs August 2020//Fig.inv.community.week16.pdf", width=4, height=3, units="in")
 
 
 
 #### community fig week 8
-fig.community.week.8<-wrap_plots(plt.native.occupied.space.8,
-                                  plt.num.species.no.bot.8,
-                                  plt.CAP1.8, plt.distances.8, ncol=2)+
+fig.community.week.8<-wrap_plots(plt.inv.native.occupied.space.8,
+                                  plt.inv.num.species.no.bot.8,
+                                  plt.inv.CAP1.inv.8, plt.inv.distances.8, ncol=2)+
   plot_annotation(tag_levels = 'a')
 
 fig.community.week.8
 
-ggplot2::ggsave(plot=fig.community.week.8, "C:Graphs August 2020//Fig.community.week8.pdf", width=3, height=3, units="in")
+ggplot2::ggsave(plot=fig.community.week.8, "C:Graphs August 2020//Fig.inv.community.week8.pdf", width=4, height=3, units="in")
 
 
 
