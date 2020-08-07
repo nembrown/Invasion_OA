@@ -144,8 +144,8 @@ invasion.exp.data.8_zscores$av.pH.unscaled <-invasion.exp.data.8_zscores$av.pH *
 
 # Plotting settings -------------------------------------------------------
 
-colorset_invasives = c("Present"="#A20228" ,"Absent"="#816392")
-colorset_CO2.Treatment = c("CO2"="#A20228" ,"AIR"="#816392")
+colorset_invasives = c("Present"="#A20228" ,"Absent"="#818392")
+colorset_CO2.Treatment = c("CO2"="#A20228" ,"AIR"="#818392")
 
 theme_set(theme_classic(base_size = 12))
 theme_update(plot.margin = unit(c(0,0,0,0), "cm"))
