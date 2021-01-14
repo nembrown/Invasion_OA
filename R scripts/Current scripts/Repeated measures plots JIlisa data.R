@@ -45,7 +45,7 @@ cdata.num_bot$num_bot.se<-cdata.num_bot$num_bot.sd/sqrt(cdata.num_bot$N)
 head(cdata.num_bot)
 
 
-plot.num_bot<-ggplot(cdata.num_bot, aes(x=Week, y=num_bot.mean, linetype=Treatment, shape=Treatment)) + geom_errorbar(aes(ymin=num_bot.mean-num_bot.se, ymax=num_bot.mean+num_bot.se), width=0.25) + geom_line(size=1) + geom_point(aes(shape=Treatment),size=5, col="#666666") + scale_colour_manual(values=cbbPalette.all.purple)+scale_shape_manual(values=c(1, 2))
+plot.num_bot<-ggplot(cdata.num_bot, aes(x=Week, y=num_bot.mean, linetype=Treatment, shape=Treatment)) + geom_errorbar(aes(ymin=num_bot.mean-num_bot.se, ymax=num_bot.mean+num_bot.se), width=0.25) + geom_line(size=1) + geom_point(aes(shape=Treatment),size=5, col="#666666") + scale_colour_manual(values=cbbPalette3)+scale_shape_manual(values=c(1, 2))
 plot.num_bot<- plot.num_bot + labs(x = "Time (weeks)", y="Botryllus new recruitment\n(# colonies)")+ theme_bw()+ theme(text = element_text(size=16), axis.text = element_text(size=16)) + theme(axis.title.y = element_text(angle=90))+xlim(0,16)
 plot.num_bot<-plot.num_bot + theme(legend.text = element_text(colour="black", size = 16))+theme(legend.title = element_text(colour="black", size=16), legend.position=c(.50,.80))+theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank(), axis.line=element_line(size=0.25), axis.ticks.length=unit(-0.25, "cm") )+ theme(legend.key = element_blank())+theme(legend.key.size = unit(0.3, "cm"))
 plot.num_bot <- plot.num_bot+ theme(legend.position="none") + theme(axis.text.x = element_text(margin=margin(0.5, 0.5, 0.5, 0.5, "cm")), axis.text.y = element_text(margin=margin(0.5, 0.5, 0.5, 0.5, "cm")))
